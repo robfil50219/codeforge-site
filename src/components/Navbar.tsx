@@ -7,9 +7,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
-        <a href="#home" className="text-lg font-extrabold tracking-tight text-slate-900">
+        <span
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }
+          className="text-lg font-extrabold tracking-tight text-slate-900 cursor-pointer"
+        >
           CodeForge Studio
-        </a>
+        </span>
 
         {/* Desktop links */}
         <nav className="hidden md:flex items-center gap-8 text-sm">
@@ -24,7 +29,6 @@ export default function Navbar() {
           onClick={() => setOpen(v => !v)}
           className="md:hidden rounded-lg p-2 hover:bg-slate-100"
           aria-label="Toggle menu"
-          type="button"
         >
           <div className="w-6 h-0.5 bg-slate-900 mb-1.5" />
           <div className="w-6 h-0.5 bg-slate-900 mb-1.5" />
