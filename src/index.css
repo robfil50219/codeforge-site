@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* small app-level tweaks */
+html, body, #root { height: 100%; }
+html { scroll-behavior: smooth; }
+body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
