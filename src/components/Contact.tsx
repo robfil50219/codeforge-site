@@ -18,7 +18,7 @@ export default function Contact() {
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
           >
             <h3 className="text-base font-semibold text-slate-900">Email</h3>
-            <p className="mt-2 text-sm text-slate-600">you@example.com</p>
+            <p className="mt-2 text-sm text-slate-600">robert.codeforgestudio@gmail.com</p>
           </a>
 
           <a
@@ -32,20 +32,20 @@ export default function Contact() {
           </a>
 
           <a
-            href="https://www.linkedin.com/in/your-handle"
+            href="www.linkedin.com/in/robert-filep-417146264"
             target="_blank"
             rel="noreferrer"
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
           >
             <h3 className="text-base font-semibold text-slate-900">LinkedIn</h3>
-            <p className="mt-2 text-sm text-slate-600">/in/your-handle</p>
+            <p className="mt-2 text-sm text-slate-600">www.linkedin.com/in/robert-filep-417146264/</p>
           </a>
         </div>
 
         {/* Simple CTA */}
         <div className="mt-12 text-center">
           <a
-            href="mailto:you@example.com"
+            href="mailto:robert.codeforgestudio@gmail.com"
             className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium hover:bg-sky-700 transition"
           >
             Start a project

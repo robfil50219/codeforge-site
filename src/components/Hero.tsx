@@ -52,8 +52,8 @@ export default function Hero() {
 
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
               <img
-                src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1600&auto=format&fit=crop"
-                alt="Developer workspace with code on screen"
+                src="/hero.jpg"
+                alt="Developer workspace"
                 className="h-72 w-full object-cover sm:h-96"
                 loading="eager"
               />
