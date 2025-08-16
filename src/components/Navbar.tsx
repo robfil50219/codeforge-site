@@ -29,13 +29,23 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
+        
+        {/* Brand with Logo */}
         <a
           href="#"
-          onClick={(e) => { e.preventDefault(); setOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          className="text-lg font-extrabold tracking-tight text-slate-900"
+          onClick={(e) => {
+            e.preventDefault();
+            setOpen(false);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-900"
         >
-          {t("brand")}
+          <img
+            src="/public/favicon.png"
+            alt="CodeForge Studio logo"
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full"
+          />
+          <span>{t("brand")}</span>
         </a>
 
         {/* Desktop nav with dots */}
@@ -44,7 +54,10 @@ export default function Navbar() {
             <div key={item.id} className="group flex items-center">
               <a
                 href={`#${item.id}`}
-                onClick={(e) => { e.preventDefault(); scrollToId(item.id); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToId(item.id);
+                }}
                 className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
               >
                 {t(item.labelKey)}
@@ -80,7 +93,10 @@ export default function Navbar() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={(e) => { e.preventDefault(); scrollToId(item.id); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToId(item.id);
+                }}
                 className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
               >
                 {t(item.labelKey)}
