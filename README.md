@@ -62,4 +62,4 @@ You can easily deploy this site on:
 
 ## 📜 License
 
-This project is licensed under the [MIT License](./LICENSE) © 2025 Robert Filep.
+This project is licensed under the [MIT License](./LICENSE) © 2025 CodeForge Studio Filep.
