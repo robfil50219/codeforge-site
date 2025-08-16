@@ -1,4 +1,6 @@
 // src/components/Services.tsx
+import React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type Service = {
@@ -46,7 +48,35 @@ export default function Services() {
     },
   ];
 
-  const steps = t("services.process.steps", { returnObjects: true }) as { step: string; text: string }[];
+  const steps = t("services.process.steps", {
+    returnObjects: true,
+  }) as { step: string; text: string }[];
+
+  // --- Animated dot state ---
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const stepRefs = useMemo(
+    () => Array.from({ length: steps.length }, () => React.createRef<HTMLDivElement>()),
+    [steps.length]
+  );
+  const [dotLeft, setDotLeft] = useState<number>(0);
+
+  useEffect(() => {
+    positionDotAtIndex(0);
+    const onResize = () => positionDotAtIndex(0);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const positionDotAtIndex = (idx: number) => {
+    const track = trackRef.current;
+    const stepEl = stepRefs[idx]?.current as HTMLDivElement | null;
+    if (!track || !stepEl) return;
+    const trackRect = track.getBoundingClientRect();
+    const stepRect = stepEl.getBoundingClientRect();
+    const centerX = stepRect.left + stepRect.width / 2;
+    setDotLeft(centerX - trackRect.left);
+  };
 
   return (
     <section id="services" className="scroll-mt-24 bg-white">
@@ -62,7 +92,10 @@ export default function Services() {
         {/* Primary services */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {primary.map((s) => (
-            <article key={s.title} className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg">
+            <article
+              key={s.title}
+              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
+            >
               <h3 className="text-base font-semibold text-slate-900">{s.title}</h3>
               <p className="mt-3 text-sm text-slate-600">{s.blurb}</p>
               <ul className="mt-4 space-y-2 text-sm text-slate-700">
@@ -80,7 +113,10 @@ export default function Services() {
         {/* Extras */}
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {extras.map((s) => (
-            <article key={s.title} className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg">
+            <article
+              key={s.title}
+              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
+            >
               <h3 className="text-base font-semibold text-slate-900">{s.title}</h3>
               <p className="mt-3 text-sm text-slate-600">{s.blurb}</p>
               <ul className="mt-4 space-y-2 text-sm text-slate-700">
@@ -100,10 +136,87 @@ export default function Services() {
           <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase text-center">
             {t("services.process.title")}
           </p>
-          <ol className="mt-4 grid gap-4 sm:grid-cols-3 text-center">
-            {steps.map((x) => (
-              <li key={x.step} className="px-4">
-                <div className="text-slate-900 font-semibold">{x.step}</div>
+
+          {/* Desktop: line above labels; perfectly centered dots */}
+          <div
+            ref={trackRef}
+            className="relative mt-12 hidden h-28 sm:flex items-start"
+          >
+            {/* Baseline line ABOVE labels */}
+            <div className="absolute left-4 right-4 top-6 h-0.5 bg-slate-200" />
+
+            {/* Steps with static anchor dots and labels */}
+            <div className="grid w-full grid-cols-3">
+              {steps.map((x, idx) => (
+                <div
+                  key={x.step}
+                  ref={(el) => { stepRefs[idx].current = el; }}
+                  className="relative flex flex-col items-center"
+                  onMouseEnter={() => positionDotAtIndex(idx)}
+                  onFocus={() => positionDotAtIndex(idx)}
+                  tabIndex={0}
+                  aria-label={x.step}
+                >
+                  {/* Static grey dot (behind) centered on the line */}
+                  <div className="relative h-0">
+                    <div className="absolute left-1/2 top-6 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-300 z-0" />
+                  </div>
+                  {/* Labels under the line */}
+                  <div className="mt-10 text-center">
+                    <div className="font-semibold text-slate-900">{x.step}</div>
+                    <div className="text-sm text-slate-600">{x.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Moving blue dot (always above) centered on the same line */}
+            <div
+              className="pointer-events-none absolute top-6 -translate-x-1/2 -translate-y-1/2 z-10"
+              style={{
+                left: dotLeft,
+                transition: "left 280ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
+              {/* Glow ring */}
+              <div
+                className="h-8 w-8 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(closest-side, rgba(59,130,246,0.22), rgba(14,165,233,0))",
+                  filter: "blur(4px)",
+                }}
+              />
+              {/* Shiny dot */}
+              <div
+                className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-md ring-1 ring-white"
+                style={{
+                  background:
+                    "linear-gradient(145deg, #38bdf8 0%, #3b82f6 70%, #1d4ed8 100%)",
+                  boxShadow:
+                    "0 3px 6px rgba(2,132,199,0.35), 0 0 0 2px rgba(255,255,255,0.85)",
+                }}
+              />
+              {/* Inner sparkle */}
+              <div
+                className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.25))",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Mobile: vertical list */}
+          <ol className="sm:hidden mt-6 space-y-6">
+            {steps.map((x, idx) => (
+              <li key={x.step} className="relative pl-8">
+                <span className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-sky-500" />
+                {idx < steps.length - 1 && (
+                  <span className="absolute left-1.5 top-5 bottom-[-12px] w-0.5 bg-slate-200" />
+                )}
+                <div className="font-semibold text-slate-900">{x.step}</div>
                 <div className="text-sm text-slate-600">{x.text}</div>
               </li>
             ))}
