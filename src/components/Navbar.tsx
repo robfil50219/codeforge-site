@@ -29,8 +29,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
-        {/* Brand with Logo */}
+        {/* Brand with logo */}
         <a
           href="#"
           onClick={(e) => {
@@ -38,14 +37,14 @@ export default function Navbar() {
             setOpen(false);
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-900"
+          className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
         >
           <img
-            src="/public/favicon.png"
+            src={`${import.meta.env.BASE_URL}favicon.png`}
             alt="CodeForge Studio logo"
-            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full"
+            className="h-12 w-12 sm:h-14 sm:w-14" // bigger logo size
           />
-          <span>{t("brand")}</span>
+          <span className="text-xl sm:text-2xl">{t("brand")}</span>
         </a>
 
         {/* Desktop nav with dots */}
