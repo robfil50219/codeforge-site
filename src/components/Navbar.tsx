@@ -1,74 +1,62 @@
-// src/components/Navbar.tsx
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "./LanguageToggle";
 
-type NavItem = { id: string; label: string };
+type NavItem = { id: string; labelKey: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "services", label: "Services" },
-  { id: "work", label: "Work" },
-  { id: "pricing", label: "Pricing" },
-  { id: "about", label: "About" },
-  { id: "contact", label: "Contact" },
+  { id: "services", labelKey: "nav.services" },
+  { id: "work", labelKey: "nav.work" },
+  { id: "pricing", labelKey: "nav.pricing" },
+  { id: "about", labelKey: "nav.about" },
+  { id: "contact", labelKey: "nav.contact" },
 ];
 
-// sticky header height (px) for offset when scrolling to sections
 const HEADER_OFFSET = 80;
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const scrollToId = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
     setOpen(false);
-
-    const y =
-      window.scrollY +
-      el.getBoundingClientRect().top -
-      (HEADER_OFFSET - 4);
-
+    const y = window.scrollY + el.getBoundingClientRect().top - (HEADER_OFFSET - 4);
     window.scrollTo({ top: y, behavior: "smooth" });
   };
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand → scroll to absolute top */}
+        {/* Brand */}
         <a
           href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setOpen(false);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
+          onClick={(e) => { e.preventDefault(); setOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }}
           className="text-lg font-extrabold tracking-tight text-slate-900"
         >
-          CodeForge Studio
+          {t("brand")}
         </a>
 
-        {/* Desktop nav with animated dots */}
+        {/* Desktop nav with dots */}
         <nav className="hidden md:flex items-center">
           {NAV_ITEMS.map((item, idx) => (
             <div key={item.id} className="group flex items-center">
               <a
                 href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToId(item.id);
-                }}
+                onClick={(e) => { e.preventDefault(); scrollToId(item.id); }}
                 className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
               >
-                {item.label}
+                {t(item.labelKey)}
               </a>
-              {/* Dot divider (skip after last item) */}
               {idx < NAV_ITEMS.length - 1 && (
-                <span
-                  className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out
-                             group-hover:scale-125 group-hover:bg-slate-500"
-                />
+                <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out group-hover:scale-125 group-hover:bg-slate-500" />
               )}
             </div>
           ))}
+          <div className="ml-4">
+            <LanguageToggle />
+          </div>
         </nav>
 
         {/* Mobile menu button */}
@@ -84,7 +72,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile nav with clean separators (no dots) */}
+      {/* Mobile nav */}
       {open && (
         <div className="md:hidden border-t border-slate-200 bg-white">
           <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -92,15 +80,15 @@ export default function Navbar() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToId(item.id);
-                }}
+                onClick={(e) => { e.preventDefault(); scrollToId(item.id); }}
                 className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
               >
-                {item.label}
+                {t(item.labelKey)}
               </a>
             ))}
+            <div className="py-3 flex justify-center">
+              <LanguageToggle />
+            </div>
           </nav>
         </div>
       )}

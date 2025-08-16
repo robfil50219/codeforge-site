@@ -1,9 +1,5 @@
-import {
-  CodeBracketIcon,
-  ChartBarIcon,
-  ShoppingCartIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+// src/components/Work.tsx
+import { useTranslation } from "react-i18next";
 
 type Project = {
   title: string;
@@ -11,63 +7,56 @@ type Project = {
   tags: string[];
   image: string;
   href?: string;
-  icon: React.ElementType;
 };
 
-const projects: Project[] = [
-  {
-    title: "Dashboard Pro",
-    blurb: "Analytics dashboard with charts, filters, and real-time data.",
-    tags: ["React", "TypeScript", "Vite"],
-    image:
-      "https://images.unsplash.com/photo-1551281044-8a5a39c9b638?q=80&w=1600&auto=format&fit=crop",
-    href: "#",
-    icon: ChartBarIcon,
-  },
-  {
-    title: "Landing Kit",
-    blurb: "High-conversion landing page with A/B testing hooks.",
-    tags: ["Tailwind", "Accessibility", "SEO"],
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
-    href: "#",
-    icon: CodeBracketIcon,
-  },
-  {
-    title: "Storefront UI",
-    blurb: "Fast e-commerce front-end with cart and checkout.",
-    tags: ["SPA", "State Mgmt", "API"],
-    image:
-      "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop",
-    href: "#",
-    icon: ShoppingCartIcon,
-  },
-  {
-    title: "Docs Engine",
-    blurb: "Searchable docs site with live code examples.",
-    tags: ["MDX", "Search", "Perf"],
-    image:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
-    href: "#",
-    icon: DocumentTextIcon,
-  },
-];
-
 export default function Work() {
+  const { t } = useTranslation();
+
+  const projects: Project[] = [
+    {
+      title: t("work.cards.dashboard.title"),
+      blurb: t("work.cards.dashboard.blurb"),
+      tags: t("work.cards.dashboard.tags", { returnObjects: true }) as string[],
+      image:
+        "https://images.unsplash.com/photo-1551281044-8a5a39c9b638?q=80&w=1600&auto=format&fit=crop",
+      href: "#",
+    },
+    {
+      title: t("work.cards.landing.title"),
+      blurb: t("work.cards.landing.blurb"),
+      tags: t("work.cards.landing.tags", { returnObjects: true }) as string[],
+      image:
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
+      href: "#",
+    },
+    {
+      title: t("work.cards.storefront.title"),
+      blurb: t("work.cards.storefront.blurb"),
+      tags: t("work.cards.storefront.tags", { returnObjects: true }) as string[],
+      image:
+        "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop",
+      href: "#",
+    },
+    {
+      title: t("work.cards.docs.title"),
+      blurb: t("work.cards.docs.blurb"),
+      tags: t("work.cards.docs.tags", { returnObjects: true }) as string[],
+      image:
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
+      href: "#",
+    },
+  ];
+
   return (
     <section id="work" className="scroll-mt-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-            Selected Work
+            {t("work.heading")}
           </h2>
-          <p className="mt-3 text-slate-600">
-            A few highlights from recent projects.
-          </p>
+          <p className="mt-3 text-slate-600">{t("work.sub")}</p>
         </div>
 
-        {/* Project cards */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
             <article
@@ -81,42 +70,32 @@ export default function Work() {
                   className="h-48 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
                   loading="lazy"
                 />
-                {/* subtle gradient overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 transition group-hover:opacity-100" />
               </div>
 
               <div className="p-5">
-                {/* Icon + title */}
-                <div className="flex items-center gap-2">
-                  <p.icon className="h-5 w-5 text-sky-600" />
-                  <h3 className="text-base font-semibold text-slate-900">
-                    {p.title}
-                  </h3>
-                </div>
-
+                <h3 className="text-base font-semibold text-slate-900">{p.title}</h3>
                 <p className="mt-1 text-sm text-slate-600">{p.blurb}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
+                  {p.tags.map((tTag) => (
                     <span
-                      key={t}
+                      key={tTag}
                       className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-600"
                     >
-                      {t}
+                      {tTag}
                     </span>
                   ))}
                 </div>
 
-                {p.href && (
-                  <div className="mt-5">
-                    <a
-                      href={p.href}
-                      className="inline-flex items-center rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
-                    >
-                      View project
-                    </a>
-                  </div>
-                )}
+                <div className="mt-5">
+                  <a
+                    href={p.href || "#"}
+                    className="inline-flex items-center rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+                  >
+                    {t("work.view")}
+                  </a>
+                </div>
               </div>
             </article>
           ))}
