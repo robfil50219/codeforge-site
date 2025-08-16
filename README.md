@@ -16,48 +16,50 @@ The site showcases services, project work, pricing packages, and a contact secti
 ---
 
 ## 📂 Project Structure
-    src/
-      components/   # Reusable UI components (Navbar, Hero, Services, Work, etc.)
-      assets/       # Static images (hero.jpg, logos, etc.)
-      App.tsx       # Root layout
-      main.tsx      # Entry point
+src/
+├── components/      # Reusable UI components (Navbar, Hero, Services, Work, About, Pricing, Contact, Footer)
+├── assets/          # Images, icons, and static assets
+├── App.tsx          # Root component with routing/sections
+├── main.tsx         # React entry point
+└── index.css        # Tailwind base styles
 
 ---
 
-## 🛠️ Tech Stack
-- [React](https://react.dev/) – UI library  
-- [TypeScript](https://www.typescriptlang.org/) – Strongly typed JavaScript  
-- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework  
-- [Vite](https://vitejs.dev/) – Next-gen frontend tooling  
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js (>= 18)
+- npm or yarn
+
+### Installation
+# Clone the repo
+git clone https://github.com/your-username/codeforge-studio.git
+
+# Navigate into the project
+cd codeforge-studio
+
+# Install dependencies
+npm install
+
+### Development
+npm run dev
+
+### Build
+npm run build
+
+### Preview Production Build
+npm run preview
 
 ---
 
-## ⚡ Getting Started
-
-### 1. Clone the repository
-    git clone https://github.com/robfil50219/codeforge-site.git
-    cd codeforge-site
-
-### 2. Install dependencies
-    npm install
-
-### 3. Run the development server
-    npm run dev
-
-### 4. Build for production
-    npm run build
-
-### 5. Preview the production build
-    npm run preview
-
----
-
-## 📬 Contact
-- **Email**: robert.codeforgestudio@gmail.com  
-- **GitHub**: [@robfil50219](https://github.com/robfil50219)  
-- **LinkedIn**: [Robert Filep](https://www.linkedin.com/in/robert-filep-417146264/)  
+## 🌐 Deployment
+You can easily deploy this site on:
+- Netlify → https://www.netlify.com/
+- Vercel → https://vercel.com/
+- Any static hosting provider
 
 ---
 
 ## 📜 License
-This project is open source and available under the [MIT License](LICENSE).
+
+This project is licensed under the [MIT License](./LICENSE) © 2025 Robert Filep.

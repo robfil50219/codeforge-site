@@ -88,7 +88,7 @@ export default function Navbar() {
           }}
           className="text-lg font-extrabold tracking-tight text-slate-900"
         >
-          CodeForge Studio
+          CodeForge Studio.
         </a>
 
         {/* Desktop nav */}
