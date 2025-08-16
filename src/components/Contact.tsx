@@ -2,6 +2,7 @@ export default function Contact() {
   return (
     <section id="contact" className="scroll-mt-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
             Let’s build something great
@@ -14,7 +15,7 @@ export default function Contact() {
         {/* Contact cards */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <a
-            href="mailto:you@example.com"
+            href="mailto:robert.codeforgestudio@gmail.com"
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
           >
             <h3 className="text-base font-semibold text-slate-900">Email</h3>
@@ -38,7 +39,7 @@ export default function Contact() {
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
           >
             <h3 className="text-base font-semibold text-slate-900">LinkedIn</h3>
-            <p className="mt-2 text-sm text-slate-600">www.linkedin.com/in/robert-filep-417146264/</p>
+            <p className="mt-2 text-sm text-slate-600">linkedin.com/in/robert-filep-417146264</p>
           </a>
         </div>
 

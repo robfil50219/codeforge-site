@@ -9,7 +9,7 @@ type Project = {
 const projects: Project[] = [
   {
     title: "Dashboard Pro",
-    blurb: "Analytics dashboard with charts, filters, and real‑time data.",
+    blurb: "Analytics dashboard with charts, filters, and real-time data.",
     tags: ["React", "TypeScript", "Vite"],
     image:
       "https://images.unsplash.com/photo-1551281044-8a5a39c9b638?q=80&w=1600&auto=format&fit=crop",
@@ -17,7 +17,7 @@ const projects: Project[] = [
   },
   {
     title: "Landing Kit",
-    blurb: "High‑conversion landing page with A/B testing hooks.",
+    blurb: "High-conversion landing page with A/B testing hooks.",
     tags: ["Tailwind", "Accessibility", "SEO"],
     image:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
@@ -25,7 +25,7 @@ const projects: Project[] = [
   },
   {
     title: "Storefront UI",
-    blurb: "Fast e‑commerce front‑end with cart and checkout.",
+    blurb: "Fast e-commerce front-end with cart and checkout.",
     tags: ["SPA", "State Mgmt", "API"],
     image:
       "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop",
@@ -99,16 +99,6 @@ export default function Work() {
               </div>
             </article>
           ))}
-        </div>
-
-        {/* CTA row */}
-        <div className="mt-12 text-center">
-          <a
-            href="#contact"
-            className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium hover:bg-sky-700 transition"
-          >
-            Start your project
-          </a>
         </div>
       </div>
     </section>
