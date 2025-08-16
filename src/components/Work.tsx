@@ -1,9 +1,17 @@
+import {
+  CodeBracketIcon,
+  ChartBarIcon,
+  ShoppingCartIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
+
 type Project = {
   title: string;
   blurb: string;
   tags: string[];
   image: string;
   href?: string;
+  icon: React.ElementType;
 };
 
 const projects: Project[] = [
@@ -14,6 +22,7 @@ const projects: Project[] = [
     image:
       "https://images.unsplash.com/photo-1551281044-8a5a39c9b638?q=80&w=1600&auto=format&fit=crop",
     href: "#",
+    icon: ChartBarIcon,
   },
   {
     title: "Landing Kit",
@@ -22,6 +31,7 @@ const projects: Project[] = [
     image:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
     href: "#",
+    icon: CodeBracketIcon,
   },
   {
     title: "Storefront UI",
@@ -30,6 +40,7 @@ const projects: Project[] = [
     image:
       "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop",
     href: "#",
+    icon: ShoppingCartIcon,
   },
   {
     title: "Docs Engine",
@@ -38,6 +49,7 @@ const projects: Project[] = [
     image:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
     href: "#",
+    icon: DocumentTextIcon,
   },
 ];
 
@@ -45,6 +57,7 @@ export default function Work() {
   return (
     <section id="work" className="scroll-mt-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
             Selected Work
@@ -54,6 +67,7 @@ export default function Work() {
           </p>
         </div>
 
+        {/* Project cards */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
             <article
@@ -72,9 +86,14 @@ export default function Work() {
               </div>
 
               <div className="p-5">
-                <h3 className="text-base font-semibold text-slate-900">
-                  {p.title}
-                </h3>
+                {/* Icon + title */}
+                <div className="flex items-center gap-2">
+                  <p.icon className="h-5 w-5 text-sky-600" />
+                  <h3 className="text-base font-semibold text-slate-900">
+                    {p.title}
+                  </h3>
+                </div>
+
                 <p className="mt-1 text-sm text-slate-600">{p.blurb}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -88,14 +107,16 @@ export default function Work() {
                   ))}
                 </div>
 
-                <div className="mt-5">
-                  <a
-                    href={p.href || "#"}
-                    className="inline-flex items-center rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
-                  >
-                    View project
-                  </a>
-                </div>
+                {p.href && (
+                  <div className="mt-5">
+                    <a
+                      href={p.href}
+                      className="inline-flex items-center rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+                    >
+                      View project
+                    </a>
+                  </div>
+                )}
               </div>
             </article>
           ))}
