@@ -349,6 +349,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
+    lng: "no",
     fallbackLng: "en",
     supportedLngs: ["en", "no"],
     detection: {
