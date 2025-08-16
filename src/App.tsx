@@ -5,6 +5,7 @@ import Work from "./components/Work";
 import About from "./components/About";      
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Pricing from "./components/Pricing";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Hero />
         <Services />
         <Work />
+        <Pricing />
         <About />       
         <Contact />
       </main>
