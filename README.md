@@ -1,69 +1,63 @@
-# React + TypeScript + Vite
+# CodeForge Studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern portfolio website for **CodeForge Studio** — built with React, TypeScript, Tailwind CSS, and Vite.  
+The site showcases services, project work, pricing packages, and a contact section.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
+- **Responsive design** – mobile-first, looks great on all devices  
+- **Smooth scroll & active navbar highlighting**  
+- **Hero, Services, Work, About, Pricing, and Contact sections**  
+- **Reusable components** with clean structure  
+- **Tailwind CSS** for utility-first styling  
+- **TypeScript** for safety and maintainability  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📂 Project Structure
+    src/
+      components/   # Reusable UI components (Navbar, Hero, Services, Work, etc.)
+      assets/       # Static images (hero.jpg, logos, etc.)
+      App.tsx       # Root layout
+      main.tsx      # Entry point
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack
+- [React](https://react.dev/) – UI library  
+- [TypeScript](https://www.typescriptlang.org/) – Strongly typed JavaScript  
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework  
+- [Vite](https://vitejs.dev/) – Next-gen frontend tooling  
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚡ Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Clone the repository
+    git clone https://github.com/robfil50219/codeforge-site.git
+    cd codeforge-site
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 2. Install dependencies
+    npm install
+
+### 3. Run the development server
+    npm run dev
+
+### 4. Build for production
+    npm run build
+
+### 5. Preview the production build
+    npm run preview
+
+---
+
+## 📬 Contact
+- **Email**: robert.codeforgestudio@gmail.com  
+- **GitHub**: [@robfil50219](https://github.com/robfil50219)  
+- **LinkedIn**: [Robert Filep](https://www.linkedin.com/in/robert-filep-417146264/)  
+
+---
+
+## 📜 License
+This project is open source and available under the [MIT License](LICENSE).
