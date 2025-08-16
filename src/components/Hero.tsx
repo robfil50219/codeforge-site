@@ -14,6 +14,11 @@ export default function Hero() {
               Design & build modern web apps
             </h1>
 
+            {/* Subtle tagline */}
+            <p className="mt-3 text-lg font-medium text-sky-600">
+              Your partner in modern frontend development
+            </p>
+
             <p className="mt-6 text-lg leading-8 text-slate-600 max-w-xl">
               We craft fast, accessible, and beautiful front-ends with React and TypeScript.  
               Clean code, crisp UX, shipped with care.

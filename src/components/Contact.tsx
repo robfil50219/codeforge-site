@@ -6,7 +6,7 @@ import {
 
 export default function Contact() {
   return (
-    <section id="contact" className="scroll-mt-24 bg-white">
+    <section id="contact" className="scroll-mt-24 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
