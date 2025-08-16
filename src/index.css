@@ -1,14 +1,33 @@
 @import "tailwindcss";
 
-/* small app-level tweaks */
-html, body, #root { height: 100%; }
-html { scroll-behavior: smooth; }
-body { 
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-  overflow-x: hidden;
+/* Base app tweaks */
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow-x: clip;          /* stop horizontal scroll safely */
 }
 
-/*/* Optional: enhances 3D effect for coin spin */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Media defaults so images/icons never push layout wider than viewport */
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;            /* avoids inline-gap quirks */
+}
+
+/* Optional: enhances 3D effect for coin spin */
 .coin-container {
   perspective: 1000px;
 }
