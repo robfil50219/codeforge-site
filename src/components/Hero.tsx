@@ -23,9 +23,9 @@ export default function Hero() {
               <a href="#services" className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium shadow-sm hover:bg-sky-700 transition">
                 {t("hero.ctaServices")}
               </a>
-              <a href="#work" className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-slate-100 transition">
+              {/* <a href="#work" className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-slate-100 transition">
                 {t("hero.ctaWork")}
-              </a>
+              </a> */}
             </div>
           </div>
 

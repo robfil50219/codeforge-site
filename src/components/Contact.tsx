@@ -133,12 +133,12 @@ export default function Contact() {
               >
                 {t("contact.start")}
               </a>
-              <a
+              {/* <a
                 href="#work"
                 className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-white transition"
               >
                 {t("work.view")}
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

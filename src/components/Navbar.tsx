@@ -6,7 +6,7 @@ type NavItem = { id: string; labelKey: string };
 
 const NAV_ITEMS: NavItem[] = [
   { id: "services", labelKey: "nav.services" },
-  { id: "work", labelKey: "nav.work" },
+  //{ id: "work", labelKey: "nav.work" },// 
   { id: "pricing", labelKey: "nav.pricing" },
   { id: "about", labelKey: "nav.about" },
   { id: "contact", labelKey: "nav.contact" },
