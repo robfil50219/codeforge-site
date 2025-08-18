@@ -68,7 +68,7 @@ export default function Pricing() {
               </ul>
 
               <a
-                href="mailto:robert.codeforgestudio@gmail.com?subject=Starter%20plan%20inquiry"
+                href="mailto:robert@codeforgestudio.norobert.codeforgestudio@gmail.com?subject=Starter%20plan%20inquiry"
                 className="mt-6 inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
               >
                 {t("pricing.chooseStarter")}
@@ -113,7 +113,7 @@ export default function Pricing() {
               </ul>
 
               <a
-                href="mailto:robert.codeforgestudio@gmail.com?subject=Pro%20plan%20inquiry"
+                href="mailto:robert@codeforgestudio.norobert.codeforgestudio@gmail.com?subject=Pro%20plan%20inquiry"
                 className="mt-6 inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700"
               >
                 {t("pricing.choosePro")}
@@ -155,7 +155,7 @@ export default function Pricing() {
               </ul>
 
               <a
-                href="mailto:robert.codeforgestudio@gmail.com?subject=Custom%20plan%20inquiry"
+                href="mailto:robert@codeforgestudio.norobert.codeforgestudio@gmail.com?subject=Custom%20plan%20inquiry"
                 className="mt-6 inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
               >
                 {t("pricing.requestQuote")}
