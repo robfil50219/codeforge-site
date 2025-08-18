@@ -1,6 +1,9 @@
 // src/components/Contact.tsx
 import { useTranslation } from "react-i18next";
 import { Mail, Github, Linkedin, Clock, MapPin } from "lucide-react";
+// Use relative imports to avoid alias issues
+import { MAILTO, CONTACT_EMAIL } from "../config/contact";
+import ContactForm from "./ContactForm";
 
 export default function Contact() {
   const { t } = useTranslation();
@@ -44,7 +47,7 @@ export default function Contact() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Email */}
           <a
-            href="mailto:robert@codeforgestudio.no"
+            href={MAILTO}
             className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
           >
             <div
@@ -59,9 +62,7 @@ export default function Contact() {
                 <h3 className="text-base font-semibold text-slate-900">
                   {t("contact.email")}
                 </h3>
-                <p className="mt-1 text-sm text-slate-600">
-                  robert.codeforgestudio@gmail.com
-                </p>
+                <p className="mt-1 text-sm text-slate-600">{CONTACT_EMAIL}</p>
               </div>
             </div>
           </a>
@@ -117,31 +118,24 @@ export default function Contact() {
           </a>
         </div>
 
-        {/* CTA panel with translations */}
+        {/* Form in CTA-style panel */}
         <div className="mt-16 overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-sky-50 to-indigo-50 p-6 sm:p-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <h3 className="text-xl font-semibold text-slate-900">
-              {t("contact.ctaTitle")}
+          <div className="mx-auto max-w-3xl">
+            <h3 className="text-xl font-semibold text-slate-900 text-center">
+              {t("contact.formTitle")}
             </h3>
-            <p className="mt-2 text-slate-600">
-              {t("contact.ctaCopy")}
+            <p className="mt-2 text-slate-600 text-center">
+              {t("contact.formCopy")}
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="mailto:robert@codeforgestudio.no"
-                className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium shadow-sm hover:bg-sky-700 transition"
-              >
-                {t("contact.start")}
-              </a>
-              {/* <a
-                href="#work"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-white transition"
-              >
-                {t("work.view")}
-              </a> */}
+
+            <div className="mt-8">
+              <div className="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                <ContactForm />
+              </div>
             </div>
           </div>
         </div>
+        {/* End: Form panel */}
       </div>
     </section>
   );

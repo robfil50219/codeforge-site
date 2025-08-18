@@ -101,8 +101,6 @@ const resources = {
       pricing: {
         heading: "Project packages",
         sub: "From quick launches to full-scale platforms — choose the path that fits your goals.",
-
-        // Tiers (now fully translatable)
         starter: {
           name: "Starter",
           price: "€799 / fixed",
@@ -137,7 +135,6 @@ const resources = {
             "Flexible timeline & budget"
           ]
         },
-
         chooseStarter: "Choose Starter",
         choosePro: "Choose Pro",
         requestQuote: "Request a quote",
@@ -158,6 +155,30 @@ const resources = {
         },
         ctaTitle: "Ready to start?",
         ctaCopy: "Let’s bring your idea to life with clean, modern code.",
+        formTitle: "Send a message",
+        formCopy: "Fill out the form and I’ll get back to you shortly.",
+        form: {
+          name: "Name",
+          email: "Email",
+          subjectOptional: "Subject (optional)",
+          message: "Message",
+          send: "Send Message",
+          sending: "Sending...",
+          success: "Thanks! Your message has been sent.",
+          error: "Something went wrong. Please try again later.",
+          noSubject: "(no subject)",
+          placeholders: {
+            name: "Your name",
+            email: "you@example.com",
+            subject: "How can we help?",
+            message: "Write your message here..."
+          },
+          errors: {
+            name: "Please enter your name.",
+            email: "Enter a valid email.",
+            message: "Please enter a message."
+          }
+        }
       },
       about: {
         sectionLabel: "About",
@@ -269,7 +290,6 @@ const resources = {
       pricing: {
         heading: "Prosjektpakker",
         sub: "Fra raske lanseringer til fulle plattformer — velg det som passer dine mål.",
-
         starter: {
           name: "Start",
           price: "kr 8 500 / fastpris",
@@ -304,7 +324,6 @@ const resources = {
             "Fleksibel tidslinje og budsjett"
           ]
         },
-
         chooseStarter: "Velg Start",
         choosePro: "Velg Pro",
         requestQuote: "Be om tilbud",
@@ -325,6 +344,30 @@ const resources = {
         },
         ctaTitle: "Klar til å starte?",
         ctaCopy: "La oss gjøre idéen din til virkelighet med ren, moderne kode.",
+        formTitle: "Send en melding",
+        formCopy: "Fyll ut skjemaet, så tar jeg kontakt.",
+        form: {
+          name: "Navn",
+          email: "E-post",
+          subjectOptional: "Emne (valgfritt)",
+          message: "Melding",
+          send: "Send melding",
+          sending: "Sender …",
+          success: "Takk! Meldingen er sendt.",
+          error: "Noe gikk galt. Prøv igjen senere.",
+          noSubject: "(uten emne)",
+          placeholders: {
+            name: "Ditt navn",
+            email: "du@eksempel.no",
+            subject: "Hvordan kan jeg hjelpe?",
+            message: "Skriv meldingen her …"
+          },
+          errors: {
+            name: "Skriv inn navnet ditt.",
+            email: "Skriv inn en gyldig e-post.",
+            message: "Skriv inn en melding."
+          }
+        }
       },
       about: {
         sectionLabel: "Om oss",
