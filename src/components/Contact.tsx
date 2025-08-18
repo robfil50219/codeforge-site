@@ -44,7 +44,7 @@ export default function Contact() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Email */}
           <a
-            href="mailto:robert@codeforgestudio.norobert.codeforgestudio@gmail.com?subject=Project%20inquiry%20from%20website"
+            href="mailto:robert@codeforgestudio.no"
             className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
           >
             <div
@@ -128,7 +128,7 @@ export default function Contact() {
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <a
-                href="mailto:robert@codeforgestudio.norobert.codeforgestudio@gmail.com?subject=Project%20inquiry%20from%20website"
+                href="mailto:robert@codeforgestudio.no"
                 className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium shadow-sm hover:bg-sky-700 transition"
               >
                 {t("contact.start")}
