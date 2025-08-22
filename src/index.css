@@ -1,33 +1,41 @@
+/* Tailwind v4 single import */
 @import "tailwindcss";
 
+/* Optional: define design tokens with v4 @theme (so you can use text-brand-sea, bg-brand-sea, etc.) */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  /* Brand palette */
+  --color-brand-sea: #00A0A0;
+  --color-brand-midnight: #0F4452;
+  --color-brand-salt: #F6FAFA;
+  --color-brand-black: #001920;
+}
+
 /* Base app tweaks */
-html,
-body,
-#root {
+html, body, #root {
   height: 100%;
   width: 100%;
-  overflow-x: clip;          /* stop horizontal scroll safely */
+  overflow-x: clip; /* avoid horizontal scroll */
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: var(--font-sans);
+  /* light default background/text */
+  background: #f8fafc; /* slate-50-ish */
+  color: #0f172a;      /* slate-900-ish */
 }
 
-/* Media defaults so images/icons never push layout wider than viewport */
-img,
-svg,
-video,
-canvas {
+/* Media defaults so images/icons don’t overflow */
+img, svg, video, canvas {
   max-width: 100%;
   height: auto;
-  display: block;            /* avoids inline-gap quirks */
+  display: block;
 }
 
-/* Optional: enhances 3D effect for coin spin */
-.coin-container {
-  perspective: 1000px;
-}
+/* Optional: nicer focus & selection */
+:focus-visible { outline: 2px solid rgb(59 130 246); outline-offset: 2px; }
+::selection { background: rgb(224 242 254); }
