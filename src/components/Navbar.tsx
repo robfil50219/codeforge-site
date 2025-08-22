@@ -11,7 +11,7 @@ const NAV_ITEMS: NavItem[] = [
   // { id: "work", labelKey: "nav.work" },
   { id: "pricing", labelKey: "nav.pricing" },
   { id: "about", labelKey: "nav.about" },
-  { id: "contact", labelKey: "nav.contact" },
+  { id: "contact", labelKey: "nav.contact" }, // will route to /contact
 ];
 
 const HEADER_OFFSET = 80;
@@ -25,8 +25,7 @@ export default function Navbar() {
     const el = document.getElementById(id);
     if (!el) return;
     setOpen(false);
-    const y =
-      window.scrollY + el.getBoundingClientRect().top - (HEADER_OFFSET - 4);
+    const y = window.scrollY + el.getBoundingClientRect().top - (HEADER_OFFSET - 4);
     window.scrollTo({ top: y, behavior: "smooth" });
   };
 
@@ -35,11 +34,15 @@ export default function Navbar() {
     id: string,
     to: string = "/"
   ) => {
+    // For contact, we want a real route -> let Link handle it
+    if (id === "contact") return;
+
     if (to === "/") {
       e.preventDefault();
       if (location.pathname === "/") {
         scrollToId(id);
       } else {
+        // navigate home with hash (keeps behavior if user is on another page)
         window.location.href = `/${"#" + id}`;
       }
     }
@@ -48,7 +51,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand with logo */}
+        {/* Brand with logo -> Link to home */}
         <Link
           to="/"
           onClick={() => {
@@ -56,6 +59,7 @@ export default function Navbar() {
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
+          aria-label="Go to home"
         >
           <img
             src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -67,20 +71,25 @@ export default function Navbar() {
 
         {/* Desktop nav with dots */}
         <nav className="hidden md:flex items-center">
-          {NAV_ITEMS.map((item, idx) => (
-            <div key={item.id} className="group flex items-center">
-              <Link
-                to={`/${"#" + item.id}`}
-                onClick={(e) => handleSmoothScroll(e, item.id)}
-                className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
-              >
-                {t(item.labelKey)}
-              </Link>
-              {idx < NAV_ITEMS.length - 1 && (
-                <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out group-hover:scale-125 group-hover:bg-slate-500" />
-              )}
-            </div>
-          ))}
+          {NAV_ITEMS.map((item, idx) => {
+            const isContact = item.id === "contact";
+            const to = isContact ? "/contact" : `/${"#" + item.id}`;
+
+            return (
+              <div key={item.id} className="group flex items-center">
+                <Link
+                  to={to}
+                  onClick={(e) => handleSmoothScroll(e, item.id)}
+                  className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
+                >
+                  {t(item.labelKey)}
+                </Link>
+                {idx < NAV_ITEMS.length - 1 && (
+                  <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out group-hover:scale-125 group-hover:bg-slate-500" />
+                )}
+              </div>
+            );
+          })}
           <div className="ml-4">
             <LanguageToggle />
           </div>
@@ -103,16 +112,21 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden border-t border-slate-200 bg-white">
           <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.id}
-                to={`/${"#" + item.id}`}
-                onClick={(e) => handleSmoothScroll(e, item.id)}
-                className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
-              >
-                {t(item.labelKey)}
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const isContact = item.id === "contact";
+              const to = isContact ? "/contact" : `/${"#" + item.id}`;
+
+              return (
+                <Link
+                  key={item.id}
+                  to={to}
+                  onClick={(e) => handleSmoothScroll(e, item.id)}
+                  className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
+                >
+                  {t(item.labelKey)}
+                </Link>
+              );
+            })}
             <div className="py-3 flex justify-center">
               <LanguageToggle />
             </div>
