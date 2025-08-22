@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import LanguageToggle from "./LanguageToggle";
 
 type NavItem = { id: string; labelKey: string };
@@ -19,19 +19,36 @@ const HEADER_OFFSET = 80;
 export default function Navbar() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const location = useLocation();
 
   const scrollToId = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
     setOpen(false);
-    const y = window.scrollY + el.getBoundingClientRect().top - (HEADER_OFFSET - 4);
+    const y =
+      window.scrollY + el.getBoundingClientRect().top - (HEADER_OFFSET - 4);
     window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
+  const handleSmoothScroll = (
+    e: React.MouseEvent,
+    id: string,
+    to: string = "/"
+  ) => {
+    if (to === "/") {
+      e.preventDefault();
+      if (location.pathname === "/") {
+        scrollToId(id);
+      } else {
+        window.location.href = `/${"#" + id}`;
+      }
+    }
   };
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand with logo -> Link to home */}
+        {/* Brand with logo */}
         <Link
           to="/"
           onClick={() => {
@@ -39,7 +56,6 @@ export default function Navbar() {
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
-          aria-label="Go to home"
         >
           <img
             src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -53,16 +69,13 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center">
           {NAV_ITEMS.map((item, idx) => (
             <div key={item.id} className="group flex items-center">
-              <a
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToId(item.id);
-                }}
+              <Link
+                to={`/${"#" + item.id}`}
+                onClick={(e) => handleSmoothScroll(e, item.id)}
                 className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
               >
                 {t(item.labelKey)}
-              </a>
+              </Link>
               {idx < NAV_ITEMS.length - 1 && (
                 <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out group-hover:scale-125 group-hover:bg-slate-500" />
               )}
@@ -91,17 +104,14 @@ export default function Navbar() {
         <div className="md:hidden border-t border-slate-200 bg-white">
           <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {NAV_ITEMS.map((item) => (
-              <a
+              <Link
                 key={item.id}
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToId(item.id);
-                }}
+                to={`/${"#" + item.id}`}
+                onClick={(e) => handleSmoothScroll(e, item.id)}
                 className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
               >
                 {t(item.labelKey)}
-              </a>
+              </Link>
             ))}
             <div className="py-3 flex justify-center">
               <LanguageToggle />
