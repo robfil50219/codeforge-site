@@ -1,12 +1,14 @@
+// src/components/Navbar.tsx
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import LanguageToggle from "./LanguageToggle";
 
 type NavItem = { id: string; labelKey: string };
 
 const NAV_ITEMS: NavItem[] = [
   { id: "services", labelKey: "nav.services" },
-  //{ id: "work", labelKey: "nav.work" },// 
+  // { id: "work", labelKey: "nav.work" },
   { id: "pricing", labelKey: "nav.pricing" },
   { id: "about", labelKey: "nav.about" },
   { id: "contact", labelKey: "nav.contact" },
@@ -29,23 +31,23 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand with logo */}
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
+        {/* Brand with logo -> Link to home */}
+        <Link
+          to="/"
+          onClick={() => {
             setOpen(false);
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
+          aria-label="Go to home"
         >
           <img
             src={`${import.meta.env.BASE_URL}favicon.png`}
             alt="CodeForge Studio logo"
-            className="h-12 w-12 sm:h-14 sm:w-14" // bigger logo size
+            className="h-12 w-12 sm:h-14 sm:w-14"
           />
           <span className="text-xl sm:text-2xl">{t("brand")}</span>
-        </a>
+        </Link>
 
         {/* Desktop nav with dots */}
         <nav className="hidden md:flex items-center">

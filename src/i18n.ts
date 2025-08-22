@@ -180,6 +180,13 @@ const resources = {
           }
         }
       },
+      footer: {
+        navLabel: "Footer navigation",
+        connect: "Connect",
+        rights: "All rights reserved.",
+        privacy: "Privacy",
+        terms: "Terms",
+      },
       about: {
         sectionLabel: "About",
         alt: "Robert Filep",
@@ -193,6 +200,31 @@ const resources = {
           "Pixel-perfect execution",
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
+      },
+      // ✅ Privacy page translations (used by PrivacyPage.tsx)
+      privacy: {
+        heading: "Privacy Policy",
+        intro: "Your privacy is important to us. This page explains how we handle your data.",
+        sections: {
+          data: {
+            title: "Data we collect",
+            text: "We only collect the information you provide when contacting us or starting a project."
+          },
+          use: {
+            title: "How we use your data",
+            text: "Your information is used solely to respond to inquiries and deliver our services."
+          },
+          rights: {
+            title: "Your rights",
+            text: "You can request access, correction, or deletion of your data at any time."
+          },
+          cookies: {
+            title: "Cookies",
+            text: "This site uses minimal cookies for basic functionality and performance insights."
+          }
+        },
+        contact: "For questions about privacy, please contact us at:",
+        back: "Back to home"
       },
     },
   },
@@ -369,6 +401,13 @@ const resources = {
           }
         }
       },
+      footer: {
+        navLabel: "Bunnmeny",
+        connect: "Kontakt",
+        rights: "Alle rettigheter forbeholdt.",
+        privacy: "Personvern",
+        terms: "Vilkår",
+      },
       about: {
         sectionLabel: "Om oss",
         alt: "Robert Filep",
@@ -382,6 +421,31 @@ const resources = {
           "Pikselperfekt gjennomføring",
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
+      },
+      // ✅ Personvernside-tekster (brukes av PrivacyPage.tsx)
+      privacy: {
+        heading: "Personvernerklæring",
+        intro: "Ditt personvern er viktig for oss. Denne siden forklarer hvordan vi behandler data.",
+        sections: {
+          data: {
+            title: "Data vi samler inn",
+            text: "Vi samler kun inn informasjon du oppgir når du kontakter oss eller starter et prosjekt."
+          },
+          use: {
+            title: "Hvordan vi bruker data",
+            text: "Informasjonen brukes kun for å svare på henvendelser og levere våre tjenester."
+          },
+          rights: {
+            title: "Dine rettigheter",
+            text: "Du kan be om innsyn, retting eller sletting av dine data når som helst."
+          },
+          cookies: {
+            title: "Informasjonskapsler",
+            text: "Nettstedet bruker minimale informasjonskapsler for grunnleggende funksjoner og ytelsesmåling."
+          }
+        },
+        contact: "For spørsmål om personvern, ta kontakt på:",
+        back: "Tilbake til forsiden"
       },
     },
   },

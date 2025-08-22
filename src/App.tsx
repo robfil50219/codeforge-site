@@ -11,12 +11,13 @@ import Pricing from "./components/Pricing";
 
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
+import PrivacyPage from "./pages/PrivacyPage"; // ✅ added
 
 function Home() {
   const site = "CodeForge Studio";
   const title = `Design & build modern web apps • ${site}`;
   const desc =
-    "We craft fast, accessible, and beautiful front‑ends with React and TypeScript.";
+    "We craft fast, accessible, and beautiful front-ends with React and TypeScript.";
 
   return (
     <>
@@ -26,17 +27,15 @@ function Home() {
       <meta name="robots" content="index,follow" />
       <link rel="canonical" href="https://www.codeforgestudio.no/" />
 
-      {/* Open Graph / Twitter (optional but recommended) */}
+      {/* Open Graph / Twitter */}
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={site} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />
       <meta property="og:url" content="https://www.codeforgestudio.no/" />
-      {/* <meta property="og:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={desc} />
-      {/* <meta name="twitter:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
 
       <Hero />
       <Services />
@@ -65,11 +64,9 @@ function ContactRoute() {
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />
       <meta property="og:url" content="https://www.codeforgestudio.no/contact" />
-      {/* <meta property="og:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={desc} />
-      {/* <meta name="twitter:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
 
       <Contact />
     </>
@@ -80,12 +77,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <div className="min-h-screen bg-slate-50 text-slate-900">
+        {/* make the shell a flex column so the footer sits at the bottom */}
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
           <Navbar />
-          <main>
+          {/* let main grow to fill vertical space */}
+          <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/contact" element={<ContactRoute />} />
+              <Route path="/privacy" element={<PrivacyPage />} /> {/* ✅ new route */}
               {/* catch-all 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
