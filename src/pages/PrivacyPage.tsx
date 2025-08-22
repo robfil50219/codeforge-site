@@ -5,26 +5,34 @@ import { Link } from "react-router-dom";
 
 export default function PrivacyPage() {
   const { t } = useTranslation();
+
+  // All text (including SEO) comes from i18n
   const site = "CodeForge Studio";
   const title = `${t("privacy.heading")} • ${site}`;
   const desc = t("privacy.intro");
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16">
-      {/* SEO head tags */}
+    <main className="mx-auto max-w-3xl px-4 py-16">
+      {/* SEO head tags (React 19) */}
       <title>{title}</title>
       <meta name="description" content={desc} />
       <meta name="robots" content="index,follow" />
       <link rel="canonical" href="https://www.codeforgestudio.no/privacy" />
 
+      {/* Open Graph / Twitter (localized) */}
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={site} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />
-      <meta property="og:url" content="https://www.codeforgestudio.no/privacy" />
+      <meta
+        property="og:url"
+        content="https://www.codeforgestudio.no/privacy"
+      />
+      {/* <meta property="og:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={desc} />
+      {/* <meta name="twitter:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
 
       <h1 className="text-3xl font-bold text-slate-900 mb-6">
         {t("privacy.heading")}
@@ -55,10 +63,13 @@ export default function PrivacyPage() {
 
       {/* Back */}
       <div className="mt-10">
-        <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+        <Link
+          to="/"
+          className="text-sm text-slate-500 hover:text-slate-700"
+        >
           ← {t("privacy.back")}
         </Link>
       </div>
-    </div>
+    </main>
   );
 }
