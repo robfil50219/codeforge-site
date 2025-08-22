@@ -1,3 +1,4 @@
+// src/App.tsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -11,7 +12,8 @@ import Pricing from "./components/Pricing";
 
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
-import PrivacyPage from "./pages/PrivacyPage"; // ✅ added
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage"; 
 
 function Home() {
   const site = "CodeForge Studio";
@@ -85,7 +87,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/contact" element={<ContactRoute />} />
-              <Route path="/privacy" element={<PrivacyPage />} /> {/* ✅ new route */}
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} /> 
               {/* catch-all 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>

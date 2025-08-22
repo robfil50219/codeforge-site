@@ -1,11 +1,20 @@
 // src/i18n.ts
+// ---------------------------------------------
+// i18next initialization and translation bundles
+// ---------------------------------------------
+
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+// ---------------------------------------------
+// Translation resources (EN + NO)
+// Tip: keep keys consistent across languages.
+// ---------------------------------------------
 const resources = {
   en: {
     translation: {
+      // ---------- Global / Navigation ----------
       nav: {
         services: "Services",
         work: "Work",
@@ -13,7 +22,11 @@ const resources = {
         about: "About",
         contact: "Contact",
       },
+
+      // ---------- Brand ----------
       brand: "CodeForge Studio",
+
+      // ---------- Hero ----------
       hero: {
         title: "Design & build modern web apps",
         tagline: "Your partner in modern frontend development",
@@ -22,6 +35,8 @@ const resources = {
         ctaServices: "View Services",
         ctaWork: "See Work",
       },
+
+      // ---------- Services ----------
       services: {
         heading: "Services",
         sub: "Design, build, and polish. From idea to production-ready front-ends.",
@@ -71,6 +86,8 @@ const resources = {
           ],
         },
       },
+
+      // ---------- Work ----------
       work: {
         heading: "Selected Work",
         sub: "A few highlights from recent projects.",
@@ -98,6 +115,8 @@ const resources = {
           },
         },
       },
+
+      // ---------- Pricing ----------
       pricing: {
         heading: "Project packages",
         sub: "From quick launches to full-scale platforms — choose the path that fits your goals.",
@@ -109,8 +128,8 @@ const resources = {
             "1 landing page",
             "Responsive + basic SEO",
             "Contact form or mailto CTA",
-            "Deployed to your host"
-          ]
+            "Deployed to your host",
+          ],
         },
         pro: {
           name: "Pro",
@@ -121,8 +140,8 @@ const resources = {
             "Up to 6 pages",
             "Design system + components",
             "Integrations (forms, CMS, email)",
-            "Performance & accessibility pass"
-          ]
+            "Performance & accessibility pass",
+          ],
         },
         custom: {
           name: "Custom",
@@ -132,8 +151,8 @@ const resources = {
             "Advanced features / integrations",
             "E-commerce, auth, dashboards",
             "Roadmap & iterations",
-            "Flexible timeline & budget"
-          ]
+            "Flexible timeline & budget",
+          ],
         },
         chooseStarter: "Choose Starter",
         choosePro: "Choose Pro",
@@ -141,6 +160,8 @@ const resources = {
         fineprint:
           "Prices are typical starting points. Final quote depends on scope and integrations.",
       },
+
+      // ---------- Contact ----------
       contact: {
         heading: "Let’s build something great",
         copy:
@@ -171,15 +192,17 @@ const resources = {
             name: "Your name",
             email: "you@example.com",
             subject: "How can we help?",
-            message: "Write your message here..."
+            message: "Write your message here...",
           },
           errors: {
             name: "Please enter your name.",
             email: "Enter a valid email.",
-            message: "Please enter a message."
-          }
-        }
+            message: "Please enter a message.",
+          },
+        },
       },
+
+      // ---------- Footer ----------
       footer: {
         navLabel: "Footer navigation",
         connect: "Connect",
@@ -187,6 +210,8 @@ const resources = {
         privacy: "Privacy",
         terms: "Terms",
       },
+
+      // ---------- About ----------
       about: {
         sectionLabel: "About",
         alt: "Robert Filep",
@@ -201,35 +226,67 @@ const resources = {
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
       },
-      // ✅ Privacy page translations (used by PrivacyPage.tsx)
+
+      // ---------- Privacy Page ----------
       privacy: {
         heading: "Privacy Policy",
         intro: "Your privacy is important to us. This page explains how we handle your data.",
         sections: {
           data: {
             title: "Data we collect",
-            text: "We only collect the information you provide when contacting us or starting a project."
+            text: "We only collect the information you provide when contacting us or starting a project.",
           },
           use: {
             title: "How we use your data",
-            text: "Your information is used solely to respond to inquiries and deliver our services."
+            text: "Your information is used solely to respond to inquiries and deliver our services.",
           },
           rights: {
             title: "Your rights",
-            text: "You can request access, correction, or deletion of your data at any time."
+            text: "You can request access, correction, or deletion of your data at any time.",
           },
           cookies: {
             title: "Cookies",
-            text: "This site uses minimal cookies for basic functionality and performance insights."
-          }
+            text: "This site uses minimal cookies for basic functionality and performance insights.",
+          },
         },
         contact: "For questions about privacy, please contact us at:",
-        back: "Back to home"
+        back: "Back to home",
+      },
+
+      // ---------- Terms Page ----------
+      terms: {
+        heading: "Terms & Conditions",
+        intro:
+          "These terms outline the rules and conditions for using our services and website.",
+        sections: {
+          usage: {
+            title: "Use of Service",
+            text: "You agree to use our services responsibly and in compliance with applicable laws.",
+          },
+          payments: {
+            title: "Payments & Invoicing",
+            text:
+              "Unless otherwise stated, invoices are due within 14 days. Project work may require an upfront deposit.",
+          },
+          ip: {
+            title: "Intellectual Property",
+            text:
+              "Unless agreed in writing, project deliverables are owned by the client upon full payment. Our internal tooling and libraries remain our property.",
+          },
+          liability: {
+            title: "Limitations of Liability",
+            text:
+              "We provide our services as-is. We are not liable for indirect, incidental, or consequential damages.",
+          },
+        },
+        back: "Back to home",
       },
     },
   },
+
   no: {
     translation: {
+      // ---------- Global / Navigation ----------
       nav: {
         services: "Tjenester",
         work: "Arbeid",
@@ -237,7 +294,11 @@ const resources = {
         about: "Om oss",
         contact: "Kontakt",
       },
+
+      // ---------- Brand ----------
       brand: "CodeForge Studio",
+
+      // ---------- Hero ----------
       hero: {
         title: "Design og bygg moderne nettløsninger",
         tagline: "Din partner for moderne frontend-utvikling",
@@ -246,6 +307,8 @@ const resources = {
         ctaServices: "Se tjenester",
         ctaWork: "Se arbeid",
       },
+
+      // ---------- Services ----------
       services: {
         heading: "Tjenester",
         sub: "Design, bygg og finpuss. Fra idé til produksjonsklare løsninger.",
@@ -292,6 +355,8 @@ const resources = {
           ],
         },
       },
+
+      // ---------- Work ----------
       work: {
         heading: "Utvalgt arbeid",
         sub: "Noen høydepunkter fra nyere prosjekter.",
@@ -319,6 +384,8 @@ const resources = {
           },
         },
       },
+
+      // ---------- Pricing ----------
       pricing: {
         heading: "Prosjektpakker",
         sub: "Fra raske lanseringer til fulle plattformer — velg det som passer dine mål.",
@@ -330,8 +397,8 @@ const resources = {
             "1 landingsside",
             "Responsiv + grunnleggende SEO",
             "Kontaktskjema eller e-post-CTA",
-            "Publisert til din host"
-          ]
+            "Publisert til din host",
+          ],
         },
         pro: {
           name: "Pro",
@@ -342,8 +409,8 @@ const resources = {
             "Opptil 6 sider",
             "Designsystem + komponenter",
             "Integrasjoner (skjema, CMS, e-post)",
-            "Ytelses- og tilgjengelighetsjekk"
-          ]
+            "Ytelses- og tilgjengelighetsjekk",
+          ],
         },
         custom: {
           name: "Skreddersøm",
@@ -353,8 +420,8 @@ const resources = {
             "Avanserte funksjoner / integrasjoner",
             "E-handel, innlogging, dashboards",
             "Roadmap og iterasjoner",
-            "Fleksibel tidslinje og budsjett"
-          ]
+            "Fleksibel tidslinje og budsjett",
+          ],
         },
         chooseStarter: "Velg Start",
         choosePro: "Velg Pro",
@@ -362,6 +429,8 @@ const resources = {
         fineprint:
           "Prisene er typiske utgangspunkt. Endelig tilbud avhenger av omfang og integrasjoner.",
       },
+
+      // ---------- Contact ----------
       contact: {
         heading: "La oss bygge noe bra",
         copy:
@@ -392,15 +461,17 @@ const resources = {
             name: "Ditt navn",
             email: "du@eksempel.no",
             subject: "Hvordan kan jeg hjelpe?",
-            message: "Skriv meldingen her …"
+            message: "Skriv meldingen her …",
           },
           errors: {
             name: "Skriv inn navnet ditt.",
             email: "Skriv inn en gyldig e-post.",
-            message: "Skriv inn en melding."
-          }
-        }
+            message: "Skriv inn en melding.",
+          },
+        },
       },
+
+      // ---------- Footer ----------
       footer: {
         navLabel: "Bunnmeny",
         connect: "Kontakt",
@@ -408,6 +479,8 @@ const resources = {
         privacy: "Personvern",
         terms: "Vilkår",
       },
+
+      // ---------- About ----------
       about: {
         sectionLabel: "Om oss",
         alt: "Robert Filep",
@@ -422,50 +495,87 @@ const resources = {
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
       },
-      // ✅ Personvernside-tekster (brukes av PrivacyPage.tsx)
+
+      // ---------- Personvern (Privacy) ----------
       privacy: {
         heading: "Personvernerklæring",
         intro: "Ditt personvern er viktig for oss. Denne siden forklarer hvordan vi behandler data.",
         sections: {
           data: {
             title: "Data vi samler inn",
-            text: "Vi samler kun inn informasjon du oppgir når du kontakter oss eller starter et prosjekt."
+            text: "Vi samler kun inn informasjon du oppgir når du kontakter oss eller starter et prosjekt.",
           },
           use: {
             title: "Hvordan vi bruker data",
-            text: "Informasjonen brukes kun for å svare på henvendelser og levere våre tjenester."
+            text: "Informasjonen brukes kun for å svare på henvendelser og levere våre tjenester.",
           },
           rights: {
             title: "Dine rettigheter",
-            text: "Du kan be om innsyn, retting eller sletting av dine data når som helst."
+            text: "Du kan be om innsyn, retting eller sletting av dine data når som helst.",
           },
           cookies: {
             title: "Informasjonskapsler",
-            text: "Nettstedet bruker minimale informasjonskapsler for grunnleggende funksjoner og ytelsesmåling."
-          }
+            text: "Nettstedet bruker minimale informasjonskapsler for grunnleggende funksjoner og ytelsesmåling.",
+          },
         },
         contact: "For spørsmål om personvern, ta kontakt på:",
-        back: "Tilbake til forsiden"
+        back: "Tilbake til forsiden",
+      },
+
+      // ---------- Vilkår (Terms) (NEW) ----------
+      terms: {
+        heading: "Vilkår og betingelser",
+        intro:
+          "Disse vilkårene beskriver reglene for bruk av våre tjenester og nettsted.",
+        sections: {
+          usage: {
+            title: "Bruk av tjenesten",
+            text:
+              "Du forplikter deg til å bruke våre tjenester på en ansvarlig måte og i tråd med gjeldende lovverk.",
+          },
+          payments: {
+            title: "Betaling og fakturering",
+            text:
+              "Med mindre annet er avtalt, forfaller fakturaer innen 14 dager. Prosjektarbeid kan kreve forskuddsbetaling.",
+          },
+          ip: {
+            title: "Immaterielle rettigheter",
+            text:
+              "Med mindre annet er skriftlig avtalt, eies leveranser av kunden etter full betaling. Vår interne verktøy og biblioteker forblir vårt eierskap.",
+          },
+          liability: {
+            title: "Ansvarsbegrensning",
+            text:
+              "Tjenestene leveres som de er. Vi er ikke ansvarlige for indirekte, tilfeldige eller følgeskader.",
+          },
+        },
+        back: "Tilbake til forsiden",
       },
     },
   },
 } as const;
 
+// ---------------------------------------------
+// i18n setup
+// ---------------------------------------------
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: "no",
+    lng: "no", // default language (can be changed by detector)
     fallbackLng: "en",
     supportedLngs: ["en", "no"],
     detection: {
+      // Order of language detection
       order: ["localStorage", "navigator", "htmlTag", "querystring", "cookie"],
+      // Where to cache the user language
       caches: ["localStorage"],
     },
     interpolation: { escapeValue: false },
   });
 
+// Keep <html lang="..."> in sync with current language
 i18n.on("languageChanged", (lng) => {
   document.documentElement.lang = lng;
 });
