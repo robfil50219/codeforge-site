@@ -137,7 +137,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={resetConsent}
-              className="hover:text-slate-700"
+              className="text-slate-500 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
               aria-label={t("consent.manage", {
                 defaultValue: "Manage cookies",
               })}
