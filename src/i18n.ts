@@ -23,6 +23,18 @@ const resources = {
         contact: "Contact",
       },
 
+      //--------- Consent ----------
+
+      consent: {
+        title: "Cookie Consent",
+        text: "This website uses cookies to ensure you get the best experience on our website.",
+        learnMore: "Learn more",
+        actions: {
+          accept: "Accept all cookies",
+          reject: "Reject non-essential cookies",
+        },
+      },
+
       // ---------- Brand ----------
       brand: "CodeForge Studio",
 
@@ -311,6 +323,17 @@ const resources = {
         pricing: "Priser",
         about: "Om oss",
         contact: "Kontakt",
+      },
+
+      // ---------- Consent ----------
+      consent: {
+        title: "Informasjonskapsler og personvern",
+        text: "Denne nettsiden bruker informasjonskapsler for å sikre at du får den beste opplevelsen på vår nettside.",
+        learnMore: "Lær mer",
+        actions: {
+          accept: "Godta alle informasjonskapsler",
+          reject: "Avvis ikke-essensielle informasjonskapsler",
+        },
       },
 
       // ---------- Brand ----------

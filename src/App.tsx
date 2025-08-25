@@ -13,7 +13,8 @@ import Pricing from "./components/Pricing";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PrivacyPage from "./pages/PrivacyPage";
-import TermsPage from "./pages/TermsPage"; 
+import TermsPage from "./pages/TermsPage";
+import ConsentBanner from "./components/ConsentBanner"; // ✅ added
 
 function Home() {
   const site = "CodeForge Studio";
@@ -79,20 +80,25 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        {/* make the shell a flex column so the footer sits at the bottom */}
-           <div className="min-h-screen flex flex-col bg-white text-slate-900">
+        {/* keep the shell a flex column so footer sits at the bottom */}
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
           <Navbar />
+
+          {/* Consent banner (shows only if not previously answered) */}
+          <ConsentBanner />
+
           {/* let main grow to fill vertical space */}
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/contact" element={<ContactRoute />} />
               <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} /> 
+              <Route path="/terms" element={<TermsPage />} />
               {/* catch-all 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
+
           <Footer />
         </div>
       </ErrorBoundary>
