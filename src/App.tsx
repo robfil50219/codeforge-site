@@ -80,7 +80,7 @@ export default function App() {
     <BrowserRouter>
       <ErrorBoundary>
         {/* make the shell a flex column so the footer sits at the bottom */}
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+           <div className="min-h-screen flex flex-col bg-white text-slate-900">
           <Navbar />
           {/* let main grow to fill vertical space */}
           <main className="flex-1">
