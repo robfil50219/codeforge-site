@@ -48,6 +48,8 @@ const resources = {
           "We design and build modern sites and web apps with React and TypeScript. Clear structure, smooth interactions, and careful attention to detail.",
         ctaServices: "View Services",
         ctaWork: "See Work",
+        imageAlt: "Developers collaborating in front of a monitor",
+        imageCaption: "Real-time UI, clean architecture, and pixel-perfect details",
       },
 
       // ---------- Services ----------
@@ -337,6 +339,8 @@ const resources = {
           "Vi designer og bygger moderne nettsider og web‑apper med React og TypeScript. Tydelig struktur, smidige interaksjoner og stor vekt på detaljer.",
         ctaServices: "Se tjenester",
         ctaWork: "Se arbeid",
+        imageAlt: "Utviklere som samarbeider foran en skjerm",
+        imageCaption: "Sanntidsgrensesnitt, ryddig arkitektur og pikselperfekte detaljer",
       },
 
       // ---------- Services ----------
