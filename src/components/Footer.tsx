@@ -6,7 +6,7 @@ import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
 
 export default function Footer() {
-  const { t, i18n } = useTranslation();   // ⬅️ include i18n
+  const { t, i18n } = useTranslation();  
   const year = new Date().getFullYear();
   const location = useLocation();
 
