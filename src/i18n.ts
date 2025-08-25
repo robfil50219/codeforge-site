@@ -27,11 +27,12 @@ const resources = {
       brand: "CodeForge Studio",
 
       // ---------- Hero ----------
+      // Keep headline as requested
       hero: {
         title: "Design & build modern web apps",
-        tagline: "Your partner in modern frontend development",
+        tagline: "Websites that feel fast and look sharp.",
         blurb:
-          "We craft fast, accessible, and beautiful front-ends with React and TypeScript. Clean code, crisp UX, shipped with care.",
+          "We design and build modern sites and web apps with React and TypeScript. Clear structure, smooth interactions, and careful attention to detail.",
         ctaServices: "View Services",
         ctaWork: "See Work",
       },
@@ -39,42 +40,53 @@ const resources = {
       // ---------- Services ----------
       services: {
         heading: "Services",
-        sub: "Design, build, and polish. From idea to production-ready front-ends.",
+        sub: "From idea to launch — design, build, and fine‑tune your site.",
         primary: {
           uiux: {
             title: "UI/UX Design",
             blurb:
-              "Simple, modern interfaces that put the user first and feel great to use.",
-            points: ["Design systems", "Wireframes & mockups", "Interactive prototypes"],
+              "Clear, modern interfaces that are easy to understand and use.",
+            points: [
+              "Design systems & style guides",
+              "Wireframes and mockups",
+              "Clickable prototypes",
+            ],
           },
           frontend: {
             title: "Frontend Development",
             blurb:
-              "Production-ready React + TypeScript with clean, maintainable structure.",
-            points: ["Component libraries", "API integration", "Routing & state"],
+              "Reliable React + TypeScript builds with clean, maintainable code.",
+            points: [
+              "Reusable component libraries",
+              "API and CMS integration",
+              "Routing and state handled",
+            ],
           },
           perf: {
             title: "Performance & Accessibility",
-            blurb:
-              "Fast, inclusive experiences that score well and work for everyone.",
-            points: ["Core Web Vitals", "WCAG best practices", "Audit & fixes"],
+            blurb: "Fast, accessible sites that work for everyone.",
+            points: [
+              "Core Web Vitals improvements",
+              "WCAG‑aware design & fixes",
+              "Audits with action plans",
+            ],
           },
         },
         extras: {
           cms: {
-            title: "CMS & Content",
-            blurb: "Hook your UI up to content that’s easy to edit.",
-            points: ["Headless CMS", "Markdown/MDX", "Content modeling"],
+            title: "Content & CMS",
+            blurb: "Connect your site to tools your team can edit.",
+            points: ["Headless CMS setup", "Markdown/MDX support", "Content models & roles"],
           },
           responsive: {
             title: "Responsive & Mobile",
-            blurb: "Looks sharp on every device, from phones to 4K monitors.",
-            points: ["Mobile-first", "Adaptive layouts", "Touch interactions"],
+            blurb: "Looks great on phones, tablets, and large screens.",
+            points: ["Mobile‑first layouts", "Flexible grids & images", "Touch‑friendly patterns"],
           },
           quality: {
             title: "Quality & Security",
-            blurb: "Confidence to ship, with checks and guardrails in place.",
-            points: ["Type safety", "Lint & tests", "Best-practice hardening"],
+            blurb: "Confidence to ship, with guardrails in place.",
+            points: ["Type safety & linting", "Automated checks", "Best‑practice hardening"],
           },
         },
         process: {
@@ -82,7 +94,7 @@ const resources = {
           steps: [
             { step: "1. Discover", text: "Goals, audience, scope" },
             { step: "2. Design", text: "Flows, wireframes, UI" },
-            { step: "3. Build & Ship", text: "Code, QA, deploy" },
+            { step: "3. Build & Launch", text: "Code, QA, deploy" },
           ],
         },
       },
@@ -95,23 +107,23 @@ const resources = {
         cards: {
           dashboard: {
             title: "Dashboard Pro",
-            blurb: "Analytics dashboard with charts, filters, and real-time data.",
+            blurb: "Compact performance dashboards with charts and filters.",
             tags: ["React", "TypeScript", "Vite"],
           },
           landing: {
             title: "Landing Kit",
-            blurb: "High-conversion landing page with A/B testing hooks.",
+            blurb: "Conversion‑focused landing pages with simple A/B hooks.",
             tags: ["Tailwind", "Accessibility", "SEO"],
           },
           storefront: {
             title: "Storefront UI",
-            blurb: "Fast e-commerce front-end with cart and checkout.",
+            blurb: "Fast storefront front‑end with cart and checkout.",
             tags: ["SPA", "State Mgmt", "API"],
           },
           docs: {
             title: "Docs Engine",
-            blurb: "Searchable docs site with live code examples.",
-            tags: ["MDX", "Search", "Perf"],
+            blurb: "Searchable documentation with live code examples.",
+            tags: ["MDX", "Search", "Performance"],
           },
         },
       },
@@ -119,15 +131,15 @@ const resources = {
       // ---------- Pricing ----------
       pricing: {
         heading: "Project packages",
-        sub: "From quick launches to full-scale platforms — choose the path that fits your goals.",
+        sub: "Pick what fits your goals and timeline.",
         starter: {
           name: "Starter",
           price: "€799 / fixed",
-          blurb: "Launch a clean one-pager.",
+          blurb: "Launch a clean one‑page site.",
           features: [
             "1 landing page",
             "Responsive + basic SEO",
-            "Contact form or mailto CTA",
+            "Contact form or email CTA",
             "Deployed to your host",
           ],
         },
@@ -135,7 +147,7 @@ const resources = {
           name: "Pro",
           price: "€2,400 / fixed",
           badge: "Most popular",
-          blurb: "Full site + components.",
+          blurb: "A complete multi‑page site with a solid component setup.",
           features: [
             "Up to 6 pages",
             "Design system + components",
@@ -146,11 +158,11 @@ const resources = {
         custom: {
           name: "Custom",
           price: "€? / quote",
-          blurb: "Complex or ongoing work.",
+          blurb: "For complex features or ongoing work.",
           features: [
-            "Advanced features / integrations",
-            "E-commerce, auth, dashboards",
-            "Roadmap & iterations",
+            "Advanced features & integrations",
+            "E‑commerce, auth, dashboards",
+            "Roadmap and iterations",
             "Flexible timeline & budget",
           ],
         },
@@ -165,7 +177,7 @@ const resources = {
       contact: {
         heading: "Let’s build something great",
         copy:
-          "Tell me about your project — goals, timeline, and budget. I’ll follow up with a plan and next steps.",
+          "Tell me about your goals, timeline, and budget. I’ll reply with a plan and next steps.",
         email: "Email",
         github: "GitHub",
         linkedin: "LinkedIn",
@@ -215,14 +227,14 @@ const resources = {
       about: {
         sectionLabel: "About",
         alt: "Robert Filep",
-        heading: "Building clean, fast, user-friendly UIs",
+        heading: "Building clean, fast, user‑friendly UIs",
         copy:
-          "I’m Robert Filep, a front-end developer and founder of CodeForge Studio. I design and build responsive, accessible interfaces with React + TypeScript and a strong eye for detail.",
+          "I’m Robert Filep, a front‑end developer and founder of CodeForge Studio. I design and build responsive, accessible interfaces with React + TypeScript. My focus is clear structure, strong performance, and small details that add up.",
         highlights: [
-          "Performance-first mindset",
+          "Performance‑first mindset",
           "Accessible by default",
           "TypeScript everywhere",
-          "Pixel-perfect execution",
+          "Pixel‑perfect execution",
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
       },
@@ -230,23 +242,27 @@ const resources = {
       // ---------- Privacy Page ----------
       privacy: {
         heading: "Privacy Policy",
-        intro: "Your privacy is important to us. This page explains how we handle your data.",
+        intro: "Your privacy matters. This page explains how we handle your data.",
         sections: {
           data: {
             title: "Data we collect",
-            text: "We only collect the information you provide when contacting us or starting a project.",
+            text:
+              "We only collect information you provide when contacting us or starting a project.",
           },
           use: {
             title: "How we use your data",
-            text: "Your information is used solely to respond to inquiries and deliver our services.",
+            text:
+              "We use it to respond to inquiries and deliver our services. Nothing more.",
           },
           rights: {
             title: "Your rights",
-            text: "You can request access, correction, or deletion of your data at any time.",
+            text:
+              "You can request access, correction, or deletion of your data at any time.",
           },
           cookies: {
             title: "Cookies",
-            text: "This site uses minimal cookies for basic functionality and performance insights.",
+            text:
+              "We use minimal cookies for basic functionality and performance insights.",
           },
         },
         contact: "For questions about privacy, please contact us at:",
@@ -257,26 +273,27 @@ const resources = {
       terms: {
         heading: "Terms & Conditions",
         intro:
-          "These terms outline the rules and conditions for using our services and website.",
+          "These terms explain how you can use our website and services.",
         sections: {
           usage: {
-            title: "Use of Service",
-            text: "You agree to use our services responsibly and in compliance with applicable laws.",
+            title: "Use of service",
+            text:
+              "Use our services responsibly and in line with applicable laws.",
           },
           payments: {
-            title: "Payments & Invoicing",
+            title: "Payments & invoicing",
             text:
-              "Unless otherwise stated, invoices are due within 14 days. Project work may require an upfront deposit.",
+              "Unless otherwise agreed, invoices are due within 14 days. Some projects require an upfront deposit.",
           },
           ip: {
-            title: "Intellectual Property",
+            title: "Intellectual property",
             text:
-              "Unless agreed in writing, project deliverables are owned by the client upon full payment. Our internal tooling and libraries remain our property.",
+              "After full payment, project deliverables belong to you. Our internal tools and libraries remain ours.",
           },
           liability: {
-            title: "Limitations of Liability",
+            title: "Limitations of liability",
             text:
-              "We provide our services as-is. We are not liable for indirect, incidental, or consequential damages.",
+              "Services are provided as‑is. We are not liable for indirect or consequential loss.",
           },
         },
         back: "Back to home",
@@ -284,6 +301,7 @@ const resources = {
     },
   },
 
+  // ------------------ NORWEGIAN ------------------
   no: {
     translation: {
       // ---------- Global / Navigation ----------
@@ -301,9 +319,9 @@ const resources = {
       // ---------- Hero ----------
       hero: {
         title: "Design og bygg moderne nettløsninger",
-        tagline: "Din partner for moderne frontend-utvikling",
+        tagline: "Nettsteder som er raske og ser skarpe ut.",
         blurb:
-          "Vi leverer raske, tilgjengelige og vakre front-ends med React og TypeScript. Ren kode, tydelig UX, levert med omtanke.",
+          "Vi designer og bygger moderne nettsider og web‑apper med React og TypeScript. Tydelig struktur, smidige interaksjoner og stor vekt på detaljer.",
         ctaServices: "Se tjenester",
         ctaWork: "Se arbeid",
       },
@@ -311,39 +329,65 @@ const resources = {
       // ---------- Services ----------
       services: {
         heading: "Tjenester",
-        sub: "Design, bygg og finpuss. Fra idé til produksjonsklare løsninger.",
+        sub: "Fra idé til lansering — vi designer, bygger og finpusser nettsiden.",
         primary: {
           uiux: {
-            title: "UI/UX-design",
-            blurb: "Enkle, moderne grensesnitt som setter brukeren først.",
-            points: ["Designsystemer", "Wireframes og skisser", "Interaktive prototyper"],
+            title: "UI/UX‑design",
+            blurb:
+              "Tydelige, moderne grensesnitt som er enkle å forstå og bruke.",
+            points: [
+              "Designsystem og stilguide",
+              "Wireframes og skisser",
+              "Klikkbare prototyper",
+            ],
           },
           frontend: {
-            title: "Frontend-utvikling",
-            blurb: "Produksjonsklar React + TypeScript med ryddig struktur.",
-            points: ["Komponentbibliotek", "API-integrasjon", "Routing og state"],
+            title: "Frontend‑utvikling",
+            blurb:
+              "Trygg utvikling i React + TypeScript med ryddig og vedlikeholdbar kode.",
+            points: [
+              "Gjenbrukbare komponenter",
+              "Integrasjon mot API og CMS",
+              "Routing og state på plass",
+            ],
           },
           perf: {
             title: "Ytelse og tilgjengelighet",
-            blurb: "Raske, inkluderende opplevelser som fungerer for alle.",
-            points: ["Core Web Vitals", "WCAG-praksis", "Analyse og forbedringer"],
+            blurb: "Raske, tilgjengelige sider som fungerer for alle.",
+            points: [
+              "Forbedring av Core Web Vitals",
+              "WCAG‑tilpasninger og fixes",
+              "Analyser og tiltaksplan",
+            ],
           },
         },
         extras: {
           cms: {
-            title: "CMS og innhold",
-            blurb: "Koble UI til innhold som er lett å redigere.",
-            points: ["Headless CMS", "Markdown/MDX", "Innholdsmodellering"],
+            title: "Innhold og CMS",
+            blurb: "Koble nettsiden til verktøy dere kan redigere selv.",
+            points: [
+              "Oppsett av headless CMS",
+              "Støtte for Markdown/MDX",
+              "Innholdsmodeller og roller",
+            ],
           },
           responsive: {
             title: "Responsiv og mobil",
-            blurb: "Ser skarpt ut på alle enheter, fra mobil til 4K.",
-            points: ["Mobil-først", "Adaptive layouts", "Berøringsinteraksjoner"],
+            blurb: "Fungerer på alle skjermstørrelser.",
+            points: [
+              "Mobil‑først oppsett",
+              "Fleksible rutenett og bilder",
+              "Berøringsvennlige mønstre",
+            ],
           },
           quality: {
             title: "Kvalitet og sikkerhet",
-            blurb: "Trygghet i leveranse, med kontroller og sikring.",
-            points: ["Typesikkerhet", "Lint og tester", "Best practice-herding"],
+            blurb: "Trygghet i leveranse, med gode rammer.",
+            points: [
+              "Typesikkerhet og linting",
+              "Automatiske sjekker",
+              "Sikker praksis",
+            ],
           },
         },
         process: {
@@ -364,22 +408,22 @@ const resources = {
         cards: {
           dashboard: {
             title: "Dashboard Pro",
-            blurb: "Analyse-dashbord med grafer, filtre og sanntidsdata.",
+            blurb: "Kompakte dashboards med grafer og filtre.",
             tags: ["React", "TypeScript", "Vite"],
           },
           landing: {
             title: "Landing Kit",
-            blurb: "Landingsside med A/B-testing og høy konvertering.",
+            blurb: "Landingssider som konverterer, med enkle A/B‑muligheter.",
             tags: ["Tailwind", "Tilgjengelighet", "SEO"],
           },
           storefront: {
             title: "Storefront UI",
-            blurb: "Rask e-handel frontend med handlekurv og checkout.",
-            tags: ["SPA", "State-håndtering", "API"],
+            blurb: "Rask butikkfront med handlekurv og checkout.",
+            tags: ["SPA", "State‑håndtering", "API"],
           },
           docs: {
             title: "Docs Engine",
-            blurb: "Søkbare dokumenter med levende kodeeksempler.",
+            blurb: "Søkbar dokumentasjon med levende kodeeksempler.",
             tags: ["MDX", "Søk", "Ytelse"],
           },
         },
@@ -388,37 +432,37 @@ const resources = {
       // ---------- Pricing ----------
       pricing: {
         heading: "Prosjektpakker",
-        sub: "Fra raske lanseringer til fulle plattformer — velg det som passer dine mål.",
+        sub: "Velg det som passer mål og tidsplan.",
         starter: {
           name: "Start",
           price: "kr 8 500 / fastpris",
-          blurb: "Lanser en ren én-siders side.",
+          blurb: "Lanser en ryddig én‑siders nettside.",
           features: [
             "1 landingsside",
             "Responsiv + grunnleggende SEO",
-            "Kontaktskjema eller e-post-CTA",
-            "Publisert til din host",
+            "Kontaktskjema eller e‑post‑CTA",
+            "Publisering til din host",
           ],
         },
         pro: {
           name: "Pro",
           price: "kr 25 000 / fastpris",
           badge: "Mest populær",
-          blurb: "Full nettside + komponenter.",
+          blurb: "Flere sider og godt komponentoppsett.",
           features: [
             "Opptil 6 sider",
             "Designsystem + komponenter",
-            "Integrasjoner (skjema, CMS, e-post)",
-            "Ytelses- og tilgjengelighetsjekk",
+            "Integrasjoner (skjema, CMS, e‑post)",
+            "Ytelses‑ og tilgjengelighetssjekk",
           ],
         },
         custom: {
           name: "Skreddersøm",
           price: "kr ? / tilbud",
-          blurb: "Komplekst eller løpende arbeid.",
+          blurb: "For avanserte behov eller løpende arbeid.",
           features: [
-            "Avanserte funksjoner / integrasjoner",
-            "E-handel, innlogging, dashboards",
+            "Avanserte funksjoner og integrasjoner",
+            "E‑handel, innlogging, dashboards",
             "Roadmap og iterasjoner",
             "Fleksibel tidslinje og budsjett",
           ],
@@ -434,22 +478,22 @@ const resources = {
       contact: {
         heading: "La oss bygge noe bra",
         copy:
-          "Fortell om prosjektet — mål, tidslinje og budsjett. Jeg følger opp med plan og neste steg.",
-        email: "E-post",
+          "Fortell om mål, tidslinje og budsjett. Jeg svarer med en plan og neste steg.",
+        email: "E‑post",
         github: "GitHub",
         linkedin: "LinkedIn",
         start: "Start et prosjekt",
         trust: {
-          reply: "Svarer innen 24t",
+          reply: "Svarer innen 24 t",
           location: "Basert i Trondheim, Norge",
         },
         ctaTitle: "Klar til å starte?",
-        ctaCopy: "La oss gjøre idéen din til virkelighet med ren, moderne kode.",
+        ctaCopy: "La oss gjøre idéen din til virkelighet med moderne kode.",
         formTitle: "Send en melding",
         formCopy: "Fyll ut skjemaet, så tar jeg kontakt.",
         form: {
           name: "Navn",
-          email: "E-post",
+          email: "E‑post",
           subjectOptional: "Emne (valgfritt)",
           message: "Melding",
           send: "Send melding",
@@ -460,12 +504,12 @@ const resources = {
           placeholders: {
             name: "Ditt navn",
             email: "du@eksempel.no",
-            subject: "Hvordan kan jeg hjelpe?",
+            subject: "Hvordan kan vi hjelpe?",
             message: "Skriv meldingen her …",
           },
           errors: {
             name: "Skriv inn navnet ditt.",
-            email: "Skriv inn en gyldig e-post.",
+            email: "Skriv inn en gyldig e‑post.",
             message: "Skriv inn en melding.",
           },
         },
@@ -486,9 +530,9 @@ const resources = {
         alt: "Robert Filep",
         heading: "Bygger rene, raske og brukervennlige grensesnitt",
         copy:
-          "Jeg er Robert Filep, frontend-utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger responsive og tilgjengelige løsninger med React + TypeScript, med fokus på detaljer.",
+          "Jeg er Robert Filep, frontend‑utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger responsive og tilgjengelige løsninger med React + TypeScript, med fokus på tydelig struktur, god ytelse og detaljer som teller.",
         highlights: [
-          "Ytelse først-tankesett",
+          "Ytelse først",
           "Tilgjengelig som standard",
           "TypeScript overalt",
           "Pikselperfekt gjennomføring",
@@ -499,54 +543,59 @@ const resources = {
       // ---------- Personvern (Privacy) ----------
       privacy: {
         heading: "Personvernerklæring",
-        intro: "Ditt personvern er viktig for oss. Denne siden forklarer hvordan vi behandler data.",
+        intro:
+          "Ditt personvern er viktig. Her forklarer vi hvordan vi behandler data.",
         sections: {
           data: {
             title: "Data vi samler inn",
-            text: "Vi samler kun inn informasjon du oppgir når du kontakter oss eller starter et prosjekt.",
+            text:
+              "Vi samler bare inn informasjon du gir når du kontakter oss eller starter et prosjekt.",
           },
           use: {
             title: "Hvordan vi bruker data",
-            text: "Informasjonen brukes kun for å svare på henvendelser og levere våre tjenester.",
+            text:
+              "Vi bruker den for å svare på henvendelser og levere tjenestene våre. Ikke mer.",
           },
           rights: {
             title: "Dine rettigheter",
-            text: "Du kan be om innsyn, retting eller sletting av dine data når som helst.",
+            text:
+              "Du kan be om innsyn, retting eller sletting av dine data når som helst.",
           },
           cookies: {
             title: "Informasjonskapsler",
-            text: "Nettstedet bruker minimale informasjonskapsler for grunnleggende funksjoner og ytelsesmåling.",
+            text:
+              "Vi bruker et minimum av informasjonskapsler for grunnleggende funksjon og ytelsesinnsikt.",
           },
         },
-        contact: "For spørsmål om personvern, ta kontakt på:",
+        contact: "Spørsmål om personvern? Kontakt oss på:",
         back: "Tilbake til forsiden",
       },
 
-      // ---------- Vilkår (Terms) (NEW) ----------
+      // ---------- Vilkår (Terms) ----------
       terms: {
         heading: "Vilkår og betingelser",
         intro:
-          "Disse vilkårene beskriver reglene for bruk av våre tjenester og nettsted.",
+          "Disse vilkårene forklarer hvordan du kan bruke nettstedet og tjenestene våre.",
         sections: {
           usage: {
             title: "Bruk av tjenesten",
             text:
-              "Du forplikter deg til å bruke våre tjenester på en ansvarlig måte og i tråd med gjeldende lovverk.",
+              "Bruk tjenestene ansvarlig og i tråd med gjeldende lovverk.",
           },
           payments: {
             title: "Betaling og fakturering",
             text:
-              "Med mindre annet er avtalt, forfaller fakturaer innen 14 dager. Prosjektarbeid kan kreve forskuddsbetaling.",
+              "Med mindre annet er avtalt, forfaller fakturaer innen 14 dager. Noen prosjekter krever forskudd.",
           },
           ip: {
             title: "Immaterielle rettigheter",
             text:
-              "Med mindre annet er skriftlig avtalt, eies leveranser av kunden etter full betaling. Vår interne verktøy og biblioteker forblir vårt eierskap.",
+              "Etter full betaling eies leveranser av deg. Våre interne verktøy og biblioteker forblir våre.",
           },
           liability: {
             title: "Ansvarsbegrensning",
             text:
-              "Tjenestene leveres som de er. Vi er ikke ansvarlige for indirekte, tilfeldige eller følgeskader.",
+              "Tjenestene leveres «som de er». Vi er ikke ansvarlige for indirekte eller følgeskader.",
           },
         },
         back: "Tilbake til forsiden",
