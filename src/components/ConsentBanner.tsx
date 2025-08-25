@@ -1,9 +1,7 @@
-// src/components/ConsentBanner.tsx
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "cf_consent"; // "accepted" | "rejected"
-
 type ConsentValue = "accepted" | "rejected";
 
 function getStoredConsent(): ConsentValue | null {
@@ -18,10 +16,9 @@ function getStoredConsent(): ConsentValue | null {
 function setStoredConsent(v: ConsentValue) {
   try {
     localStorage.setItem(STORAGE_KEY, v);
-    // Optional: also mirror into a cookie for server/CDN rules if ever needed.
     document.cookie = `cf_consent=${v}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax`;
   } catch {
-    /* no-op */
+    /* ignore */
   }
 }
 
@@ -37,14 +34,12 @@ export default function ConsentBanner() {
   const acceptAll = () => {
     setStoredConsent("accepted");
     setVisible(false);
-    // Place to initialize analytics if you add them later, e.g.:
-    // initAnalytics();
+    // If/when you add analytics, init here conditionally.
   };
 
   const rejectNonEssential = () => {
     setStoredConsent("rejected");
     setVisible(false);
-    // Ensure no analytics run if you add them later.
   };
 
   if (!visible) return null;
