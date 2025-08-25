@@ -33,6 +33,7 @@ const resources = {
           accept: "Accept all cookies",
           reject: "Reject non-essential cookies",
         },
+        manage: "Manage cookies",
       },
 
       // ---------- Brand ----------
@@ -325,17 +326,6 @@ const resources = {
         contact: "Kontakt",
       },
 
-      // ---------- Consent ----------
-      consent: {
-        title: "Informasjonskapsler og personvern",
-        text: "Denne nettsiden bruker informasjonskapsler for å sikre at du får den beste opplevelsen på vår nettside.",
-        learnMore: "Lær mer",
-        actions: {
-          accept: "Godta alle informasjonskapsler",
-          reject: "Avvis ikke-essensielle informasjonskapsler",
-        },
-      },
-
       // ---------- Brand ----------
       brand: "CodeForge Studio",
 
@@ -561,6 +551,18 @@ const resources = {
           "Pikselperfekt gjennomføring",
         ],
         tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
+      },
+
+         // ---------- Consent ----------
+      consent: {
+        title: "Informasjonskapsler og personvern",
+        text: "Denne nettsiden bruker informasjonskapsler for å sikre at du får den beste opplevelsen på vår nettside.",
+        learnMore: "Lær mer",
+        actions: {
+          accept: "Godta alle informasjonskapsler",
+          reject: "Avvis ikke-essensielle informasjonskapsler",
+        },
+        manage: "Administrer informasjonskapsler"
       },
 
       // ---------- Personvern (Privacy) ----------

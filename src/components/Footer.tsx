@@ -6,7 +6,7 @@ import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();   // ⬅️ include i18n
   const year = new Date().getFullYear();
   const location = useLocation();
 
@@ -28,7 +28,7 @@ export default function Footer() {
         const id = hash.replace("#", "");
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       } else {
-        window.location.href = `${to}${hash}`; // navigate home with anchor
+        window.location.href = `${to}${hash}`;
       }
     }
   };
@@ -38,7 +38,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         {/* Top: brand + nav + socials */}
         <div className="grid gap-8 sm:grid-cols-3">
-          {/* Brand (header-style: icon + brand text) */}
+          {/* Brand */}
           <div>
             <Link
               to="/"
@@ -58,9 +58,7 @@ export default function Footer() {
 
           {/* Quick links */}
           <nav
-            aria-label={t("footer.navLabel", {
-              defaultValue: "Footer navigation",
-            })}
+            aria-label={t("footer.navLabel")}
             className="sm:justify-self-center"
           >
             <ul className="space-y-2 text-sm">
@@ -81,7 +79,7 @@ export default function Footer() {
           {/* Socials */}
           <div className="sm:justify-self-end">
             <div className="text-sm font-medium text-slate-900">
-              {t("footer.connect", { defaultValue: "Connect" })}
+              {t("footer.connect")}
             </div>
             <ul className="mt-3 flex items-center gap-3">
               <li>
@@ -123,26 +121,25 @@ export default function Footer() {
         {/* Bottom: legal line */}
         <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} CodeForge Studio.{" "}
-            {t("footer.rights", { defaultValue: "All rights reserved." })}
+            © {year} CodeForge Studio. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="hover:text-slate-700">
-              {t("footer.privacy", { defaultValue: "Privacy" })}
+              {t("footer.privacy")}
             </Link>
             <Link to="/terms" className="hover:text-slate-700">
-              {t("footer.terms", { defaultValue: "Terms" })}
+              {t("footer.terms")}
             </Link>
+
             {/* Manage cookies */}
             <button
+              key={i18n.language}         
               type="button"
               onClick={resetConsent}
               className="text-slate-500 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
-              aria-label={t("consent.manage", {
-                defaultValue: "Manage cookies",
-              })}
+              aria-label={t("consent.manage")}
             >
-              {t("consent.manage", { defaultValue: "Manage cookies" })}
+              {t("consent.manage")}
             </button>
           </div>
         </div>
