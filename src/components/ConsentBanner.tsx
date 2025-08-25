@@ -1,26 +1,7 @@
+// src/components/ConsentBanner.tsx
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-const STORAGE_KEY = "cf_consent"; // "accepted" | "rejected"
-type ConsentValue = "accepted" | "rejected";
-
-function getStoredConsent(): ConsentValue | null {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v === "accepted" || v === "rejected" ? v : null;
-  } catch {
-    return null;
-  }
-}
-
-function setStoredConsent(v: ConsentValue) {
-  try {
-    localStorage.setItem(STORAGE_KEY, v);
-    document.cookie = `cf_consent=${v}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax`;
-  } catch {
-    /* ignore */
-  }
-}
+import { getStoredConsent, setStoredConsent } from "../utils/consent";
 
 export default function ConsentBanner() {
   const { t } = useTranslation();
@@ -29,12 +10,16 @@ export default function ConsentBanner() {
   useEffect(() => {
     const existing = getStoredConsent();
     if (!existing) setVisible(true);
+
+    const onReset = () => setVisible(true);
+    window.addEventListener("cf:consent:reset", onReset);
+    return () => window.removeEventListener("cf:consent:reset", onReset);
   }, []);
 
   const acceptAll = () => {
     setStoredConsent("accepted");
     setVisible(false);
-    // If/when you add analytics, init here conditionally.
+    // Init analytics later if needed
   };
 
   const rejectNonEssential = () => {

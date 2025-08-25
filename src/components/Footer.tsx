@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
+import { resetConsent } from "../utils/consent";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -16,14 +17,18 @@ export default function Footer() {
     { to: "/contact", label: t("nav.contact") },
   ];
 
-  const handleSmoothScroll = (e: React.MouseEvent, to: string, hash?: string) => {
+  const handleSmoothScroll = (
+    e: React.MouseEvent,
+    to: string,
+    hash?: string
+  ) => {
     if (hash && to === "/") {
       e.preventDefault();
       if (location.pathname === "/") {
         const id = hash.replace("#", "");
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       } else {
-        window.location.href = `${to}${hash}`; // fallback: navigate home first
+        window.location.href = `${to}${hash}`; // navigate home with anchor
       }
     }
   };
@@ -37,9 +42,7 @@ export default function Footer() {
           <div>
             <Link
               to="/"
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
               aria-label="Back to home"
             >
@@ -130,6 +133,17 @@ export default function Footer() {
             <Link to="/terms" className="hover:text-slate-700">
               {t("footer.terms", { defaultValue: "Terms" })}
             </Link>
+            {/* Manage cookies */}
+            <button
+              type="button"
+              onClick={resetConsent}
+              className="hover:text-slate-700"
+              aria-label={t("consent.manage", {
+                defaultValue: "Manage cookies",
+              })}
+            >
+              {t("consent.manage", { defaultValue: "Manage cookies" })}
+            </button>
           </div>
         </div>
       </div>
