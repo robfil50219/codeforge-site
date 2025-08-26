@@ -45,7 +45,7 @@ function Home() {
       {/* <Work /> */}
       <Pricing />
       <About />
-      <Contact /> {/* ✅ Contact is a section with id="contact" for smooth scroll */}
+      <Contact /> 
     </>
   );
 }
