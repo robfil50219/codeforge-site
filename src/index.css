@@ -38,4 +38,13 @@ img, svg, video, canvas {
 
 /* Optional: nicer focus & selection */
 :focus-visible { outline: 2px solid rgb(59 130 246); outline-offset: 2px; }
-::selection { background: rgb(224 242 254); }
+::selection { background: rgb(224 242 254); } 
+
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+  @apply cursor-pointer;
+}
