@@ -44,8 +44,7 @@ const resources = {
       hero: {
         title: "Design & build modern web apps",
         tagline: "Websites that feel fast and look sharp.",
-        blurb:
-          "We design and build modern sites and web apps with React and TypeScript. Clear structure, smooth interactions, and careful attention to detail.",
+        blurb: "We craft fast, reliable digital solutions using modern web technologies — tailored to your goals. From simple landing pages to full-scale platforms, we focus on performance, accessibility, and design that leaves a strong impression.",
         ctaServices: "View Services",
         ctaWork: "See Work",
         imageAlt: "Developers collaborating in front of a monitor",
@@ -240,19 +239,27 @@ const resources = {
 
       // ---------- About ----------
       about: {
-        sectionLabel: "About",
-        alt: "Robert Filep",
-        heading: "Building clean, fast, user‑friendly UIs",
-        copy:
-          "I’m Robert Filep, a front‑end developer and founder of CodeForge Studio. I design and build responsive, accessible interfaces with React + TypeScript. My focus is clear structure, strong performance, and small details that add up.",
-        highlights: [
-          "Performance‑first mindset",
-          "Accessible by default",
-          "TypeScript everywhere",
-          "Pixel‑perfect execution",
-        ],
-        tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
-      },
+  sectionLabel: "About",
+  alt: "Robert Filep",
+  heading: "Building clean, fast, user-friendly digital solutions",
+  copy:
+    "I’m Robert Filep, a front-end developer and founder of CodeForge Studio. I design and build modern websites and applications with a strong focus on performance, accessibility, and detail. I work with a range of technologies to deliver solutions that fit your needs — from simple sites to full-scale platforms.",
+  highlights: [
+    "Performance-first mindset",
+    "Accessible by default",
+    "Modern tech stack",
+    "Pixel-perfect execution",
+  ],
+  tech: ["React",
+    "TypeScript",
+    "Next.js",
+    "Node.js",
+    "TailwindCSS",
+    "Vite",
+    "WordPress",
+    "Firebase",
+    "REST & GraphQL APIs"], 
+},
 
       // ---------- Privacy Page ----------
       privacy: {
@@ -335,8 +342,7 @@ const resources = {
       hero: {
         title: "Design og bygg moderne nettløsninger",
         tagline: "Nettsteder som er raske og ser skarpe ut.",
-        blurb:
-          "Vi designer og bygger moderne nettsider og web‑apper med React og TypeScript. Tydelig struktur, smidige interaksjoner og stor vekt på detaljer.",
+        blurb: "Vi lager raske og pålitelige digitale løsninger med moderne webteknologi — tilpasset dine mål. Fra enkle landingssider til komplette plattformer, har vi fokus på ytelse, tilgjengelighet og design som gjør inntrykk.",
         ctaServices: "Se tjenester",
         ctaWork: "Se arbeid",
         imageAlt: "Utviklere som samarbeider foran en skjerm",
@@ -543,19 +549,27 @@ const resources = {
 
       // ---------- About ----------
       about: {
-        sectionLabel: "Om oss",
-        alt: "Robert Filep",
-        heading: "Bygger rene, raske og brukervennlige grensesnitt",
-        copy:
-          "Jeg er Robert Filep, frontend‑utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger responsive og tilgjengelige løsninger med React + TypeScript, med fokus på tydelig struktur, god ytelse og detaljer som teller.",
-        highlights: [
-          "Ytelse først",
-          "Tilgjengelig som standard",
-          "TypeScript overalt",
-          "Pikselperfekt gjennomføring",
-        ],
-        tech: ["React", "TypeScript", "TailwindCSS", "Vite"],
-      },
+  sectionLabel: "Om oss",
+  alt: "Robert Filep",
+  heading: "Bygger rene, raske og brukervennlige digitale løsninger",
+  copy:
+    "Jeg er Robert Filep, frontend-utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger moderne nettsider og applikasjoner med fokus på ytelse, tilgjengelighet og detaljer. Jeg jobber med ulike teknologier for å levere løsninger som passer dine behov — fra enkle sider til komplette plattformer.",
+  highlights: [
+    "Ytelse først",
+    "Tilgjengelig som standard",
+    "Moderne teknologistack",
+    "Pikselperfekt gjennomføring",
+  ],
+  tech: ["React",
+    "TypeScript",
+    "Next.js",
+    "Node.js",
+    "TailwindCSS",
+    "Vite",
+    "WordPress",
+    "Firebase",
+    "REST & GraphQL APIs"],
+},
 
          // ---------- Consent ----------
       consent: {
