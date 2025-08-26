@@ -103,15 +103,20 @@ const resources = {
             points: ["Type safety & linting", "Automated checks", "Best‑practice hardening"],
           },
         },
-        process: {
-          title: "Process",
-          steps: [
-            { step: "1. Discover", text: "Goals, audience, scope" },
-            { step: "2. Design", text: "Flows, wireframes, UI" },
-            { step: "3. Build & Launch", text: "Code, QA, deploy" },
-          ],
-        },
-      },
+       process: {
+    title: "Process",
+    steps: [
+      { step: "1. Discover", text: "Goals, audience, scope" },
+      { step: "2. Design", text: "Flows, wireframes, UI" },
+      { step: "3. Build & Launch", text: "Code, QA, deploy" },
+    ],
+    details: {
+      0: "We run a short workshop and audit to clarify goals, map users, and set success metrics.",
+      1: "We design key user flows, build wireframes, then deliver a polished UI with states and responsive specs.",
+      2: "We implement, test, and optimize for performance and accessibility, then ship with a smooth handover.",
+    },
+  },
+},
 
       // ---------- Work ----------
       work: {
