@@ -46,5 +46,5 @@ a,
 input[type="submit"],
 input[type="button"],
 input[type="reset"] {
-  @apply cursor-pointer;
+  cursor: pointer;
 }
