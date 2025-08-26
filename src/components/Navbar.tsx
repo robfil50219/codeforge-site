@@ -39,7 +39,6 @@ export default function Navbar() {
     if (location.pathname === "/") {
       scrollToId(id);
     } else {
-      // navigate home with hash (then browser handles scroll)
       window.location.href = `/${"#" + id}`;
     }
   };
@@ -62,7 +61,9 @@ export default function Navbar() {
             alt="CodeForge Studio logo"
             className="h-12 w-12 sm:h-14 sm:w-14"
           />
-          <span className="text-xl sm:text-2xl">{t("brand")}</span>
+          <span className="text-xl sm:text-2xl font-extrabold tracking-wide uppercase">
+            {t("brand")}
+          </span>
         </Link>
 
         {/* Desktop nav */}
