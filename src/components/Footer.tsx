@@ -6,7 +6,7 @@ import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
 
 export default function Footer() {
-  const { t, i18n } = useTranslation();  
+  const { t, i18n } = useTranslation();
   const year = new Date().getFullYear();
   const location = useLocation();
 
@@ -43,7 +43,7 @@ export default function Footer() {
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
+              className="flex items-center gap-3 text-lg font-extrabold tracking-widest text-slate-900"
               aria-label="Back to home"
             >
               <img
@@ -51,7 +51,10 @@ export default function Footer() {
                 alt="CodeForge Studio logo"
                 className="h-12 w-12 sm:h-14 sm:w-14"
               />
-              <span className="text-xl sm:text-2xl">{t("brand")}</span>
+              {/* Render brand in ALL CAPS visually */}
+              <span className="text-xl sm:text-2xl uppercase">
+                {t("brand")}
+              </span>
             </Link>
             <p className="mt-3 text-sm text-slate-600">{t("hero.tagline")}</p>
           </div>
@@ -133,7 +136,7 @@ export default function Footer() {
 
             {/* Manage cookies */}
             <button
-              key={i18n.language}         
+              key={i18n.language}
               type="button"
               onClick={resetConsent}
               className="text-slate-500 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
