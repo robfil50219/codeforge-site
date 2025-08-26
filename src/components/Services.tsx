@@ -1,4 +1,4 @@
-// import hooks if needed
+// src/components/Services.tsx
 import { useTranslation } from "react-i18next";
 import {
   Palette,
@@ -79,17 +79,55 @@ export default function Services() {
     returnObjects: true,
   }) as { step: string; text: string }[];
 
-  // Icon tone styles (for cards)
+  // Localized dropdown details for each step
+  const details = [
+    {
+      title: t("services.process.details.discover.title"),
+      body: t("services.process.details.discover.body"),
+    },
+    {
+      title: t("services.process.details.design.title"),
+      body: t("services.process.details.design.body"),
+    },
+    {
+      title: t("services.process.details.build.title"),
+      body: t("services.process.details.build.body"),
+    },
+  ];
+
+  const stepIcons = [Search, Palette, Rocket];
+
+  // Icon tone styles
   const toneStyle = (tone: Service["tone"]) => {
     switch (tone) {
       case "sky":
-        return { ring: "ring-sky-100", bg: "bg-sky-50", icon: "text-sky-600", glow: "bg-sky-100/60" };
+        return {
+          ring: "ring-sky-100",
+          bg: "bg-sky-50",
+          icon: "text-sky-600",
+          glow: "bg-sky-100/60",
+        };
       case "indigo":
-        return { ring: "ring-indigo-100", bg: "bg-indigo-50", icon: "text-indigo-600", glow: "bg-indigo-100/60" };
+        return {
+          ring: "ring-indigo-100",
+          bg: "bg-indigo-50",
+          icon: "text-indigo-600",
+          glow: "bg-indigo-100/60",
+        };
       case "emerald":
-        return { ring: "ring-emerald-100", bg: "bg-emerald-50", icon: "text-emerald-600", glow: "bg-emerald-100/60" };
+        return {
+          ring: "ring-emerald-100",
+          bg: "bg-emerald-50",
+          icon: "text-emerald-600",
+          glow: "bg-emerald-100/60",
+        };
       default:
-        return { ring: "ring-slate-200", bg: "bg-slate-50", icon: "text-slate-700", glow: "bg-slate-100/60" };
+        return {
+          ring: "ring-slate-200",
+          bg: "bg-slate-50",
+          icon: "text-slate-700",
+          glow: "bg-slate-100/60",
+        };
     }
   };
 
@@ -140,11 +178,12 @@ export default function Services() {
           })}
         </div>
 
-        {/* Process strip (extracted component) */}
+        {/* Process strip (new component, same look + dropdown) */}
         <ProcessStrip
           steps={steps}
-          icons={[Search, Palette, Rocket]}
+          icons={stepIcons}
           title={t("services.process.title")}
+          details={details}
         />
 
         {/* Extras */}

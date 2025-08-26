@@ -9,7 +9,6 @@ import LanguageDetector from "i18next-browser-languagedetector";
 
 // ---------------------------------------------
 // Translation resources (EN + NO)
-// Tip: keep keys consistent across languages.
 // ---------------------------------------------
 const resources = {
   en: {
@@ -23,8 +22,7 @@ const resources = {
         contact: "Contact",
       },
 
-      //--------- Consent ----------
-
+      // ---------- Consent ----------
       consent: {
         title: "Cookie Consent",
         text: "This website uses cookies to ensure you get the best experience on our website.",
@@ -40,11 +38,11 @@ const resources = {
       brand: "CodeForge Studio",
 
       // ---------- Hero ----------
-      // Keep headline as requested
       hero: {
         title: "Design & build modern web apps",
         tagline: "Websites that feel fast and look sharp.",
-        blurb: "We craft fast, reliable digital solutions using modern web technologies — tailored to your goals. From simple landing pages to full-scale platforms, we focus on performance, accessibility, and design that leaves a strong impression.",
+        blurb:
+          "We craft fast, reliable digital solutions using modern web technologies — tailored to your goals. From simple landing pages to full-scale platforms, we focus on performance, accessibility, and design that leaves a strong impression.",
         ctaServices: "View Services",
         ctaWork: "See Work",
         imageAlt: "Developers collaborating in front of a monitor",
@@ -54,12 +52,11 @@ const resources = {
       // ---------- Services ----------
       services: {
         heading: "Services",
-        sub: "From idea to launch — design, build, and fine‑tune your site.",
+        sub: "From idea to launch — design, build, and fine-tune your site.",
         primary: {
           uiux: {
             title: "UI/UX Design",
-            blurb:
-              "Clear, modern interfaces that are easy to understand and use.",
+            blurb: "Clear, modern interfaces that are easy to understand and use.",
             points: [
               "Design systems & style guides",
               "Wireframes and mockups",
@@ -81,7 +78,7 @@ const resources = {
             blurb: "Fast, accessible sites that work for everyone.",
             points: [
               "Core Web Vitals improvements",
-              "WCAG‑aware design & fixes",
+              "WCAG-aware design & fixes",
               "Audits with action plans",
             ],
           },
@@ -95,28 +92,40 @@ const resources = {
           responsive: {
             title: "Responsive & Mobile",
             blurb: "Looks great on phones, tablets, and large screens.",
-            points: ["Mobile‑first layouts", "Flexible grids & images", "Touch‑friendly patterns"],
+            points: ["Mobile-first layouts", "Flexible grids & images", "Touch-friendly patterns"],
           },
           quality: {
             title: "Quality & Security",
             blurb: "Confidence to ship, with guardrails in place.",
-            points: ["Type safety & linting", "Automated checks", "Best‑practice hardening"],
+            points: ["Type safety & linting", "Automated checks", "Best-practice hardening"],
           },
         },
-       process: {
-    title: "Process",
-    steps: [
-      { step: "1. Discover", text: "Goals, audience, scope" },
-      { step: "2. Design", text: "Flows, wireframes, UI" },
-      { step: "3. Build & Launch", text: "Code, QA, deploy" },
-    ],
-    details: {
-      0: "We run a short workshop and audit to clarify goals, map users, and set success metrics.",
-      1: "We design key user flows, build wireframes, then deliver a polished UI with states and responsive specs.",
-      2: "We implement, test, and optimize for performance and accessibility, then ship with a smooth handover.",
-    },
-  },
-},
+        process: {
+          title: "Process",
+          steps: [
+            { step: "1. Discover", text: "Goals, audience, scope" },
+            { step: "2. Design", text: "Flows, wireframes, UI" },
+            { step: "3. Build & Launch", text: "Code, QA, deploy" },
+          ],
+          details: {
+            discover: {
+              title: "Discovery & planning",
+              body:
+                "We run a short workshop and audit to clarify goals, map users, and define success metrics, scope and timeline before we design.",
+            },
+            design: {
+              title: "Design & prototyping",
+              body:
+                "We create flows, wireframes and visual UI. You’ll get clickable prototypes so we can refine structure and look together.",
+            },
+            build: {
+              title: "Build, test & launch",
+              body:
+                "We implement the UI, connect content and APIs, and test performance and accessibility. Then we ship and hand over smoothly.",
+            },
+          },
+        },
+      },
 
       // ---------- Work ----------
       work: {
@@ -131,12 +140,12 @@ const resources = {
           },
           landing: {
             title: "Landing Kit",
-            blurb: "Conversion‑focused landing pages with simple A/B hooks.",
+            blurb: "Conversion-focused landing pages with simple A/B hooks.",
             tags: ["Tailwind", "Accessibility", "SEO"],
           },
           storefront: {
             title: "Storefront UI",
-            blurb: "Fast storefront front‑end with cart and checkout.",
+            blurb: "Fast storefront front-end with cart and checkout.",
             tags: ["SPA", "State Mgmt", "API"],
           },
           docs: {
@@ -154,7 +163,7 @@ const resources = {
         starter: {
           name: "Starter",
           price: "€799 / fixed",
-          blurb: "Launch a clean one‑page site.",
+          blurb: "Launch a clean one-page site.",
           features: [
             "1 landing page",
             "Responsive + basic SEO",
@@ -166,7 +175,7 @@ const resources = {
           name: "Pro",
           price: "€2,400 / fixed",
           badge: "Most popular",
-          blurb: "A complete multi‑page site with a solid component setup.",
+          blurb: "A complete multi-page site with a solid component setup.",
           features: [
             "Up to 6 pages",
             "Design system + components",
@@ -180,7 +189,7 @@ const resources = {
           blurb: "For complex features or ongoing work.",
           features: [
             "Advanced features & integrations",
-            "E‑commerce, auth, dashboards",
+            "E-commerce, auth, dashboards",
             "Roadmap and iterations",
             "Flexible timeline & budget",
           ],
@@ -244,27 +253,29 @@ const resources = {
 
       // ---------- About ----------
       about: {
-  sectionLabel: "About",
-  alt: "Robert Filep",
-  heading: "Building clean, fast, user-friendly digital solutions",
-  copy:
-    "I’m Robert Filep, a front-end developer and founder of CodeForge Studio. I design and build modern websites and applications with a strong focus on performance, accessibility, and detail. I work with a range of technologies to deliver solutions that fit your needs — from simple sites to full-scale platforms.",
-  highlights: [
-    "Performance-first mindset",
-    "Accessible by default",
-    "Modern tech stack",
-    "Pixel-perfect execution",
-  ],
-  tech: ["React",
-    "TypeScript",
-    "Next.js",
-    "Node.js",
-    "TailwindCSS",
-    "Vite",
-    "WordPress",
-    "Firebase",
-    "REST & GraphQL APIs"], 
-},
+        sectionLabel: "About",
+        alt: "Robert Filep",
+        heading: "Building clean, fast, user-friendly digital solutions",
+        copy:
+          "I’m Robert Filep, a front-end developer and founder of CodeForge Studio. I design and build modern websites and applications with a strong focus on performance, accessibility, and detail. I work with a range of technologies to deliver solutions that fit your needs — from simple sites to full-scale platforms.",
+        highlights: [
+          "Performance-first mindset",
+          "Accessible by default",
+          "Modern tech stack",
+          "Pixel-perfect execution",
+        ],
+        tech: [
+          "React",
+          "TypeScript",
+          "Next.js",
+          "Node.js",
+          "TailwindCSS",
+          "Vite",
+          "WordPress",
+          "Firebase",
+          "REST & GraphQL APIs",
+        ],
+      },
 
       // ---------- Privacy Page ----------
       privacy: {
@@ -299,8 +310,7 @@ const resources = {
       // ---------- Terms Page ----------
       terms: {
         heading: "Terms & Conditions",
-        intro:
-          "These terms explain how you can use our website and services.",
+        intro: "These terms explain how you can use our website and services.",
         sections: {
           usage: {
             title: "Use of service",
@@ -320,7 +330,7 @@ const resources = {
           liability: {
             title: "Limitations of liability",
             text:
-              "Services are provided as‑is. We are not liable for indirect or consequential loss.",
+              "Services are provided as-is. We are not liable for indirect or consequential loss.",
           },
         },
         back: "Back to home",
@@ -347,7 +357,8 @@ const resources = {
       hero: {
         title: "Design og bygg moderne nettløsninger",
         tagline: "Nettsteder som er raske og ser skarpe ut.",
-        blurb: "Vi lager raske og pålitelige digitale løsninger med moderne webteknologi — tilpasset dine mål. Fra enkle landingssider til komplette plattformer, har vi fokus på ytelse, tilgjengelighet og design som gjør inntrykk.",
+        blurb:
+          "Vi lager raske og pålitelige digitale løsninger med moderne webteknologi — tilpasset dine mål. Fra enkle landingssider til komplette plattformer, har vi fokus på ytelse, tilgjengelighet og design som gjør inntrykk.",
         ctaServices: "Se tjenester",
         ctaWork: "Se arbeid",
         imageAlt: "Utviklere som samarbeider foran en skjerm",
@@ -360,9 +371,8 @@ const resources = {
         sub: "Fra idé til lansering — vi designer, bygger og finpusser nettsiden.",
         primary: {
           uiux: {
-            title: "UI/UX‑design",
-            blurb:
-              "Tydelige, moderne grensesnitt som er enkle å forstå og bruke.",
+            title: "UI/UX-design",
+            blurb: "Tydelige, moderne grensesnitt som er enkle å forstå og bruke.",
             points: [
               "Designsystem og stilguide",
               "Wireframes og skisser",
@@ -370,7 +380,7 @@ const resources = {
             ],
           },
           frontend: {
-            title: "Frontend‑utvikling",
+            title: "Frontend-utvikling",
             blurb:
               "Trygg utvikling i React + TypeScript med ryddig og vedlikeholdbar kode.",
             points: [
@@ -384,7 +394,7 @@ const resources = {
             blurb: "Raske, tilgjengelige sider som fungerer for alle.",
             points: [
               "Forbedring av Core Web Vitals",
-              "WCAG‑tilpasninger og fixes",
+              "WCAG-tilpasninger og fixes",
               "Analyser og tiltaksplan",
             ],
           },
@@ -403,7 +413,7 @@ const resources = {
             title: "Responsiv og mobil",
             blurb: "Fungerer på alle skjermstørrelser.",
             points: [
-              "Mobil‑først oppsett",
+              "Mobil-først oppsett",
               "Fleksible rutenett og bilder",
               "Berøringsvennlige mønstre",
             ],
@@ -425,6 +435,23 @@ const resources = {
             { step: "2. Design", text: "Flyt, wireframes, UI" },
             { step: "3. Bygg og lanser", text: "Kode, QA, deploy" },
           ],
+          details: {
+            discover: {
+              title: "Utforskning og planlegging",
+              body:
+                "Vi avklarer mål, målgruppe og suksesskriterier, og setter rammer for omfang, innhold og tidslinje før vi starter design.",
+            },
+            design: {
+              title: "Design og prototyping",
+              body:
+                "Vi lager brukerflyt, skisser og visuelt design. Du får klikkbare prototyper slik at vi sammen kan finjustere struktur og uttrykk.",
+            },
+            build: {
+              title: "Bygg, test og lansering",
+              body:
+                "Vi implementerer UI, kobler på innhold og API-er, og tester ytelse og tilgjengelighet. Deretter lanserer vi og følger opp.",
+            },
+          },
         },
       },
 
@@ -441,13 +468,13 @@ const resources = {
           },
           landing: {
             title: "Landing Kit",
-            blurb: "Landingssider som konverterer, med enkle A/B‑muligheter.",
+            blurb: "Landingssider som konverterer, med enkle A/B-muligheter.",
             tags: ["Tailwind", "Tilgjengelighet", "SEO"],
           },
           storefront: {
             title: "Storefront UI",
             blurb: "Rask butikkfront med handlekurv og checkout.",
-            tags: ["SPA", "State‑håndtering", "API"],
+            tags: ["SPA", "State-håndtering", "API"],
           },
           docs: {
             title: "Docs Engine",
@@ -464,11 +491,11 @@ const resources = {
         starter: {
           name: "Start",
           price: "kr 8 500 / fastpris",
-          blurb: "Lanser en ryddig én‑siders nettside.",
+          blurb: "Lanser en ryddig én-siders nettside.",
           features: [
             "1 landingsside",
             "Responsiv + grunnleggende SEO",
-            "Kontaktskjema eller e‑post‑CTA",
+            "Kontaktskjema eller e-post-CTA",
             "Publisering til din host",
           ],
         },
@@ -480,8 +507,8 @@ const resources = {
           features: [
             "Opptil 6 sider",
             "Designsystem + komponenter",
-            "Integrasjoner (skjema, CMS, e‑post)",
-            "Ytelses‑ og tilgjengelighetssjekk",
+            "Integrasjoner (skjema, CMS, e-post)",
+            "Ytelses- og tilgjengelighetssjekk",
           ],
         },
         custom: {
@@ -490,7 +517,7 @@ const resources = {
           blurb: "For avanserte behov eller løpende arbeid.",
           features: [
             "Avanserte funksjoner og integrasjoner",
-            "E‑handel, innlogging, dashboards",
+            "E-handel, innlogging, dashboards",
             "Roadmap og iterasjoner",
             "Fleksibel tidslinje og budsjett",
           ],
@@ -507,7 +534,7 @@ const resources = {
         heading: "La oss bygge noe bra",
         copy:
           "Fortell om mål, tidslinje og budsjett. Jeg svarer med en plan og neste steg.",
-        email: "E‑post",
+        email: "E-post",
         github: "GitHub",
         linkedin: "LinkedIn",
         start: "Start et prosjekt",
@@ -521,7 +548,7 @@ const resources = {
         formCopy: "Fyll ut skjemaet, så tar jeg kontakt.",
         form: {
           name: "Navn",
-          email: "E‑post",
+          email: "E-post",
           subjectOptional: "Emne (valgfritt)",
           message: "Melding",
           send: "Send melding",
@@ -537,7 +564,7 @@ const resources = {
           },
           errors: {
             name: "Skriv inn navnet ditt.",
-            email: "Skriv inn en gyldig e‑post.",
+            email: "Skriv inn en gyldig e-post.",
             message: "Skriv inn en melding.",
           },
         },
@@ -554,29 +581,31 @@ const resources = {
 
       // ---------- About ----------
       about: {
-  sectionLabel: "Om oss",
-  alt: "Robert Filep",
-  heading: "Bygger rene, raske og brukervennlige digitale løsninger",
-  copy:
-    "Jeg er Robert Filep, frontend-utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger moderne nettsider og applikasjoner med fokus på ytelse, tilgjengelighet og detaljer. Jeg jobber med ulike teknologier for å levere løsninger som passer dine behov — fra enkle sider til komplette plattformer.",
-  highlights: [
-    "Ytelse først",
-    "Tilgjengelig som standard",
-    "Moderne teknologistack",
-    "Pikselperfekt gjennomføring",
-  ],
-  tech: ["React",
-    "TypeScript",
-    "Next.js",
-    "Node.js",
-    "TailwindCSS",
-    "Vite",
-    "WordPress",
-    "Firebase",
-    "REST & GraphQL APIs"],
-},
+        sectionLabel: "Om oss",
+        alt: "Robert Filep",
+        heading: "Bygger rene, raske og brukervennlige digitale løsninger",
+        copy:
+          "Jeg er Robert Filep, frontend-utvikler og grunnlegger av CodeForge Studio. Jeg designer og bygger moderne nettsider og applikasjoner med fokus på ytelse, tilgjengelighet og detaljer. Jeg jobber med ulike teknologier for å levere løsninger som passer dine behov — fra enkle sider til komplette plattformer.",
+        highlights: [
+          "Ytelse først",
+          "Tilgjengelig som standard",
+          "Moderne teknologistack",
+          "Pikselperfekt gjennomføring",
+        ],
+        tech: [
+          "React",
+          "TypeScript",
+          "Next.js",
+          "Node.js",
+          "TailwindCSS",
+          "Vite",
+          "WordPress",
+          "Firebase",
+          "REST & GraphQL APIs",
+        ],
+      },
 
-         // ---------- Consent ----------
+      // ---------- Consent (NO) ----------
       consent: {
         title: "Informasjonskapsler og personvern",
         text: "Denne nettsiden bruker informasjonskapsler for å sikre at du får den beste opplevelsen på vår nettside.",
@@ -585,14 +614,13 @@ const resources = {
           accept: "Godta alle informasjonskapsler",
           reject: "Avvis ikke-essensielle informasjonskapsler",
         },
-        manage: "Administrer informasjonskapsler"
+        manage: "Administrer informasjonskapsler",
       },
 
       // ---------- Personvern (Privacy) ----------
       privacy: {
         heading: "Personvernerklæring",
-        intro:
-          "Ditt personvern er viktig. Her forklarer vi hvordan vi behandler data.",
+        intro: "Ditt personvern er viktig. Her forklarer vi hvordan vi behandler data.",
         sections: {
           data: {
             title: "Data vi samler inn",
@@ -622,8 +650,7 @@ const resources = {
       // ---------- Vilkår (Terms) ----------
       terms: {
         heading: "Vilkår og betingelser",
-        intro:
-          "Disse vilkårene forklarer hvordan du kan bruke nettstedet og tjenestene våre.",
+        intro: "Disse vilkårene forklarer hvordan du kan bruke nettstedet og tjenestene våre.",
         sections: {
           usage: {
             title: "Bruk av tjenesten",
@@ -664,9 +691,7 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "no"],
     detection: {
-      // Order of language detection
       order: ["localStorage", "navigator", "htmlTag", "querystring", "cookie"],
-      // Where to cache the user language
       caches: ["localStorage"],
     },
     interpolation: { escapeValue: false },
