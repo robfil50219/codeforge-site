@@ -45,7 +45,7 @@ function Home() {
       {/* <Work /> */}
       <Pricing />
       <About />
-      <Contact /> 
+      <Contact />
     </>
   );
 }
@@ -55,14 +55,14 @@ export default function App() {
     <BrowserRouter>
       <ErrorBoundary>
         {/* flex column shell so the footer sits at the bottom */}
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+        <div className="min-h-screen flex flex-col bg-white text-slate-900">
           <Navbar />
 
           {/* Consent banner (always mounted at the app shell) */}
           <ConsentBanner />
 
           {/* main grows to fill remaining height */}
-          <main className="flex-1">
+          <main className="flex-1 bg-white">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/privacy" element={<PrivacyPage />} />

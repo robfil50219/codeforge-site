@@ -14,31 +14,42 @@
 }
 
 /* Base app tweaks */
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   overflow-x: clip; /* avoid horizontal scroll */
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   font-family: var(--font-sans);
-  /* light default background/text */
-  background: #f8fafc; /* slate-50-ish */
-  color: #0f172a;      /* slate-900-ish */
+  background: #f8fafc; /* default: slate-50-ish */
+  color: #0f172a; /* slate-900-ish */
 }
 
 /* Media defaults so images/icons don’t overflow */
-img, svg, video, canvas {
+img,
+svg,
+video,
+canvas {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
 /* Optional: nicer focus & selection */
-:focus-visible { outline: 2px solid rgb(59 130 246); outline-offset: 2px; }
-::selection { background: rgb(224 242 254); } 
+:focus-visible {
+  outline: 2px solid rgb(59 130 246);
+  outline-offset: 2px;
+}
+::selection {
+  background: rgb(224 242 254);
+}
 
 button,
 a,
@@ -48,3 +59,34 @@ input[type="button"],
 input[type="reset"] {
   cursor: pointer;
 }
+
+/* ---------- Glass utilities ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 0.75rem; /* md rounded by default */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.glass-animated {
+  animation: liquidGlass 14s ease-in-out infinite;
+}
+
+@keyframes liquidGlass {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.01);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-animated {
+    animation: none !important;
+  }
+} 
+
