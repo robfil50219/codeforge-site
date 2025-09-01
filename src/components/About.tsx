@@ -57,22 +57,20 @@ export default function About() {
     <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 md:grid-cols-2">
-        {/* Photo */}
-<div className="flex justify-center">
-  <div className="relative">
-    {/* soft glow */}
-    <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
-    {/* circular mask wrapper */}
-    <div className="h-56 w-56 rounded-full overflow-hidden shadow-xl ring-4 ring-white bg-slate-100">
-      <img
-        src={profileImg}
-        alt={t("about.alt")}
-        className="h-full w-full object-cover"
-        loading="lazy"
-      />
-    </div>
-  </div>
-</div>
+          {/* Photo */}
+          <div className="flex justify-center">
+            <div className="relative">
+              {/* soft glow behind */}
+              <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
+              <img
+                src={profileImg}
+                alt={t("about.alt")}
+                className="block aspect-square h-56 w-56 sm:h-64 sm:w-64 rounded-full object-cover object-center
+                           ring-4 ring-white shadow-[0_4px_12px_rgba(0,0,0,0.25),0_8px_24px_rgba(0,0,0,0.15)]"
+                loading="lazy"
+              />
+            </div>
+          </div>
 
           {/* Text */}
           <div>
