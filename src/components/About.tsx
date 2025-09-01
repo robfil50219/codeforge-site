@@ -1,7 +1,7 @@
 // src/components/About.tsx
 import { type JSX } from "react";
 import { useTranslation } from "react-i18next";
-import profileImg from "../assets/profile.jpg";
+import profileImg from "../assets/profileimage.png";
 
 // Icons
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
@@ -57,19 +57,22 @@ export default function About() {
     <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Photo */}
-          <div className="flex justify-center">
-            <div className="relative">
-              {/* soft glow */}
-              <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
-              <img
-                src={profileImg}
-                alt={t("about.alt")}
-                className="h-56 w-56 rounded-full object-cover shadow-xl ring-4 ring-white"
-                loading="lazy"
-              />
-            </div>
-          </div>
+        {/* Photo */}
+<div className="flex justify-center">
+  <div className="relative">
+    {/* soft glow */}
+    <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
+    {/* circular mask wrapper */}
+    <div className="h-56 w-56 rounded-full overflow-hidden shadow-xl ring-4 ring-white bg-slate-100">
+      <img
+        src={profileImg}
+        alt={t("about.alt")}
+        className="h-full w-full object-cover"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</div>
 
           {/* Text */}
           <div>
