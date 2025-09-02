@@ -117,8 +117,6 @@ export default function Services() {
     const track = trackRef.current;
     const stepEl = stepRefs.current[idx];
     if (!track || !stepEl) return;
-    // Removed setDotLeft since dotLeft is unused
-    // setDotLeft(centerX - trackRect.left);
   }
 
   const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
