@@ -1,4 +1,4 @@
-// Removed unused React hooks
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Palette,
@@ -8,26 +8,28 @@ import {
   Smartphone,
   ShieldCheck,
   CheckCircle2,
+  Search,
+  Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
 import Container from "./ui/Container";
-import { Card } from "./ui/Card";
-import { toneStyle } from "../utils/tone";
+import { Card, CardHeader, CardIcon, CardTitle, CardDescription, CardList } from "./ui/Card";
+import { toneStyle, type Tone } from "../utils/tone";
 import ProcessStrip from "./ProcessStrip";
-import { Search, Palette as PaletteIcon, Rocket } from "lucide-react";
 
 type Service = {
   title: string;
   blurb: string;
   points: string[];
   Icon: LucideIcon;
-  tone?: "sky" | "indigo" | "emerald" | "slate";
+  tone?: Tone;
 };
 
 export default function Services() {
   const { t } = useTranslation();
 
-  // Primary services with icons
+  // Primary & Extras (content from i18n)
   const primary: Service[] = [
     {
       title: t("services.primary.uiux.title"),
@@ -52,7 +54,6 @@ export default function Services() {
     },
   ];
 
-  // Extra services with icons
   const extras: Service[] = [
     {
       title: t("services.extras.cms.title"),
@@ -77,12 +78,50 @@ export default function Services() {
     },
   ];
 
+  // Process data + localized details
   const steps = t("services.process.steps", {
     returnObjects: true,
   }) as { step: string; text: string }[];
 
-  const details = (t("services.process.details", { returnObjects: true }) ||
-    []) as string[]; // optional; we pass title/body below
+  const detailsRaw = t("services.process.details", {
+    returnObjects: true,
+  }) as unknown;
+
+  type Detail = { title: string; body: string };
+  let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
+  if (detailsRaw && typeof detailsRaw === "object" && !Array.isArray(detailsRaw)) {
+    const entries = Object.entries(detailsRaw as Record<string, { title?: string; body?: string }>)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(([, v]) => ({ title: v?.title ?? "", body: v?.body ?? "" }));
+    if (entries.length) {
+      details = entries.map((d, i) => ({
+        title: d.title || steps[i]?.step || "",
+        body: d.body || steps[i]?.text || "",
+      }));
+    }
+  }
+
+  // Process dot (unchanged behavior)
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Removed unused dotLeft state
+
+  useEffect(() => {
+    positionDotAtIndex(0);
+    const onResize = () => positionDotAtIndex(0);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  function positionDotAtIndex(idx: number) {
+    const track = trackRef.current;
+    const stepEl = stepRefs.current[idx];
+    if (!track || !stepEl) return;
+    // Removed setDotLeft since dotLeft is unused
+    // setDotLeft(centerX - trackRect.left);
+  }
+
+  const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
 
   return (
     <section id="services" className="scroll-mt-24 bg-white" aria-labelledby="services-heading">
@@ -100,20 +139,19 @@ export default function Services() {
           {primary.map(({ title, blurb, points, Icon, tone }) => {
             const toneCls = toneStyle(tone);
             return (
-              <Card key={title} className="group">
+              <Card key={title}>
                 {/* Decorative corner glow */}
                 <div
                   aria-hidden="true"
                   className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
                 />
-                <div className="relative">
-                  <span
-                    className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${toneCls.bg} ring-1 ${toneCls.ring}`}
-                  >
+                <CardHeader>
+                  <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
                     <Icon className={`h-6 w-6 ${toneCls.icon}`} />
-                  </span>
-                  <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-                  <p className="mt-3 text-sm text-slate-600">{blurb}</p>
+                  </CardIcon>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription>{blurb}</CardDescription>
+                  {/* Keep original check icon style for bullets */}
                   <ul className="mt-4 space-y-2 text-sm text-slate-700">
                     {points.map((p) => (
                       <li key={p} className="flex items-start gap-2">
@@ -122,51 +160,33 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </CardHeader>
               </Card>
             );
           })}
         </div>
 
-        {/* Process strip (separate component, visuals unchanged) */}
-        <ProcessStrip
-          title={t("services.process.title")}
-          steps={steps}
-          icons={[Search, PaletteIcon, Rocket]}
-          details={[
-            { title: steps[0]?.step, body: (details[0] as string) ?? steps[0]?.text },
-            { title: steps[1]?.step, body: (details[1] as string) ?? steps[1]?.text },
-            { title: steps[2]?.step, body: (details[2] as string) ?? steps[2]?.text },
-          ]}
-        />
+        {/* Process strip (separate component) */}
+        <ProcessStrip steps={steps} icons={stepIcons} title={t("services.process.title")} details={details} />
 
         {/* Extras */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {extras.map(({ title, blurb, points, Icon, tone }) => {
             const toneCls = toneStyle(tone);
             return (
-              <Card key={title} className="group">
+              <Card key={title}>
                 <div
                   aria-hidden="true"
                   className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
                 />
-                <div className="relative">
-                  <span
-                    className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${toneCls.bg} ring-1 ${toneCls.ring}`}
-                  >
+                <CardHeader>
+                  <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
                     <Icon className={`h-6 w-6 ${toneCls.icon}`} />
-                  </span>
-                  <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-                  <p className="mt-3 text-sm text-slate-600">{blurb}</p>
-                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                    {points.map((p) => (
-                      <li key={p} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 text-slate-400" />
-                        <span>{p}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  </CardIcon>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription>{blurb}</CardDescription>
+                  <CardList items={points} />
+                </CardHeader>
               </Card>
             );
           })}
