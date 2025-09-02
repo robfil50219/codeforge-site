@@ -1,96 +1,57 @@
+// src/components/ConsentBanner.tsx
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getConsent, setConsent } from "../utils/consent";
+import { Link } from "react-router-dom";
 
-/**
- * Always-mounted consent banner:
- * - Registers window.showConsent so Footer (Manage cookies) can reopen it.
- * - Hides via internal state after accept/reject (no unmount).
- * - Mobile-friendly layout with no overflow issues.
- */
 export default function ConsentBanner() {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from localStorage once on client
+  // Expose showConsent globally
   useEffect(() => {
-    const stored = getConsent();
-    setVisible(stored === null); // show if not decided yet
-    setHydrated(true);
+    window.showConsent = () => setVisible(true);
+    const current = getConsent();
+    if (!current) setVisible(true);
   }, []);
 
-  // Expose global opener that Footer calls via resetConsent()
-  useEffect(() => {
-    function openBanner() {
-      setVisible(true);
-    }
-    // register
-    (window as Window & { showConsent?: () => void }).showConsent = openBanner;
-
-    // cleanup on unmount (kept for safety even though we keep the component mounted)
-    return () => {
-      if ((window as Window & { showConsent?: () => void }).showConsent === openBanner) {
-        (window as Window & { showConsent?: () => void }).showConsent = undefined;
-      }
-    };
-  }, []);
-
-  if (!hydrated || !visible) return null;
-
-  const onAccept = () => {
-    setConsent("accepted");
-    setVisible(false);
-  };
-
-  const onReject = () => {
-    setConsent("rejected");
-    setVisible(false);
-  };
+  if (!visible) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-labelledby="consent-title"
-      aria-live="polite"
-      className="fixed inset-x-0 bottom-0 z-[100] px-4 sm:px-6 lg:px-8 pb-4"
-    >
-      <div className="mx-auto max-w-7xl">
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-xl">
-          <div className="p-4 sm:p-6">
-            <div className="sm:flex sm:items-start sm:gap-6">
-              {/* Text */}
-              <div className="flex-1">
-                <h2 id="consent-title" className="text-sm font-semibold text-slate-900">
-                  {t("consent.title")}
-                </h2>
-                <p className="mt-1 text-sm text-slate-600">{t("consent.text")}</p>
-                <Link
-                  to="/privacy"
-                  className="mt-2 inline-block text-sm font-medium text-sky-700 underline underline-offset-2 hover:text-sky-800"
-                >
-                  {t("consent.learnMore")}
-                </Link>
-              </div>
+    <div className="fixed inset-x-0 bottom-0 z-50 bg-white/90 backdrop-blur-md border-t border-slate-200">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Text */}
+        <p className="text-sm text-slate-700">
+          <span className="font-semibold">{t("consent.title")}</span> ·{" "}
+          {t("consent.text")}{" "}
+          <Link
+            to="/privacy"
+            className="underline underline-offset-2 hover:text-slate-800"
+          >
+            {t("consent.learnMore")}
+          </Link>
+        </p>
 
-              {/* Actions */}
-              <div className="mt-4 grid gap-2 sm:mt-0 sm:w-[min(320px,100%)] sm:grid-cols-2">
-                <button
-                  onClick={onReject}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-                >
-                  {t("consent.actions.reject")}
-                </button>
-                <button
-                  onClick={onAccept}
-                  className="w-full rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
-                >
-                  {t("consent.actions.accept")}
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Buttons */}
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => {
+              setConsent("rejected");
+              setVisible(false);
+            }}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {t("consent.actions.reject")}
+          </button>
+          <button
+            onClick={() => {
+              setConsent("accepted");
+              setVisible(false);
+            }}
+            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+          >
+            {t("consent.actions.accept")}
+          </button>
         </div>
       </div>
     </div>
