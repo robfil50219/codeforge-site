@@ -234,48 +234,46 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
         </div>
       </div>
 
-      {/* Mobile vertical list (same look, tap to reveal details) */}
+      {/* Mobile vertical list with expandable details */}
 <ol className="sm:hidden mt-6 space-y-6">
   {steps.map((x, idx) => {
     const Icon = icons[idx % icons.length];
-    const isOpen = openIdx === idx; // uses existing state from ProcessStrip
+    const isOpen = openIdx === idx;
 
     return (
       <li key={x.step} className="relative pl-10">
-        {/* Whole step is tappable */}
+        {/* Step icon */}
+        <span className="absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-full bg-sky-50 ring-1 ring-sky-100">
+          <Icon className="h-4 w-4 text-sky-600" />
+        </span>
+
+        {/* Vertical connector line */}
+        {idx < steps.length - 1 && (
+          <span className="absolute left-3.5 top-8 bottom-[-12px] w-0.5 bg-slate-200" />
+        )}
+
+        {/* Clickable label */}
         <button
           type="button"
           onClick={() => setOpenIdx(isOpen ? null : idx)}
           aria-expanded={isOpen}
-          className="flex w-full flex-col items-start text-left"
+          className="w-full text-left"
         >
-          <span className="absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-full bg-sky-50 ring-1 ring-sky-100">
-            <Icon className="h-4 w-4 text-sky-600" />
-          </span>
-          {idx < steps.length - 1 && (
-            <span className="absolute left-3.5 top-8 bottom-[-12px] w-0.5 bg-slate-200" />
-          )}
           <div className="font-semibold text-slate-900">{x.step}</div>
           <div className="text-sm text-slate-600">{x.text}</div>
         </button>
 
-        {/* Collapsible detail (hidden by default) */}
-        <div
-          className={`grid transition-[grid-template-rows,opacity,margin] duration-200 ease-out ${
-            isOpen ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0 mt-0"
-          }`}
-        >
-          <div className="overflow-hidden">
-            <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-              <div className="text-sm font-medium text-slate-900">
-                {details?.[idx]?.title ?? x.step}
-              </div>
-              <p className="mt-1 text-sm text-slate-600">
-                {details?.[idx]?.body ?? x.text}
-              </p>
+        {/* Expanded details */}
+        {isOpen && (
+          <div className="mt-2 rounded-lg border border-slate-200 bg-white p-3 shadow-md">
+            <div className="text-sm font-semibold text-slate-900">
+              {details?.[idx]?.title ?? x.step}
             </div>
+            <p className="mt-1 text-sm text-slate-600">
+              {details?.[idx]?.body ?? x.text}
+            </p>
           </div>
-        </div>
+        )}
       </li>
     );
   })}
