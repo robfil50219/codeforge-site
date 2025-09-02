@@ -6,6 +6,13 @@ import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import Container from "./ui/Container";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 
+// Extend Window interface to include showConsent
+declare global {
+  interface Window {
+    showConsent?: () => void;
+  }
+}
+
 export default function Footer() {
   const { t, i18n } = useTranslation();
   const { handleAnchorClick } = useSmoothScroll(80);
