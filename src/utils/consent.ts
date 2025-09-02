@@ -1,6 +1,8 @@
 // Simple consent utilities used by the Footer "Manage cookies" button
 // and by the ConsentBanner component.
 
+export {}; // ensure this file is a module so global augmentation is allowed
+
 declare global {
   interface Window {
     /** Exposed by ConsentBanner so other parts of the app can reopen it. */
@@ -13,10 +15,7 @@ const CONSENT_KEY = "cookieConsent"; // "accepted" | "rejected"
 export function getConsent(): "accepted" | "rejected" | null {
   try {
     const value = localStorage.getItem(CONSENT_KEY);
-    if (value === "accepted" || value === "rejected") {
-      return value;
-    }
-    return null;
+    return value === "accepted" || value === "rejected" ? value : null;
   } catch {
     return null;
   }
@@ -38,7 +37,7 @@ export function resetConsent() {
     /* no-op */
   }
   // Call the global hook the banner registers. This is safe on mobile/desktop.
-  if (typeof window.showConsent === "function") {
+  if (typeof window !== "undefined" && typeof window.showConsent === "function") {
     window.showConsent();
   }
 }
