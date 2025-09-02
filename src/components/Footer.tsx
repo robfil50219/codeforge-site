@@ -1,41 +1,26 @@
-// src/components/Footer.tsx
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
+import Container from "./ui/Container";
+import useSmoothScroll from "../hooks/useSmoothScroll";
 
 export default function Footer() {
   const { t, i18n } = useTranslation();
+  const { handleAnchorClick } = useSmoothScroll(80);
   const year = new Date().getFullYear();
-  const location = useLocation();
 
   const nav = [
-    { to: "/", hash: "#services", label: t("nav.services") },
-    { to: "/", hash: "#pricing", label: t("nav.pricing") },
-    { to: "/", hash: "#about", label: t("nav.about") },
-    { to: "/contact", label: t("nav.contact") },
-  ];
-
-  const handleSmoothScroll = (
-    e: React.MouseEvent,
-    to: string,
-    hash?: string
-  ) => {
-    if (hash && to === "/") {
-      e.preventDefault();
-      if (location.pathname === "/") {
-        const id = hash.replace("#", "");
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.location.href = `${to}${hash}`;
-      }
-    }
-  };
+    { id: "services", label: t("nav.services") },
+    { id: "pricing", label: t("nav.pricing") },
+    { id: "about", label: t("nav.about") },
+    { id: "contact", label: t("nav.contact") },
+  ] as const;
 
   return (
     <footer className="mt-24 border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <Container className="py-10">
         {/* Top: brand + nav + socials */}
         <div className="grid gap-8 sm:grid-cols-3">
           {/* Brand */}
@@ -43,7 +28,7 @@ export default function Footer() {
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-widest text-slate-900"
+              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
               aria-label="Back to home"
             >
               <img
@@ -51,25 +36,19 @@ export default function Footer() {
                 alt="CodeForge Studio logo"
                 className="h-12 w-12 sm:h-14 sm:w-14"
               />
-              {/* Render brand in ALL CAPS visually */}
-              <span className="text-xl sm:text-2xl uppercase">
-                {t("brand")}
-              </span>
+              <span className="text-xl sm:text-2xl">{t("brand").toUpperCase()}</span>
             </Link>
             <p className="mt-3 text-sm text-slate-600">{t("hero.tagline")}</p>
           </div>
 
           {/* Quick links */}
-          <nav
-            aria-label={t("footer.navLabel")}
-            className="sm:justify-self-center"
-          >
+          <nav aria-label={t("footer.navLabel")} className="sm:justify-self-center">
             <ul className="space-y-2 text-sm">
               {nav.map((item) => (
-                <li key={item.label}>
+                <li key={item.id}>
                   <Link
-                    to={item.to + (item.hash || "")}
-                    onClick={(e) => handleSmoothScroll(e, item.to, item.hash)}
+                    to={"/#" + item.id}
+                    onClick={(e) => handleAnchorClick(e, item.id)}
                     className="text-slate-600 hover:text-slate-900 transition"
                   >
                     {item.label}
@@ -81,9 +60,7 @@ export default function Footer() {
 
           {/* Socials */}
           <div className="sm:justify-self-end">
-            <div className="text-sm font-medium text-slate-900">
-              {t("footer.connect")}
-            </div>
+            <div className="text-sm font-medium text-slate-900">{t("footer.connect")}</div>
             <ul className="mt-3 flex items-center gap-3">
               <li>
                 <a
@@ -133,8 +110,6 @@ export default function Footer() {
             <Link to="/terms" className="hover:text-slate-700">
               {t("footer.terms")}
             </Link>
-
-            {/* Manage cookies */}
             <button
               key={i18n.language}
               type="button"
@@ -146,7 +121,7 @@ export default function Footer() {
             </button>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

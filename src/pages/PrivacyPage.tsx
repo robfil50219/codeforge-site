@@ -1,74 +1,60 @@
-// src/pages/PrivacyPage.tsx
 import { useTranslation } from "react-i18next";
-import { CONTACT_EMAIL, MAILTO } from "../config/contact";
-import { Link } from "react-router-dom";
 
 export default function PrivacyPage() {
   const { t } = useTranslation();
-
-  // All text (including SEO) comes from i18n
-  const site = "CodeForge Studio";
-  const title = `${t("privacy.heading")} • ${site}`;
-  const desc = t("privacy.intro");
-
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      {/* SEO head tags (React 19) */}
-      <title>{title}</title>
-      <meta name="description" content={desc} />
-      <meta name="robots" content="index,follow" />
-      <link rel="canonical" href="https://www.codeforgestudio.no/privacy" />
+    <main className="bg-white">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          {t("privacy.heading")}
+        </h1>
+        <p className="mt-3 text-slate-600">{t("privacy.intro")}</p>
 
-      {/* Open Graph / Twitter (localized) */}
-      <meta property="og:type" content="website" />
-      <meta property="og:site_name" content={site} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={desc} />
-      <meta
-        property="og:url"
-        content="https://www.codeforgestudio.no/privacy"
-      />
-      {/* <meta property="og:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={desc} />
-      {/* <meta name="twitter:image" content="https://www.codeforgestudio.no/og-default.png" /> */}
-
-      <h1 className="text-3xl font-bold text-slate-900 mb-6">
-        {t("privacy.heading")}
-      </h1>
-      <p className="text-slate-600 mb-8">{t("privacy.intro")}</p>
-
-      {/* Sections */}
-      <div className="space-y-6">
-        {["data", "use", "rights", "cookies"].map((key) => (
-          <section key={key}>
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
-              {t(`privacy.sections.${key}.title`)}
+        <section className="mt-8 space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t("privacy.sections.data.title")}
             </h2>
-            <p className="text-slate-600">
-              {t(`privacy.sections.${key}.text`)}
+            <p className="mt-1 text-slate-600">
+              {t("privacy.sections.data.text")}
             </p>
-          </section>
-        ))}
-      </div>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t("privacy.sections.use.title")}
+            </h2>
+            <p className="mt-1 text-slate-600">
+              {t("privacy.sections.use.text")}
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t("privacy.sections.rights.title")}
+            </h2>
+            <p className="mt-1 text-slate-600">
+              {t("privacy.sections.rights.text")}
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t("privacy.sections.cookies.title")}
+            </h2>
+            <p className="mt-1 text-slate-600">
+              {t("privacy.sections.cookies.text")}
+            </p>
+          </div>
+        </section>
 
-      {/* Contact */}
-      <div className="mt-10">
-        <p className="text-slate-600">{t("privacy.contact")}</p>
-        <a href={MAILTO} className="text-sky-600 hover:underline">
-          {CONTACT_EMAIL}
-        </a>
-      </div>
+        <p className="mt-8 text-slate-600">
+          {t("privacy.contact")}
+        </p>
 
-      {/* Back */}
-      <div className="mt-10">
-        <Link
-          to="/"
-          className="text-sm text-slate-500 hover:text-slate-700"
+        <a
+          href="/"
+          className="mt-10 inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
         >
-          ← {t("privacy.back")}
-        </Link>
+          {t("privacy.back")}
+        </a>
       </div>
     </main>
   );

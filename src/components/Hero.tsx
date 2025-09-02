@@ -1,12 +1,13 @@
-// src/components/Hero.tsx
 import { useTranslation } from "react-i18next";
+import Container from "./ui/Container";
+import { ButtonLink } from "./ui/Buttons";
 
 export default function Hero() {
   const { t } = useTranslation();
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
+      <Container className="py-20">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left: Text content */}
           <div>
@@ -23,25 +24,13 @@ export default function Hero() {
               {t("hero.blurb")}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a
-                href="#services"
-                className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-white font-medium shadow-sm hover:bg-sky-700 transition"
-              >
-                {t("hero.ctaServices")}
-              </a>
-              {/* <a
-                href="#work"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-slate-100 transition"
-              >
-                {t("hero.ctaWork")}
-              </a> */}
+              <ButtonLink to="/#services">{t("hero.ctaServices")}</ButtonLink>
+              {/* <ButtonLink variant="outline" to="/#work">{t("hero.ctaWork")}</ButtonLink> */}
             </div>
           </div>
 
           {/* Right: Image with caption */}
           <div className="relative">
-            <div className="pointer-events-none absolute -top-12 -right-12 -z-10 h-72 w-72 rounded-full bg-sky-100 blur-3xl opacity-70" />
-            <div className="pointer-events-none absolute bottom-0 -left-10 -z-10 h-64 w-64 rounded-full bg-indigo-100 blur-3xl opacity-70" />
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
               <img
                 src="/hero.jpg"
@@ -58,12 +47,12 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="underline hover:text-slate-600"
               >
-                 Sigmund / Unsplash
+                Sigmund / Unsplash
               </a>
             </p>
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

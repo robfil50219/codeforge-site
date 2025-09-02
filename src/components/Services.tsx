@@ -1,4 +1,4 @@
-// src/components/Services.tsx
+// Removed unused React hooks
 import { useTranslation } from "react-i18next";
 import {
   Palette,
@@ -8,11 +8,13 @@ import {
   Smartphone,
   ShieldCheck,
   CheckCircle2,
-  Search,
-  Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Container from "./ui/Container";
+import { Card } from "./ui/Card";
+import { toneStyle } from "../utils/tone";
 import ProcessStrip from "./ProcessStrip";
+import { Search, Palette as PaletteIcon, Rocket } from "lucide-react";
 
 type Service = {
   title: string;
@@ -79,61 +81,12 @@ export default function Services() {
     returnObjects: true,
   }) as { step: string; text: string }[];
 
-  // Localized dropdown details for each step
-  const details = [
-    {
-      title: t("services.process.details.discover.title"),
-      body: t("services.process.details.discover.body"),
-    },
-    {
-      title: t("services.process.details.design.title"),
-      body: t("services.process.details.design.body"),
-    },
-    {
-      title: t("services.process.details.build.title"),
-      body: t("services.process.details.build.body"),
-    },
-  ];
-
-  const stepIcons = [Search, Palette, Rocket];
-
-  // Icon tone styles
-  const toneStyle = (tone: Service["tone"]) => {
-    switch (tone) {
-      case "sky":
-        return {
-          ring: "ring-sky-100",
-          bg: "bg-sky-50",
-          icon: "text-sky-600",
-          glow: "bg-sky-100/60",
-        };
-      case "indigo":
-        return {
-          ring: "ring-indigo-100",
-          bg: "bg-indigo-50",
-          icon: "text-indigo-600",
-          glow: "bg-indigo-100/60",
-        };
-      case "emerald":
-        return {
-          ring: "ring-emerald-100",
-          bg: "bg-emerald-50",
-          icon: "text-emerald-600",
-          glow: "bg-emerald-100/60",
-        };
-      default:
-        return {
-          ring: "ring-slate-200",
-          bg: "bg-slate-50",
-          icon: "text-slate-700",
-          glow: "bg-slate-100/60",
-        };
-    }
-  };
+  const details = (t("services.process.details", { returnObjects: true }) ||
+    []) as string[]; // optional; we pass title/body below
 
   return (
     <section id="services" className="scroll-mt-24 bg-white" aria-labelledby="services-heading">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <Container className="py-16 sm:py-24">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 id="services-heading" className="text-3xl font-bold tracking-tight text-slate-900">
@@ -147,10 +100,7 @@ export default function Services() {
           {primary.map(({ title, blurb, points, Icon, tone }) => {
             const toneCls = toneStyle(tone);
             return (
-              <article
-                key={title}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
-              >
+              <Card key={title} className="group">
                 {/* Decorative corner glow */}
                 <div
                   aria-hidden="true"
@@ -173,17 +123,21 @@ export default function Services() {
                     ))}
                   </ul>
                 </div>
-              </article>
+              </Card>
             );
           })}
         </div>
 
-        {/* Process strip (new component, same look + dropdown) */}
+        {/* Process strip (separate component, visuals unchanged) */}
         <ProcessStrip
-          steps={steps}
-          icons={stepIcons}
           title={t("services.process.title")}
-          details={details}
+          steps={steps}
+          icons={[Search, PaletteIcon, Rocket]}
+          details={[
+            { title: steps[0]?.step, body: (details[0] as string) ?? steps[0]?.text },
+            { title: steps[1]?.step, body: (details[1] as string) ?? steps[1]?.text },
+            { title: steps[2]?.step, body: (details[2] as string) ?? steps[2]?.text },
+          ]}
         />
 
         {/* Extras */}
@@ -191,10 +145,7 @@ export default function Services() {
           {extras.map(({ title, blurb, points, Icon, tone }) => {
             const toneCls = toneStyle(tone);
             return (
-              <article
-                key={title}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
-              >
+              <Card key={title} className="group">
                 <div
                   aria-hidden="true"
                   className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
@@ -216,11 +167,11 @@ export default function Services() {
                     ))}
                   </ul>
                 </div>
-              </article>
+              </Card>
             );
           })}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

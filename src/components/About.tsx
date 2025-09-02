@@ -1,7 +1,7 @@
-// src/components/About.tsx
 import { type JSX } from "react";
 import { useTranslation } from "react-i18next";
 import profileImg from "../assets/profileimage.png";
+import Container from "./ui/Container";
 
 // Icons
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
@@ -21,7 +21,6 @@ export default function About() {
   const highlights = t("about.highlights", { returnObjects: true }) as string[];
   const tech = t("about.tech", { returnObjects: true }) as string[];
 
-  // Map i18n labels -> icons (match exactly the strings you have in i18n)
   const techIcons: Record<string, JSX.Element> = {
     React: <FaReact className="h-5 w-5" />,
     TypeScript: <SiTypescript className="h-5 w-5" />,
@@ -31,7 +30,6 @@ export default function About() {
     Vite: <SiVite className="h-5 w-5" />,
     WordPress: <FaWordpress className="h-5 w-5" />,
     Firebase: <SiFirebase className="h-5 w-5" />,
-    // Special combined label → show REST + GraphQL together
     "REST & GraphQL APIs": (
       <span className="flex -space-x-1.5 items-center">
         <TbApi className="h-5 w-5" />
@@ -40,7 +38,6 @@ export default function About() {
     ),
   };
 
-  // Optional color accents per tech (kept subtle)
   const techColor: Record<string, string> = {
     React: "text-sky-500",
     TypeScript: "text-blue-600",
@@ -55,18 +52,16 @@ export default function About() {
 
   return (
     <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="grid items-center gap-12 md:grid-cols-2">
           {/* Photo */}
           <div className="flex justify-center">
             <div className="relative">
-              {/* soft glow behind */}
               <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
               <img
                 src={profileImg}
                 alt={t("about.alt")}
-                className="block aspect-square h-56 w-56 sm:h-64 sm:w-64 rounded-full object-cover object-center
-                           ring-4 ring-white shadow-[0_4px_12px_rgba(0,0,0,0.25),0_8px_24px_rgba(0,0,0,0.15)]"
+                className="h-56 w-56 rounded-full object-cover shadow-[0_8px_30px_rgba(2,6,23,0.12)] ring-4 ring-white"
                 loading="lazy"
               />
             </div>
@@ -95,7 +90,7 @@ export default function About() {
               ))}
             </ul>
 
-            {/* Tech chips with icons */}
+            {/* Tech chips */}
             <div className="mt-6 flex flex-wrap gap-2">
               {tech.map((label) => {
                 const icon = techIcons[label];
@@ -118,7 +113,7 @@ export default function About() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }
