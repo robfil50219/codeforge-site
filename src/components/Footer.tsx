@@ -1,17 +1,10 @@
-// src/components/Footer.tsx
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
+import { resetConsent } from "../utils/consent";
 import Container from "./ui/Container";
 import useSmoothScroll from "../hooks/useSmoothScroll";
-
-// Extend Window interface to include showConsent
-declare global {
-  interface Window {
-    showConsent?: () => void;
-  }
-}
 
 export default function Footer() {
   const { t, i18n } = useTranslation();
@@ -24,19 +17,6 @@ export default function Footer() {
     { id: "about", label: t("nav.about") },
     { id: "contact", label: t("nav.contact") },
   ] as const;
-
-  function handleManageCookies() {
-    try {
-      // clear stored decision
-      localStorage.removeItem("cf_consent");
-      document.cookie =
-        "cf_consent=; Path=/; Max-Age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-    } catch {
-      // ignore
-    }
-    // open the banner (typed global)
-    window.showConsent?.();
-  }
 
   return (
     <footer className="mt-24 border-t border-slate-200 bg-white">
@@ -56,18 +36,13 @@ export default function Footer() {
                 alt="CodeForge Studio logo"
                 className="h-12 w-12 sm:h-14 sm:w-14"
               />
-              <span className="text-xl sm:text-2xl">
-                {t("brand").toUpperCase()}
-              </span>
+              <span className="text-xl sm:text-2xl">{t("brand").toUpperCase()}</span>
             </Link>
             <p className="mt-3 text-sm text-slate-600">{t("hero.tagline")}</p>
           </div>
 
           {/* Quick links */}
-          <nav
-            aria-label={t("footer.navLabel", { defaultValue: "Footer navigation" })}
-            className="sm:justify-self-center"
-          >
+          <nav aria-label={t("footer.navLabel")} className="sm:justify-self-center">
             <ul className="space-y-2 text-sm">
               {nav.map((item) => (
                 <li key={item.id}>
@@ -85,9 +60,7 @@ export default function Footer() {
 
           {/* Socials */}
           <div className="sm:justify-self-end">
-            <div className="text-sm font-medium text-slate-900">
-              {t("footer.connect")}
-            </div>
+            <div className="text-sm font-medium text-slate-900">{t("footer.connect")}</div>
             <ul className="mt-3 flex items-center gap-3">
               <li>
                 <a
@@ -137,12 +110,11 @@ export default function Footer() {
             <Link to="/terms" className="hover:text-slate-700">
               {t("footer.terms")}
             </Link>
-            {/* Manage cookies (force re-render on language change so label updates) */}
             <button
               key={i18n.language}
               type="button"
-              onClick={handleManageCookies}
-              className="text-slate-500 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
+              onClick={resetConsent}
+              className="text-slate-500 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
               aria-label={t("consent.manage")}
             >
               {t("consent.manage")}
