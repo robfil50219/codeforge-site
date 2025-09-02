@@ -1,31 +1,44 @@
-// src/utils/consent.ts
-const STORAGE_KEY = "cf_consent"; // "accepted" | "rejected"
-export type ConsentValue = "accepted" | "rejected";
+// Simple consent utilities used by the Footer "Manage cookies" button
+// and by the ConsentBanner component.
 
-export function getStoredConsent(): ConsentValue | null {
+declare global {
+  interface Window {
+    /** Exposed by ConsentBanner so other parts of the app can reopen it. */
+    showConsent?: () => void;
+  }
+}
+
+const CONSENT_KEY = "cookieConsent"; // "accepted" | "rejected"
+
+export function getConsent(): "accepted" | "rejected" | null {
   try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v === "accepted" || v === "rejected" ? v : null;
+    const value = localStorage.getItem(CONSENT_KEY);
+    if (value === "accepted" || value === "rejected") {
+      return value;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
-export function setStoredConsent(v: ConsentValue) {
+export function setConsent(value: "accepted" | "rejected") {
   try {
-    localStorage.setItem(STORAGE_KEY, v);
-    document.cookie = `cf_consent=${v}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+    localStorage.setItem(CONSENT_KEY, value);
   } catch {
-    /* ignore */
+    /* no-op */
   }
 }
 
+/** Called by the "Manage cookies" button. Clears and reopens the banner. */
 export function resetConsent() {
   try {
-    localStorage.removeItem(STORAGE_KEY);
-    document.cookie = `cf_consent=; Path=/; Max-Age=0; SameSite=Lax`;
-    window.dispatchEvent(new CustomEvent("cf:consent:reset"));
+    localStorage.removeItem(CONSENT_KEY);
   } catch {
-    /* ignore */
+    /* no-op */
+  }
+  // Call the global hook the banner registers. This is safe on mobile/desktop.
+  if (typeof window.showConsent === "function") {
+    window.showConsent();
   }
 }
