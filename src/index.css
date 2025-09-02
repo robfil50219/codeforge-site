@@ -32,15 +32,19 @@ body {
   color: #0f172a; /* slate-900-ish */
 }
 
-/* Media defaults so images/icons don’t overflow */
+/* Media defaults so images/icons don’t overflow
+   IMPORTANT: do NOT force height:auto globally, it breaks circular avatars
+   that rely on w/h utilities (e.g., w-56 h-56). */
 img,
 svg,
 video,
 canvas {
   max-width: 100%;
-  height: auto;
   display: block;
 }
+/* If you need auto height for a specific image, opt-in:
+   <img class="auto-h" ... /> */
+img.auto-h { height: auto; }
 
 /* Optional: nicer focus & selection */
 :focus-visible {
@@ -88,5 +92,5 @@ input[type="reset"] {
   .glass-animated {
     animation: none !important;
   }
-} 
+}
 
