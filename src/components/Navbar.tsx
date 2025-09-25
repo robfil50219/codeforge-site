@@ -1,23 +1,132 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import LanguageToggle from "./LanguageToggle";
 import Container from "./ui/Container";
 import useSmoothScroll from "../hooks/useSmoothScroll";
+import { useWpMenu } from "../hooks/useWpMenu";
+import type { MenuItem as WpMenuItem } from "../hooks/useWpMenu";
 
-type NavItem = { id: string; labelKey: string };
+type FallbackItem = { id: string; labelKey: string };
 
-const NAV_ITEMS: NavItem[] = [
+const FALLBACK_ITEMS: FallbackItem[] = [
   { id: "services", labelKey: "nav.services" },
-  { id: "pricing", labelKey: "nav.pricing" },
-  { id: "about", labelKey: "nav.about" },
-  { id: "contact", labelKey: "nav.contact" },
+  { id: "pricing",  labelKey: "nav.pricing"  },
+  { id: "about",    labelKey: "nav.about"    },
+  { id: "contact",  labelKey: "nav.contact"  },
 ];
+
+// Return a section id (without '#') or undefined
+function extractSectionId(url: string): string | undefined {
+  try {
+    const u = new URL(url, window.location.origin);
+    if (u.origin === window.location.origin && u.hash.startsWith("#")) {
+      return u.hash.slice(1);
+    }
+    if (url.startsWith("#")) return url.slice(1);
+  } catch {
+    // relative like "/#about" or just "#about"
+    if (url.startsWith("/#")) return url.slice(2);
+    if (url.startsWith("#")) return url.slice(1);
+  }
+  return undefined;
+}
+
+type RenderItem = {
+  key: string;
+  title: string;
+  href: string;
+  sectionId?: string;
+  external?: boolean;
+  target?: string;
+};
 
 export default function Navbar() {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
   const { handleAnchorClick } = useSmoothScroll(80);
+  const [open, setOpen] = useState(false);
+
+  // Fetch WP menu from location "primary"; try slug "header" if location isn't assigned yet
+  const { items: wpItems, loading } = useWpMenu("primary", { fallbackSlug: "header" });
+
+  // Normalize to renderable items; if WP has none, fall back to i18n anchors
+  const items: RenderItem[] = useMemo(() => {
+    if (wpItems && wpItems.length > 0) {
+      const sorted: WpMenuItem[] = [...wpItems].sort(
+        (a: WpMenuItem, b: WpMenuItem) => a.order - b.order
+      );
+
+      return sorted.map((i: WpMenuItem): RenderItem => {
+        const sectionId = i.url ? extractSectionId(i.url) : undefined;
+        const external =
+          !!i.url &&
+          /^https?:\/\//i.test(i.url) &&
+          !i.url.includes(window.location.host);
+
+        return {
+          key: String(i.id),
+          title: i.title,
+          href: i.url ?? "#",
+          sectionId,
+          external,
+          target: i.target || (external ? "_blank" : "_self"),
+        };
+      });
+    }
+
+    // fallback to original local/i18n single-page anchors
+    return FALLBACK_ITEMS.map(
+      (i): RenderItem => ({
+        key: i.id,
+        title: t(i.labelKey),
+        href: `/#${i.id}`,
+        sectionId: i.id,
+        external: false,
+        target: "_self",
+      })
+    );
+  }, [wpItems, t]);
+
+  const renderLink = (item: RenderItem, showDivider: boolean) => {
+    const common =
+      "px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition";
+
+    if (item.sectionId) {
+      // Smooth scroll link
+      return (
+        <div key={item.key} className="group flex items-center">
+          <Link
+            to={`/#${item.sectionId}`}
+            onClick={(e) => handleAnchorClick(e, item.sectionId!)}
+            className={common}
+          >
+            {item.title}
+          </Link>
+          {showDivider && (
+            <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition group-hover:scale-125 group-hover:bg-slate-500" />
+          )}
+        </div>
+      );
+    }
+
+    // Normal/external link
+    return (
+      <div key={item.key} className="group flex items-center">
+        <a
+          href={item.href}
+          target={item.target}
+          rel={item.external ? "noreferrer noopener" : undefined}
+          onClick={() => setOpen(false)}
+          className={common}
+        >
+          {item.title}
+        </a>
+        {showDivider && (
+          <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition group-hover:scale-125 group-hover:bg-slate-500" />
+        )}
+      </div>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
@@ -44,26 +153,21 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center">
-          {NAV_ITEMS.map((item, idx) => (
-            <div key={item.id} className="group flex items-center">
-              <Link
-                to={"/#" + item.id}
-                onClick={(e) => handleAnchorClick(e, item.id)}
-                className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition"
-              >
-                {t(item.labelKey)}
-              </Link>
-              {idx < NAV_ITEMS.length - 1 && (
-                <span className="mx-1 h-1 w-1 rounded-full bg-slate-400 transition duration-200 ease-out group-hover:scale-125 group-hover:bg-slate-500" />
-              )}
+          {/* tiny skeleton while loading WP menu */}
+          {loading && (
+            <div className="flex items-center gap-2 mr-4">
+              <div className="h-4 w-12 rounded bg-slate-200 animate-pulse" />
+              <div className="h-4 w-12 rounded bg-slate-200 animate-pulse" />
+              <div className="h-4 w-12 rounded bg-slate-200 animate-pulse" />
             </div>
-          ))}
+          )}
+          {items.map((item, idx) => renderLink(item, idx < items.length - 1))}
           <div className="ml-4">
             <LanguageToggle />
           </div>
         </nav>
 
-        {/* Mobile menu button */}
+        {/* Mobile toggle */}
         <button
           onClick={() => setOpen((v) => !v)}
           className="md:hidden rounded-lg p-2 hover:bg-slate-100"
@@ -81,19 +185,32 @@ export default function Navbar() {
         <div className="md:hidden border-t border-slate-200 bg-white">
           <Container>
             <nav>
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.id}
-                  to={"/#" + item.id}
-                  onClick={(e) => {
-                    handleAnchorClick(e, item.id);
-                    setOpen(false);
-                  }}
-                  className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
-                >
-                  {t(item.labelKey)}
-                </Link>
-              ))}
+              {items.map((item) =>
+                item.sectionId ? (
+                  <Link
+                    key={item.key}
+                    to={`/#${item.sectionId}`}
+                    onClick={(e) => {
+                      handleAnchorClick(e, item.sectionId!);
+                      setOpen(false);
+                    }}
+                    className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
+                  >
+                    {item.title}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.key}
+                    href={item.href}
+                    target={item.target}
+                    rel={item.external ? "noreferrer noopener" : undefined}
+                    onClick={() => setOpen(false)}
+                    className="block py-3 text-center text-sm text-slate-600 hover:text-slate-900 transition border-b border-slate-100 last:border-0"
+                  >
+                    {item.title}
+                  </a>
+                )
+              )}
               <div className="py-3 flex justify-center">
                 <LanguageToggle />
               </div>
