@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 import Container from "./ui/Container";
+import { useTranslation } from "../lib/t";
 
 export default function Hero() {
   const { t } = useTranslation();
@@ -11,32 +11,31 @@ export default function Hero() {
           {/* Left: Text content */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
-              {t("brand")}
+              {t("brand") as string}
             </p>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              {t("hero.title")}
+              {t("hero.title") as string}
             </h1>
             <p className="mt-3 text-lg font-medium text-sky-600">
-              {t("hero.tagline")}
+              {t("hero.tagline") as string}
             </p>
             <p className="mt-6 text-lg leading-8 text-slate-600 max-w-xl">
-              {t("hero.blurb")}
+              {t("hero.blurb") as string}
             </p>
-            
           </div>
 
           {/* Right: Image with caption */}
           <div className="relative">
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
               <img
-                src="/hero.jpg"
-                alt={t("hero.imageAlt")}
+                src={`${import.meta.env.BASE_URL}hero.jpg`}
+                alt={t("hero.imageAlt") as string}
                 className="h-80 w-full object-cover sm:h-96 lg:h-[28rem]"
                 loading="eager"
               />
             </div>
             <p className="mt-4 text-center text-xs text-slate-400">
-              {t("hero.imageCaption")} · Photo by{" "}
+              {t("hero.imageCaption") as string} · Photo by{" "}
               <a
                 href="https://unsplash.com/photos/people-sitting-on-chair-in-front-of-computer-monitor-Fa9b57hffnM"
                 target="_blank"

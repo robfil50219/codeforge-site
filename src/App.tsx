@@ -14,7 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import ConsentBanner from "./components/ConsentBanner";
-import ScrollToTop from "./components/ScrollToTop"; // 👈 add this
+import ScrollToTop from "./components/ScrollToTop"; 
 
 function Home() {
   const site = "CodeForge Studio";

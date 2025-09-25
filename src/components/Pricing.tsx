@@ -1,5 +1,5 @@
 // src/components/Pricing.tsx
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../lib/t";
 import { Rocket, Sparkles, Settings } from "lucide-react";
 import Container from "./ui/Container";
 import { cn } from "../utils/cn";
@@ -12,6 +12,7 @@ export default function Pricing() {
   const bullet =
     "mt-1 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 flex-shrink-0";
 
+  // IMPORTANT: ask for arrays explicitly
   const starterFeatures = t("pricing.starter.features", { returnObjects: true }) as string[];
   const proFeatures     = t("pricing.pro.features",     { returnObjects: true }) as string[];
   const customFeatures  = t("pricing.custom.features",  { returnObjects: true }) as string[];

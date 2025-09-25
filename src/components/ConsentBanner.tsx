@@ -1,56 +1,62 @@
 // src/components/ConsentBanner.tsx
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { getConsent, setConsent } from "../utils/consent";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../lib/t";
+import { getConsent, setConsent } from "../utils/consent";
 
 export default function ConsentBanner() {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
-  // Expose showConsent globally
   useEffect(() => {
-    window.showConsent = () => setVisible(true);
-    const current = getConsent();
-    if (!current) setVisible(true);
+    // Show only if no decision is stored yet
+    const c = getConsent(); // expect: "accepted" | "rejected" | null
+    if (!c) setVisible(true);
   }, []);
 
   if (!visible) return null;
 
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-50 bg-white/90 backdrop-blur-md border-t border-slate-200">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Text */}
-        <p className="text-sm text-slate-700">
-          <span className="font-semibold">{t("consent.title")}</span> ·{" "}
-          {t("consent.text")}{" "}
-          <Link
-            to="/privacy"
-            className="underline underline-offset-2 hover:text-slate-800"
-          >
-            {t("consent.learnMore")}
-          </Link>
-        </p>
+  const accept = () => {
+    setConsent("accepted");
+    setVisible(false);
+  };
 
-        {/* Buttons */}
-        <div className="flex flex-wrap gap-2">
+  const reject = () => {
+    setConsent("rejected");
+    setVisible(false);
+  };
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="sm:max-w-[70%]">
+          <h3 className="text-sm font-semibold text-slate-900">
+            {t("consent.title") as string}
+          </h3>
+          <p className="mt-1 text-sm text-slate-600">
+            {t("consent.text") as string}{" "}
+            <Link
+              to="/privacy"
+              className="underline hover:text-slate-800"
+            >
+              {t("consent.learnMore") as string}
+            </Link>
+            .
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
           <button
-            onClick={() => {
-              setConsent("rejected");
-              setVisible(false);
-            }}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            onClick={reject}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
           >
-            {t("consent.actions.reject")}
+            {t("consent.actions.reject") as string}
           </button>
           <button
-            onClick={() => {
-              setConsent("accepted");
-              setVisible(false);
-            }}
-            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+            onClick={accept}
+            className="rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700"
           >
-            {t("consent.actions.accept")}
+            {t("consent.actions.accept") as string}
           </button>
         </div>
       </div>

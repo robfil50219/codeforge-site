@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Container from "./ui/Container";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import { useWpMenu } from "../hooks/useWpMenu";
 import type { MenuItem as WpMenuItem } from "../hooks/useWpMenu";
+import { useTranslation } from "../lib/t";
 
 /** Convert a menu URL to a section id (without '#') if it’s an in-page anchor. */
 function sectionIdFrom(url: string): string | undefined {
@@ -118,7 +118,7 @@ export default function Navbar() {
             className="h-12 w-12 sm:h-14 sm:w-14"
           />
           <span className="text-xl sm:text-2xl tracking-[0.04em]">
-            {t("brand").toUpperCase()}
+            {(t("brand") as string).toUpperCase()}
           </span>
         </Link>
 
@@ -131,7 +131,8 @@ export default function Navbar() {
               <div className="h-4 w-12 rounded bg-slate-200 animate-pulse" />
             </div>
           )}
-          {items.map((item, idx) => renderLink(item, idx < items.length - 1))}
+          {items.length > 0 &&
+            items.map((item, idx) => renderLink(item, idx < items.length - 1))}
         </nav>
 
         {/* Mobile toggle */}

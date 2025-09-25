@@ -1,7 +1,7 @@
 // src/components/ContactForm.tsx
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../lib/t"; // <-- use our local translator
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,9 +21,9 @@ export default function ContactForm() {
 
   const validate = () => {
     const e: { [k: string]: string } = {};
-    if (!form.name.trim()) e.name = t("contact.form.errors.name");
-    if (!EMAIL_RE.test(form.email)) e.email = t("contact.form.errors.email");
-    if (!form.message.trim()) e.message = t("contact.form.errors.message");
+    if (!form.name.trim()) e.name = t("contact.form.errors.name") as string;
+    if (!EMAIL_RE.test(form.email)) e.email = t("contact.form.errors.email") as string;
+    if (!form.message.trim()) e.message = t("contact.form.errors.message") as string;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -45,7 +45,7 @@ export default function ContactForm() {
       const params = {
         name: form.name,
         email: form.email,
-        subject: form.subject || t("contact.form.noSubject"),
+        subject: form.subject || (t("contact.form.noSubject") as string),
         time: new Date().toLocaleString(),
         message: form.message,
       };
@@ -71,7 +71,7 @@ export default function ContactForm() {
       {/* Name */}
       <div>
         <label htmlFor="name" className="block font-medium">
-          {t("contact.form.name")}
+          {t("contact.form.name") as string}
         </label>
         <input
           id="name"
@@ -83,7 +83,7 @@ export default function ContactForm() {
           aria-describedby={errors.name ? "name-err" : undefined}
           className="w-full border rounded p-2"
           required
-          placeholder={t("contact.form.placeholders.name")}
+          placeholder={t("contact.form.placeholders.name") as string}
         />
         {errors.name && (
           <p id="name-err" className="text-sm text-red-600">
@@ -95,7 +95,7 @@ export default function ContactForm() {
       {/* Email */}
       <div>
         <label htmlFor="email" className="block font-medium">
-          {t("contact.form.email")}
+          {t("contact.form.email") as string}
         </label>
         <input
           id="email"
@@ -107,7 +107,7 @@ export default function ContactForm() {
           aria-describedby={errors.email ? "email-err" : undefined}
           className="w-full border rounded p-2"
           required
-          placeholder={t("contact.form.placeholders.email")}
+          placeholder={t("contact.form.placeholders.email") as string}
         />
         {errors.email && (
           <p id="email-err" className="text-sm text-red-600">
@@ -119,7 +119,7 @@ export default function ContactForm() {
       {/* Subject (optional) */}
       <div>
         <label htmlFor="subject" className="block font-medium">
-          {t("contact.form.subjectOptional")}
+          {t("contact.form.subjectOptional") as string}
         </label>
         <input
           id="subject"
@@ -128,14 +128,14 @@ export default function ContactForm() {
           value={form.subject}
           onChange={onChange}
           className="w-full border rounded p-2"
-          placeholder={t("contact.form.placeholders.subject")}
+          placeholder={t("contact.form.placeholders.subject") as string}
         />
       </div>
 
       {/* Message */}
       <div>
         <label htmlFor="message" className="block font-medium">
-          {t("contact.form.message")}
+          {t("contact.form.message") as string}
         </label>
         <textarea
           id="message"
@@ -146,7 +146,7 @@ export default function ContactForm() {
           aria-describedby={errors.message ? "message-err" : undefined}
           className="w-full border rounded p-2 min-h-[140px]"
           required
-          placeholder={t("contact.form.placeholders.message")}
+          placeholder={t("contact.form.placeholders.message") as string}
         />
         {errors.message && (
           <p id="message-err" className="text-sm text-red-600">
@@ -174,17 +174,19 @@ export default function ContactForm() {
         disabled={status === "sending"}
         className="px-4 py-2 rounded bg-black text-white disabled:opacity-60"
       >
-        {status === "sending" ? t("contact.form.sending") : t("contact.form.send")}
+        {status === "sending"
+          ? (t("contact.form.sending") as string)
+          : (t("contact.form.send") as string)}
       </button>
 
       {status === "success" && (
         <p role="status" className="text-green-700">
-          {t("contact.form.success")}
+          {t("contact.form.success") as string}
         </p>
       )}
       {status === "error" && (
         <p role="alert" className="text-red-700">
-          {t("contact.form.error")}
+          {t("contact.form.error") as string}
         </p>
       )}
     </form>

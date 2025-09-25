@@ -1,5 +1,6 @@
+// src/components/Services.tsx
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../lib/t";
 import {
   Palette,
   Code,
@@ -10,11 +11,18 @@ import {
   CheckCircle2,
   Search,
   Rocket,
+  type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 import Container from "./ui/Container";
-import { Card, CardHeader, CardIcon, CardTitle, CardDescription, CardList } from "./ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardIcon,
+  CardTitle,
+  CardDescription,
+  CardList,
+} from "./ui/Card";
 import { toneStyle, type Tone } from "../utils/tone";
 import ProcessStrip from "./ProcessStrip";
 
@@ -90,7 +98,9 @@ export default function Services() {
   type Detail = { title: string; body: string };
   let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
   if (detailsRaw && typeof detailsRaw === "object" && !Array.isArray(detailsRaw)) {
-    const entries = Object.entries(detailsRaw as Record<string, { title?: string; body?: string }>)
+    const entries = Object.entries(
+      detailsRaw as Record<string, { title?: string; body?: string }>
+    )
       .sort(([a], [b]) => Number(a) - Number(b))
       .map(([, v]) => ({ title: v?.title ?? "", body: v?.body ?? "" }));
     if (entries.length) {
@@ -101,10 +111,9 @@ export default function Services() {
     }
   }
 
-  // Process dot (unchanged behavior)
+  // (Kept minimal track/dot logic; safe no-ops)
   const trackRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // Removed unused dotLeft state
 
   useEffect(() => {
     positionDotAtIndex(0);
@@ -117,12 +126,17 @@ export default function Services() {
     const track = trackRef.current;
     const stepEl = stepRefs.current[idx];
     if (!track || !stepEl) return;
+    // intentionally left minimal
   }
 
   const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
 
   return (
-    <section id="services" className="scroll-mt-24 bg-white" aria-labelledby="services-heading">
+    <section
+      id="services"
+      className="scroll-mt-24 bg-white"
+      aria-labelledby="services-heading"
+    >
       <Container className="py-16 sm:py-24">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
@@ -138,7 +152,6 @@ export default function Services() {
             const toneCls = toneStyle(tone);
             return (
               <Card key={title}>
-                {/* Decorative corner glow */}
                 <div
                   aria-hidden="true"
                   className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
@@ -149,7 +162,6 @@ export default function Services() {
                   </CardIcon>
                   <CardTitle>{title}</CardTitle>
                   <CardDescription>{blurb}</CardDescription>
-                  {/* Keep original check icon style for bullets */}
                   <ul className="mt-4 space-y-2 text-sm text-slate-700">
                     {points.map((p) => (
                       <li key={p} className="flex items-start gap-2">
@@ -164,8 +176,13 @@ export default function Services() {
           })}
         </div>
 
-        {/* Process strip (separate component) */}
-        <ProcessStrip steps={steps} icons={stepIcons} title={t("services.process.title")} details={details} />
+        {/* Process strip */}
+        <ProcessStrip
+          steps={steps}
+          icons={stepIcons}
+          title={t("services.process.title")}
+          details={details}
+        />
 
         {/* Extras */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

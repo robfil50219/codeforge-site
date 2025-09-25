@@ -1,7 +1,7 @@
 import { type JSX } from "react";
-import { useTranslation } from "react-i18next";
 import profileImg from "../assets/profileimage.png";
 import Container from "./ui/Container";
+import { useTranslation } from "../lib/t";
 
 // Icons
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
@@ -18,8 +18,9 @@ import { TbApi } from "react-icons/tb";
 export default function About() {
   const { t } = useTranslation();
 
-  const highlights = t("about.highlights", { returnObjects: true }) as string[];
-  const tech = t("about.tech", { returnObjects: true }) as string[];
+  // Our lightweight t() just returns whatever is in the copy (string | string[])
+  const highlights = (t("about.highlights") as unknown as string[]) ?? [];
+  const tech = (t("about.tech") as unknown as string[]) ?? [];
 
   const techIcons: Record<string, JSX.Element> = {
     React: <FaReact className="h-5 w-5" />,
@@ -60,7 +61,7 @@ export default function About() {
               <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
               <img
                 src={profileImg}
-                alt={t("about.alt")}
+                alt={t("about.alt") as string}
                 className="h-56 w-56 rounded-full object-cover shadow-[0_8px_30px_rgba(2,6,23,0.12)] ring-4 ring-white"
                 loading="lazy"
               />
@@ -70,12 +71,12 @@ export default function About() {
           {/* Text */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
-              {t("about.sectionLabel")}
+              {t("about.sectionLabel") as string}
             </p>
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              {t("about.heading")}
+              {t("about.heading") as string}
             </h2>
-            <p className="mt-4 text-lg text-slate-600">{t("about.copy")}</p>
+            <p className="mt-4 text-lg text-slate-600">{t("about.copy") as string}</p>
 
             {/* Highlights */}
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">

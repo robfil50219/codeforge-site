@@ -1,5 +1,5 @@
 // src/components/Work.tsx
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../lib/t";
 
 type Project = {
   title: string;
@@ -14,33 +14,33 @@ export default function Work() {
 
   const projects: Project[] = [
     {
-      title: t("work.cards.dashboard.title"),
-      blurb: t("work.cards.dashboard.blurb"),
-      tags: t("work.cards.dashboard.tags", { returnObjects: true }) as string[],
+      title: t("work.cards.dashboard.title") as string,
+      blurb: t("work.cards.dashboard.blurb") as string,
+      tags: t("work.cards.dashboard.tags") as string[],
       image:
         "https://images.unsplash.com/photo-1551281044-8a5a39c9b638?q=80&w=1600&auto=format&fit=crop",
       href: "#",
     },
     {
-      title: t("work.cards.landing.title"),
-      blurb: t("work.cards.landing.blurb"),
-      tags: t("work.cards.landing.tags", { returnObjects: true }) as string[],
+      title: t("work.cards.landing.title") as string,
+      blurb: t("work.cards.landing.blurb") as string,
+      tags: t("work.cards.landing.tags") as string[],
       image:
         "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
       href: "#",
     },
     {
-      title: t("work.cards.storefront.title"),
-      blurb: t("work.cards.storefront.blurb"),
-      tags: t("work.cards.storefront.tags", { returnObjects: true }) as string[],
+      title: t("work.cards.storefront.title") as string,
+      blurb: t("work.cards.storefront.blurb") as string,
+      tags: t("work.cards.storefront.tags") as string[],
       image:
         "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop",
       href: "#",
     },
     {
-      title: t("work.cards.docs.title"),
-      blurb: t("work.cards.docs.blurb"),
-      tags: t("work.cards.docs.tags", { returnObjects: true }) as string[],
+      title: t("work.cards.docs.title") as string,
+      blurb: t("work.cards.docs.blurb") as string,
+      tags: t("work.cards.docs.tags") as string[],
       image:
         "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
       href: "#",
@@ -52,9 +52,9 @@ export default function Work() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-            {t("work.heading")}
+            {t("work.heading") as string}
           </h2>
-          <p className="mt-3 text-slate-600">{t("work.sub")}</p>
+          <p className="mt-3 text-slate-600">{t("work.sub") as string}</p>
         </div>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -93,7 +93,7 @@ export default function Work() {
                     href={p.href || "#"}
                     className="inline-flex items-center rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
                   >
-                    {t("work.view")}
+                    {t("work.view") as string}
                   </a>
                 </div>
               </div>
