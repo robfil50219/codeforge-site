@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import LanguageToggle from "./LanguageToggle";
 import Container from "./ui/Container";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import { useWpMenu } from "../hooks/useWpMenu";
@@ -36,7 +35,6 @@ export default function Navbar() {
   const { handleAnchorClick } = useSmoothScroll(80);
   const [open, setOpen] = useState(false);
 
-  // Only WP: fetch the "primary" menu (you can change to "header" if you prefer slug)
   const { items: wpItems, loading } = useWpMenu("primary", { fallbackSlug: "header" });
 
   const items: RenderItem[] = useMemo(() => {
@@ -67,7 +65,6 @@ export default function Navbar() {
       "px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition";
 
     if (item.sectionId) {
-      // Smooth scroll to a section on the same page.
       return (
         <div key={item.key} className="group flex items-center">
           <Link
@@ -135,9 +132,6 @@ export default function Navbar() {
             </div>
           )}
           {items.map((item, idx) => renderLink(item, idx < items.length - 1))}
-          <div className="ml-4">
-            <LanguageToggle />
-          </div>
         </nav>
 
         {/* Mobile toggle */}
@@ -184,9 +178,6 @@ export default function Navbar() {
                   </a>
                 )
               )}
-              <div className="py-3 flex justify-center">
-                <LanguageToggle />
-              </div>
             </nav>
           </Container>
         </div>
