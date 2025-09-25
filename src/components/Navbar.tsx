@@ -7,17 +7,8 @@ import useSmoothScroll from "../hooks/useSmoothScroll";
 import { useWpMenu } from "../hooks/useWpMenu";
 import type { MenuItem as WpMenuItem } from "../hooks/useWpMenu";
 
-type FallbackItem = { id: string; labelKey: string };
-
-const FALLBACK_ITEMS: FallbackItem[] = [
-  { id: "services", labelKey: "nav.services" },
-  { id: "pricing",  labelKey: "nav.pricing"  },
-  { id: "about",    labelKey: "nav.about"    },
-  { id: "contact",  labelKey: "nav.contact"  },
-];
-
-// Return a section id (without '#') or undefined
-function extractSectionId(url: string): string | undefined {
+/** Convert a menu URL to a section id (without '#') if it’s an in-page anchor. */
+function sectionIdFrom(url: string): string | undefined {
   try {
     const u = new URL(url, window.location.origin);
     if (u.origin === window.location.origin && u.hash.startsWith("#")) {
@@ -25,7 +16,6 @@ function extractSectionId(url: string): string | undefined {
     }
     if (url.startsWith("#")) return url.slice(1);
   } catch {
-    // relative like "/#about" or just "#about"
     if (url.startsWith("/#")) return url.slice(2);
     if (url.startsWith("#")) return url.slice(1);
   }
@@ -46,53 +36,38 @@ export default function Navbar() {
   const { handleAnchorClick } = useSmoothScroll(80);
   const [open, setOpen] = useState(false);
 
-  // Fetch WP menu from location "primary"; try slug "header" if location isn't assigned yet
+  // Only WP: fetch the "primary" menu (you can change to "header" if you prefer slug)
   const { items: wpItems, loading } = useWpMenu("primary", { fallbackSlug: "header" });
 
-  // Normalize to renderable items; if WP has none, fall back to i18n anchors
   const items: RenderItem[] = useMemo(() => {
-    if (wpItems && wpItems.length > 0) {
-      const sorted: WpMenuItem[] = [...wpItems].sort(
-        (a: WpMenuItem, b: WpMenuItem) => a.order - b.order
-      );
-
-      return sorted.map((i: WpMenuItem): RenderItem => {
-        const sectionId = i.url ? extractSectionId(i.url) : undefined;
-        const external =
-          !!i.url &&
-          /^https?:\/\//i.test(i.url) &&
-          !i.url.includes(window.location.host);
-
-        return {
-          key: String(i.id),
-          title: i.title,
-          href: i.url ?? "#",
-          sectionId,
-          external,
-          target: i.target || (external ? "_blank" : "_self"),
-        };
-      });
-    }
-
-    // fallback to original local/i18n single-page anchors
-    return FALLBACK_ITEMS.map(
-      (i): RenderItem => ({
-        key: i.id,
-        title: t(i.labelKey),
-        href: `/#${i.id}`,
-        sectionId: i.id,
-        external: false,
-        target: "_self",
-      })
+    if (!wpItems) return [];
+    const sorted: WpMenuItem[] = [...wpItems].sort(
+      (a: WpMenuItem, b: WpMenuItem) => a.order - b.order
     );
-  }, [wpItems, t]);
+    return sorted.map((i: WpMenuItem): RenderItem => {
+      const sectionId = i.url ? sectionIdFrom(i.url) : undefined;
+      const external =
+        !!i.url &&
+        /^https?:\/\//i.test(i.url) &&
+        !i.url.includes(window.location.host);
+
+      return {
+        key: String(i.id),
+        title: i.title,
+        href: i.url ?? "#",
+        sectionId,
+        external,
+        target: i.target || (external ? "_blank" : "_self"),
+      };
+    });
+  }, [wpItems]);
 
   const renderLink = (item: RenderItem, showDivider: boolean) => {
     const common =
       "px-3 py-2 text-sm text-slate-600 hover:text-slate-900 transition";
 
     if (item.sectionId) {
-      // Smooth scroll link
+      // Smooth scroll to a section on the same page.
       return (
         <div key={item.key} className="group flex items-center">
           <Link
@@ -109,7 +84,6 @@ export default function Navbar() {
       );
     }
 
-    // Normal/external link
     return (
       <div key={item.key} className="group flex items-center">
         <a
@@ -153,7 +127,6 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center">
-          {/* tiny skeleton while loading WP menu */}
           {loading && (
             <div className="flex items-center gap-2 mr-4">
               <div className="h-4 w-12 rounded bg-slate-200 animate-pulse" />

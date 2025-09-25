@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import Container from "./ui/Container";
-import { ButtonLink } from "./ui/Buttons";
 
 export default function Hero() {
   const { t } = useTranslation();
@@ -23,10 +22,7 @@ export default function Hero() {
             <p className="mt-6 text-lg leading-8 text-slate-600 max-w-xl">
               {t("hero.blurb")}
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink to="/#services">{t("hero.ctaServices")}</ButtonLink>
-              {/* <ButtonLink variant="outline" to="/#work">{t("hero.ctaWork")}</ButtonLink> */}
-            </div>
+            
           </div>
 
           {/* Right: Image with caption */}
