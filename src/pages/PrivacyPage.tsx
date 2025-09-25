@@ -1,53 +1,38 @@
+// src/pages/PrivacyPage.tsx
 import { useTranslation } from "react-i18next";
+import { useWpPage } from "../hooks/useWpPage";
+
 
 export default function PrivacyPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { page, loading } = useWpPage("privacy-policy"); // <-- WP slug
+
   return (
     <main className="bg-white">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
+        {/* Title from i18n so it translates (body comes from WP) */}
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           {t("privacy.heading")}
         </h1>
-        <p className="mt-3 text-slate-600">{t("privacy.intro")}</p>
 
-        <section className="mt-8 space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              {t("privacy.sections.data.title")}
-            </h2>
-            <p className="mt-1 text-slate-600">
-              {t("privacy.sections.data.text")}
+        {page ? (
+          <>
+            <p className="mt-2 text-xs text-slate-500">
+              {t("terms.lastUpdated")}{" "}
+              {new Date(page.modified).toLocaleDateString(
+                i18n.language === "no" ? "no-NO" : "en-GB"
+              )}
             </p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              {t("privacy.sections.use.title")}
-            </h2>
-            <p className="mt-1 text-slate-600">
-              {t("privacy.sections.use.text")}
-            </p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              {t("privacy.sections.rights.title")}
-            </h2>
-            <p className="mt-1 text-slate-600">
-              {t("privacy.sections.rights.text")}
-            </p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              {t("privacy.sections.cookies.title")}
-            </h2>
-            <p className="mt-1 text-slate-600">
-              {t("privacy.sections.cookies.text")}
-            </p>
-          </div>
-        </section>
-
-        <p className="mt-8 text-slate-600">
-          {t("privacy.contact")}
-        </p>
+            <article
+              className="prose prose-slate mt-6"
+              dangerouslySetInnerHTML={{ __html: page.content.rendered }}
+            />
+          </>
+        ) : loading ? (
+          <p className="mt-3 text-slate-600">{t("loading")}</p>
+        ) : (
+          <p className="mt-3 text-slate-600">{t("privacy.intro")}</p>
+        )}
 
         <a
           href="/"
