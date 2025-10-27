@@ -1,7 +1,9 @@
+// src/components/About.tsx
 import { type JSX } from "react";
-import profileImg from "../assets/profileimage.png";
+import fallbackProfileImg from "../assets/profileimage.png";
 import Container from "./ui/Container";
 import { useTranslation } from "../lib/t";
+import { useWpPage } from "../hooks/useWpPage";
 
 // Icons
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
@@ -18,10 +20,20 @@ import { TbApi } from "react-icons/tb";
 export default function About() {
   const { t } = useTranslation();
 
-  // Our lightweight t() just returns whatever is in the copy (string | string[])
+  // Hent "about"-siden fra WP
+  const { page } = useWpPage("about");
+
+  // Dra ut ACF-bildet (url + alt)
+  const acfImg = (page?.acf as { profile_image?: { url?: string; alt?: string } })?.profile_image;
+
+  const profileSrc = acfImg?.url || fallbackProfileImg;
+  const profileAlt = acfImg?.alt || (t("about.alt") as string);
+
+  // Tekst fra i18n
   const highlights = (t("about.highlights") as unknown as string[]) ?? [];
   const tech = (t("about.tech") as unknown as string[]) ?? [];
 
+  // Ikoner
   const techIcons: Record<string, JSX.Element> = {
     React: <FaReact className="h-5 w-5" />,
     TypeScript: <SiTypescript className="h-5 w-5" />,
@@ -55,20 +67,20 @@ export default function About() {
     <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-24">
       <Container>
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Photo */}
+          {/* Bilde */}
           <div className="flex justify-center">
             <div className="relative">
               <div className="pointer-events-none absolute -inset-4 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
               <img
-                src={profileImg}
-                alt={t("about.alt") as string}
+                src={profileSrc}
+                alt={profileAlt}
                 className="h-56 w-56 rounded-full object-cover shadow-[0_8px_30px_rgba(2,6,23,0.12)] ring-4 ring-white"
                 loading="lazy"
               />
             </div>
           </div>
 
-          {/* Text */}
+          {/* Tekst */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
               {t("about.sectionLabel") as string}
@@ -76,7 +88,9 @@ export default function About() {
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
               {t("about.heading") as string}
             </h2>
-            <p className="mt-4 text-lg text-slate-600">{t("about.copy") as string}</p>
+            <p className="mt-4 text-lg text-slate-600">
+              {t("about.copy") as string}
+            </p>
 
             {/* Highlights */}
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -91,7 +105,7 @@ export default function About() {
               ))}
             </ul>
 
-            {/* Tech chips */}
+            {/* Tech-chips */}
             <div className="mt-6 flex flex-wrap gap-2">
               {tech.map((label) => {
                 const icon = techIcons[label];
