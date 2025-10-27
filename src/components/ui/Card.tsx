@@ -56,7 +56,7 @@ export function CardList({
     <ul className="mt-4 space-y-2 text-sm text-slate-700">
       {items.map((p) => (
         <li key={p} className="flex items-start gap-2">
-          <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 flex-shrink-0" />
+          <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 shrink-0" />
           <span>{p}</span>
         </li>
       ))}

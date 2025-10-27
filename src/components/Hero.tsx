@@ -30,7 +30,7 @@ export default function Hero() {
               <img
                 src={`${import.meta.env.BASE_URL}hero.jpg`}
                 alt={t("hero.imageAlt") as string}
-                className="h-80 w-full object-cover sm:h-96 lg:h-[28rem]"
+                className="h-80 w-full object-cover sm:h-96 lg:h-112"
                 loading="eager"
               />
             </div>

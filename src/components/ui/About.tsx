@@ -1,5 +1,5 @@
 // src/components/About.tsx
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../../lib/t";
 import profileImg from "../assets/profileimage.png";
 
 export default function About() {
