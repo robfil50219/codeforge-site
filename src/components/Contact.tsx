@@ -14,7 +14,7 @@ export default function Contact() {
       aria-labelledby="contact-heading"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-10 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-sky-100/60 blur-3xl" />
+        <div className="absolute left-1/2 top-10 h-64 w-xl -translate-x-1/2 rounded-full bg-sky-100/60 blur-3xl" />
       </div>
 
       <Container className="py-20">
@@ -113,7 +113,7 @@ export default function Contact() {
         </div>
 
         {/* Form in CTA panel */}
-        <div className="mt-16 overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-sky-50 to-indigo-50 p-6 sm:p-10">
+        <div className="mt-16 overflow-hidden rounded-2xl border border-slate-200 bg-linear-to-r from-sky-50 to-indigo-50 p-6 sm:p-10">
           <div className="mx-auto max-w-3xl">
             <h3 className="text-xl font-semibold text-slate-900 text-center">
               {t("contact.formTitle") as string}

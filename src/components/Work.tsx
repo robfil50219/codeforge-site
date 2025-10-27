@@ -70,7 +70,7 @@ export default function Work() {
                   className="h-48 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
                   loading="lazy"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 transition group-hover:opacity-100" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/10 to-transparent opacity-0 transition group-hover:opacity-100" />
               </div>
 
               <div className="p-5">

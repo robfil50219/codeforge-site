@@ -249,7 +249,7 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
 
         {/* Vertical connector line */}
         {idx < steps.length - 1 && (
-          <span className="absolute left-3.5 top-8 bottom-[-12px] w-0.5 bg-slate-200" />
+          <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-slate-200" />
         )}
 
         {/* Clickable label */}

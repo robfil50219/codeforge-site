@@ -46,7 +46,7 @@ export default function About() {
     "REST & GraphQL APIs": (
       <span className="flex -space-x-1.5 items-center">
         <TbApi className="h-5 w-5" />
-        <SiGraphql className="h-4 w-4 translate-y-[1px]" />
+        <SiGraphql className="h-4 w-4 translate-y-px" />
       </span>
     ),
   };
