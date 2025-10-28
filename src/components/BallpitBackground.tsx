@@ -6,7 +6,7 @@ type Ball = {
   y: number;
   vx: number;
   vy: number;
-  r: number;   // visual radius (sprites quantized to px)
+  r: number;   // visual radius
   c: string;   // color
 };
 
@@ -16,79 +16,110 @@ type Sprite = {
   hh: number;  // half height
 };
 
+type Settings = {
+  count: number;
+  rMin: number;
+  rMax: number;
+  mouseRadius: number;
+  mouseForce: number;
+  alpha: number;          // global alpha for balls
+  topKeepout: number;     // "no balls" band at top (px)
+  dprCap: number;         // cap devicePixelRatio
+  maxSpeed: number;       // clamp speed so mobile stays calm
+};
+
 export default function BallpitBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    // Bind a non-null canvas and ctx once
-    const canvas = canvasRef.current as HTMLCanvasElement | null;
-    if (!canvas) return;
+    // Narrow then non-null alias
+    const el = canvasRef.current;
+    if (!el) return;
+    const canvas: HTMLCanvasElement = el;
 
     const maybeCtx = canvas.getContext("2d");
     if (!maybeCtx) return;
     const ctx: CanvasRenderingContext2D = maybeCtx;
 
-    // --- DPR (cap for performance) ---
-    const nativeDpr = window.devicePixelRatio || 1;
-    let dpr = nativeDpr > 1.5 ? 1.5 : nativeDpr; // cap retina a bit for FPS
-
-    let W = 0;
-    let H = 0;
-    let raf = 0;
-    let running = true;
-
-    // --- Brand colors from :root with fallbacks ---
+    // Brand colors from :root with fallbacks
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
 
     const colors = [
-      SEA,
-      MIDNIGHT,
-      "#0BB3B3",
-      "#067A7A",
-      "#06B6D4",
-      "#22D3EE",
-      "#0891B2",
-      "#38BDF8",
+      SEA, MIDNIGHT,
+      "#0BB3B3", "#067A7A",
+      "#06B6D4", "#22D3EE",
+      "#0891B2", "#38BDF8",
     ];
 
-    // --- Params ---
-    const BALLS_COUNT = 26;
-    const R_MIN = 14;
-    const R_MAX = 28;
+    // ------- Responsive settings -------
+    const balls: Ball[] = [];
+    let settings: Settings = getSettings();
+    let nativeDpr = window.devicePixelRatio || 1;
+    let dpr = Math.min(nativeDpr, settings.dprCap);
 
-    // mouse repulsion
-    const mouse = { x: -9999, y: -9999, r: 90, force: 0.9 };
+    let W = 0, H = 0, raf = 0, running = true;
 
-    // --- Resize using non-null canvas & ctx ---
-        function resize() {
-          W = window.innerWidth;
-          H = window.innerHeight;
-          canvas!.style.width = `${W}px`;
-          canvas!.style.height = `${H}px`;
-          canvas!.width = Math.floor(W * dpr);
-          canvas!.height = Math.floor(H * dpr);
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
+    function isMobile() { return window.innerWidth < 768; }
+    function isTablet() { return window.innerWidth >= 768 && window.innerWidth < 1024; }
 
-    // --- Utils ---
+    function getSettings(): Settings {
+      if (isMobile()) {
+        return {
+          count: 10,
+          rMin: 10,
+          rMax: 18,
+          mouseRadius: 70,
+          mouseForce: 0.6,
+          alpha: 0.80,          // lighter for readability
+          topKeepout: 280,      // keep balls below hero text
+          dprCap: 1,            // speed up on phones
+          maxSpeed: 0.55,
+        };
+      }
+      if (isTablet()) {
+        return {
+          count: 18,
+          rMin: 12,
+          rMax: 22,
+          mouseRadius: 85,
+          mouseForce: 0.8,
+          alpha: 0.88,
+          topKeepout: 160,
+          dprCap: 1.25,
+          maxSpeed: 0.6,
+        };
+      }
+      return {
+        count: 26,
+        rMin: 14,
+        rMax: 28,
+        mouseRadius: 90,
+        mouseForce: 0.9,
+        alpha: 0.95,
+        topKeepout: 0,
+        dprCap: 1.5,
+        maxSpeed: 0.65,
+      };
+    }
+
+    // Mouse repulsion
+    const mouse = { x: -9999, y: -9999, r: settings.mouseRadius, force: settings.mouseForce };
+
+    // Sprite cache
+    const spriteCache = new Map<string, Sprite>();
     const rand = (min: number, max: number) => Math.random() * (max - min) + min;
     const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
-    // --- Sprite cache keyed by color-radius ---
-    const spriteCache = new Map<string, Sprite>();
-
     function getSprite(r: number, color: string): Sprite {
-      // quantize radius to reduce sprite variants
       const R = Math.max(6, Math.round(r));
       const key = `${color}-${R}`;
-
       const hit = spriteCache.get(key);
       if (hit) return hit;
 
-      // padding for shadow
-      const pad = Math.round(R * 1.05); // a bit more room for bigger shadow
+      // Shadow padding
+      const pad = Math.round(R * 1.05);
       const w = R * 2 + pad * 2;
       const h = R * 2 + pad * 2;
 
@@ -106,14 +137,13 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
-      // --- Shadow: stronger + a little blur (offscreen, so cheap at runtime) ---
+      // Shadow (stronger + slight blur)
       const rx = R * 1.05;
       const ry = Math.max(6, R * 0.45);
       const sx = cx + R * 0.30;
       const sy = cy + R * 0.66;
 
       octx.save();
-      // small blur ONLY for the shadow sprite drawing
       octx.filter = "blur(3px)";
       octx.translate(sx, sy);
       octx.scale(1, ry / rx);
@@ -129,7 +159,7 @@ export default function BallpitBackground() {
       octx.restore();
       octx.filter = "none";
 
-      // Optional: a faint ambient halo to blend a touch
+      // Subtle ambient halo
       octx.save();
       const haloR = R * 1.1;
       const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
@@ -141,12 +171,13 @@ export default function BallpitBackground() {
       octx.fill();
       octx.restore();
 
-      // --- Ball: crisp rim (solid), subtle rim shading, small highlight ---
+      // Ball (crisp)
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
+      // Rim shading
       const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
@@ -155,6 +186,7 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
+      // Highlight
       octx.beginPath();
       octx.fillStyle = "rgba(255,255,255,0.10)";
       octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
@@ -165,25 +197,64 @@ export default function BallpitBackground() {
       return sprite;
     }
 
-    // --- Balls ---
-    const balls: Ball[] = [];
+    function resizeCanvas() {
+      W = window.innerWidth;
+      H = window.innerHeight;
 
-    function initBalls() {
-      balls.length = 0;
-      for (let i = 0; i < BALLS_COUNT; i++) {
-        const r = rand(R_MIN, R_MAX);
-        balls.push({
-          x: rand(r, W - r),
-          y: rand(r, H - r),
-          vx: rand(-0.55, 0.55),
-          vy: rand(-0.55, 0.55),
-          r,
-          c: colors[(Math.random() * colors.length) | 0],
-        });
+      // recompute settings responsively
+      settings = getSettings();
+      nativeDpr = window.devicePixelRatio || 1;
+      dpr = Math.min(nativeDpr, settings.dprCap);
+
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // update mouse settings
+      mouse.r = settings.mouseRadius;
+      mouse.force = settings.mouseForce;
+
+      // ensure count matches new target
+      adjustBallCount(settings.count);
+
+      // clamp all balls into new walls & keepout
+      const minY = settings.topKeepout + 1;
+      for (const b of balls) {
+        b.x = clamp(b.x, b.r, W - b.r);
+        b.y = clamp(b.y, Math.max(b.r, minY), H - b.r);
+        // also clamp speed
+        b.vx = clamp(b.vx, -settings.maxSpeed, settings.maxSpeed);
+        b.vy = clamp(b.vy, -settings.maxSpeed, settings.maxSpeed);
       }
     }
 
-    // --- Sim/Render loop ---
+    function adjustBallCount(target: number) {
+      if (balls.length < target) {
+        const toAdd = target - balls.length;
+        for (let i = 0; i < toAdd; i++) {
+          const r = rand(settings.rMin, settings.rMax);
+          const minY = settings.topKeepout + r + 2;
+          balls.push({
+            x: rand(r, W - r),
+            y: rand(minY, Math.max(minY, H - r)),
+            vx: rand(-settings.maxSpeed, settings.maxSpeed),
+            vy: rand(-settings.maxSpeed, settings.maxSpeed),
+            r,
+            c: colors[(Math.random() * colors.length) | 0],
+          });
+        }
+      } else if (balls.length > target) {
+        balls.length = target;
+      }
+    }
+
+    function initBalls() {
+      balls.length = 0;
+      adjustBallCount(settings.count);
+    }
+
     function update() {
       ctx.clearRect(0, 0, W, H);
 
@@ -211,10 +282,15 @@ export default function BallpitBackground() {
         a.vx *= 0.996;
         a.vy *= 0.996;
 
-        // wall collisions
+        // keep speeds tame (mobile)
+        a.vx = clamp(a.vx, -settings.maxSpeed, settings.maxSpeed);
+        a.vy = clamp(a.vy, -settings.maxSpeed, settings.maxSpeed);
+
+        // walls with top keepout
+        const minY = settings.topKeepout + a.r;
         if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
         if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
-        if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
+        if (a.y - a.r < minY) { a.y = minY; a.vy *= -1; }
         if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
       }
 
@@ -253,17 +329,20 @@ export default function BallpitBackground() {
         }
       }
 
-      // draw via sprites (fast)
+      // draw with global alpha for readability on mobile
+      ctx.save();
+      ctx.globalAlpha = settings.alpha;
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i];
         const sprite = getSprite(b.r, b.c);
         ctx.drawImage(sprite.cvs, Math.round(b.x - sprite.hw), Math.round(b.y - sprite.hh));
       }
+      ctx.restore();
 
       if (running) raf = requestAnimationFrame(update);
     }
 
-    // --- Events ---
+    // Events
     function onMove(e: MouseEvent) {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
@@ -273,24 +352,13 @@ export default function BallpitBackground() {
       mouse.y = -9999;
     }
     function onResize() {
-      // adjust DPR on huge areas to keep FPS up
-      const area = window.innerWidth * window.innerHeight;
-      dpr = nativeDpr;
-      if (area > 2_000_000 && nativeDpr > 1.25) dpr = 1.25;
-      if (area > 3_500_000 && nativeDpr > 1) dpr = 1;
-      resize();
-      for (const b of balls) {
-        b.x = clamp(b.x, b.r, W - b.r);
-        b.y = clamp(b.y, b.r, H - b.r);
-      }
+      resizeCanvas();
     }
 
-    // --- Init ---
-    resize();
-    setTimeout(() => {
-      initBalls();
-      update();
-    }, 0);
+    // Init
+    resizeCanvas();
+    initBalls();
+    update();
 
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseleave", onLeave);
