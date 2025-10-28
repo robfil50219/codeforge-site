@@ -25,14 +25,18 @@ type Settings = {
   alpha: number;          // global alpha for balls
   topKeepout: number;     // "no balls" band at top (px)
   dprCap: number;         // cap devicePixelRatio
-  maxSpeed: number;       // clamp speed so mobile stays calm
+  maxSpeed: number;       // clamp speed
+  // Touch extras
+  touchRadius: number;    // influence radius while touching
+  touchForce: number;     // base force while touching
+  touchBurst: number;     // extra impulse on touch start
+  swipeBoost: number;     // extra force along swipe direction
 };
 
 export default function BallpitBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    // Narrow then non-null alias
     const el = canvasRef.current;
     if (!el) return;
     const canvas: HTMLCanvasElement = el;
@@ -72,10 +76,14 @@ export default function BallpitBackground() {
           rMax: 18,
           mouseRadius: 70,
           mouseForce: 0.6,
-          alpha: 0.80,          // lighter for readability
-          topKeepout: 280,      // keep balls below hero text
-          dprCap: 1,            // speed up on phones
+          alpha: 0.80,
+          topKeepout: 280,
+          dprCap: 1,
           maxSpeed: 0.55,
+          touchRadius: 130,
+          touchForce: 1.6,  // strong base force on touch
+          touchBurst: 2.0,  // burst impulse at touchstart
+          swipeBoost: 0.035 // extra push along swipe vector
         };
       }
       if (isTablet()) {
@@ -89,6 +97,10 @@ export default function BallpitBackground() {
           topKeepout: 160,
           dprCap: 1.25,
           maxSpeed: 0.6,
+          touchRadius: 140,
+          touchForce: 1.4,
+          touchBurst: 1.6,
+          swipeBoost: 0.03
         };
       }
       return {
@@ -101,11 +113,23 @@ export default function BallpitBackground() {
         topKeepout: 0,
         dprCap: 1.5,
         maxSpeed: 0.65,
+        touchRadius: 150,
+        touchForce: 1.2,
+        touchBurst: 1.2,
+        swipeBoost: 0.025
       };
     }
 
-    // Mouse repulsion
-    const mouse = { x: -9999, y: -9999, r: settings.mouseRadius, force: settings.mouseForce };
+    // Interaction point (mouse OR touch)
+    const pointer = {
+      x: -9999,
+      y: -9999,
+      r: settings.mouseRadius,
+      force: settings.mouseForce,
+      active: false,
+      lastX: -9999,
+      lastY: -9999
+    };
 
     // Sprite cache
     const spriteCache = new Map<string, Sprite>();
@@ -118,7 +142,6 @@ export default function BallpitBackground() {
       const hit = spriteCache.get(key);
       if (hit) return hit;
 
-      // Shadow padding
       const pad = Math.round(R * 1.05);
       const w = R * 2 + pad * 2;
       const h = R * 2 + pad * 2;
@@ -137,7 +160,7 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
-      // Shadow (stronger + slight blur)
+      // Shadow
       const rx = R * 1.05;
       const ry = Math.max(6, R * 0.45);
       const sx = cx + R * 0.30;
@@ -159,7 +182,7 @@ export default function BallpitBackground() {
       octx.restore();
       octx.filter = "none";
 
-      // Subtle ambient halo
+      // Halo
       octx.save();
       const haloR = R * 1.1;
       const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
@@ -171,13 +194,13 @@ export default function BallpitBackground() {
       octx.fill();
       octx.restore();
 
-      // Ball (crisp)
+      // Ball
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // Rim shading
+      // Rim
       const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
@@ -201,7 +224,6 @@ export default function BallpitBackground() {
       W = window.innerWidth;
       H = window.innerHeight;
 
-      // recompute settings responsively
       settings = getSettings();
       nativeDpr = window.devicePixelRatio || 1;
       dpr = Math.min(nativeDpr, settings.dprCap);
@@ -212,19 +234,15 @@ export default function BallpitBackground() {
       canvas.height = Math.floor(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // update mouse settings
-      mouse.r = settings.mouseRadius;
-      mouse.force = settings.mouseForce;
+      pointer.r = settings.mouseRadius;
+      pointer.force = settings.mouseForce;
 
-      // ensure count matches new target
       adjustBallCount(settings.count);
 
-      // clamp all balls into new walls & keepout
       const minY = settings.topKeepout + 1;
       for (const b of balls) {
         b.x = clamp(b.x, b.r, W - b.r);
         b.y = clamp(b.y, Math.max(b.r, minY), H - b.r);
-        // also clamp speed
         b.vx = clamp(b.vx, -settings.maxSpeed, settings.maxSpeed);
         b.vy = clamp(b.vy, -settings.maxSpeed, settings.maxSpeed);
       }
@@ -255,22 +273,62 @@ export default function BallpitBackground() {
       adjustBallCount(settings.count);
     }
 
+    // --- Touch helpers: big burst + swipe push ---
+    function burstImpulse(cx: number, cy: number, radius: number, power: number) {
+      const R2 = radius * radius;
+      for (const b of balls) {
+        const dx = b.x - cx;
+        const dy = b.y - cy;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < R2) {
+          const d = Math.max(10, Math.sqrt(d2));
+          const ux = dx / d;
+          const uy = dy / d;
+          const k = (1 - d / radius) * power; // stronger near center
+          b.vx += ux * k;
+          b.vy += uy * k;
+        }
+      }
+    }
+
+    function swipeImpulse(cx: number, cy: number, dx: number, dy: number, radius: number, boost: number) {
+      const len = Math.max(1, Math.hypot(dx, dy));
+      const ux = dx / len;
+      const uy = dy / len;
+      const R2 = radius * radius;
+      for (const b of balls) {
+        const bx = b.x - cx;
+        const by = b.y - cy;
+        const d2 = bx * bx + by * by;
+        if (d2 < R2) {
+          const d = Math.max(10, Math.sqrt(d2));
+          const falloff = (1 - d / radius);
+          const k = falloff * boost * len * 0.15; // scale with swipe distance
+          b.vx += ux * k;
+          b.vy += uy * k;
+        }
+      }
+    }
+
     function update() {
       ctx.clearRect(0, 0, W, H);
 
-      // movement + mouse repulsion
+      // movement + pointer/touch field
       for (let i = 0; i < balls.length; i++) {
         const a = balls[i];
 
-        const dx = a.x - mouse.x;
-        const dy = a.y - mouse.y;
-        const rr = (a.r + mouse.r) * (a.r + mouse.r);
+        // base field (mouse on desktop, touch when active)
+        const dx = a.x - pointer.x;
+        const dy = a.y - pointer.y;
+        const R = (pointer.active ? settings.touchRadius : pointer.r) + a.r;
+        const rr = R * R;
         const d2 = dx * dx + dy * dy;
         if (d2 < rr) {
           const dist = Math.max(10, Math.sqrt(d2));
           const ux = dx / dist;
           const uy = dy / dist;
-          const push = (1 - dist / Math.sqrt(rr)) * mouse.force;
+          const force = pointer.active ? settings.touchForce : pointer.force;
+          const push = (1 - dist / R) * force;
           a.vx += ux * push;
           a.vy += uy * push;
         }
@@ -278,11 +336,11 @@ export default function BallpitBackground() {
         a.x += a.vx;
         a.y += a.vy;
 
-        // light damping for stability
+        // damping
         a.vx *= 0.996;
         a.vy *= 0.996;
 
-        // keep speeds tame (mobile)
+        // speed cap
         a.vx = clamp(a.vx, -settings.maxSpeed, settings.maxSpeed);
         a.vy = clamp(a.vy, -settings.maxSpeed, settings.maxSpeed);
 
@@ -294,7 +352,7 @@ export default function BallpitBackground() {
         if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
       }
 
-      // ball–ball collisions (equal mass, elastic)
+      // collisions
       for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
           const a = balls[i], b = balls[j];
@@ -307,12 +365,10 @@ export default function BallpitBackground() {
             const nx = dx / dist;
             const ny = dy / dist;
 
-            // separate
             const overlap = (minDist - dist) / 2;
             a.x -= nx * overlap; a.y -= ny * overlap;
             b.x += nx * overlap; b.y += ny * overlap;
 
-            // swap normal components (elastic, equal mass)
             const avn = a.vx * nx + a.vy * ny;
             const atn = -a.vx * ny + a.vy * nx;
             const bvn = b.vx * nx + b.vy * ny;
@@ -329,7 +385,7 @@ export default function BallpitBackground() {
         }
       }
 
-      // draw with global alpha for readability on mobile
+      // draw
       ctx.save();
       ctx.globalAlpha = settings.alpha;
       for (let i = 0; i < balls.length; i++) {
@@ -342,15 +398,43 @@ export default function BallpitBackground() {
       if (running) raf = requestAnimationFrame(update);
     }
 
-    // Events
-    function onMove(e: MouseEvent) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+    // Pointer (mouse/touch unified) — attach to window, canvas stays pointer-events-none
+    function onPointerDown(e: PointerEvent) {
+      pointer.active = true;
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.lastX = e.clientX;
+      pointer.lastY = e.clientY;
+
+      // Big burst on touch-capable devices
+      if (e.pointerType === "touch") {
+        burstImpulse(pointer.x, pointer.y, settings.touchRadius, settings.touchBurst);
+      }
     }
-    function onLeave() {
-      mouse.x = -9999;
-      mouse.y = -9999;
+
+    function onPointerMove(e: PointerEvent) {
+      const prevX = pointer.x;
+      const prevY = pointer.y;
+
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+
+      // Swipe push while finger moves
+      if (pointer.active && e.pointerType === "touch") {
+        const dx = pointer.x - prevX;
+        const dy = pointer.y - prevY;
+        if (dx !== 0 || dy !== 0) {
+          swipeImpulse(pointer.x, pointer.y, dx, dy, settings.touchRadius, settings.swipeBoost);
+        }
+      }
     }
+
+    function onPointerUp() {
+      pointer.active = false;
+      pointer.x = -9999;
+      pointer.y = -9999;
+    }
+
     function onResize() {
       resizeCanvas();
     }
@@ -360,16 +444,19 @@ export default function BallpitBackground() {
     initBalls();
     update();
 
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseleave", onLeave);
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("pointercancel", onPointerUp, { passive: true });
     window.addEventListener("resize", onResize);
 
-    // Cleanup
     return () => {
       running = false;
       cancelAnimationFrame(raf);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
       window.removeEventListener("resize", onResize);
     };
   }, []);
