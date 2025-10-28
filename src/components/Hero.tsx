@@ -1,3 +1,4 @@
+// src/components/Hero.tsx
 import Container from "./ui/Container";
 import { useTranslation } from "../lib/t";
 
@@ -5,10 +6,10 @@ export default function Hero() {
   const { t } = useTranslation();
 
   return (
-    <section className="bg-white">
-      <Container className="py-20">
+    <section className="relative bg-transparent">
+      <Container className="py-20 sm:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Left: Text content */}
+          {/* Venstre: tekst */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
               {t("brand") as string}
@@ -24,14 +25,18 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Right: Image with caption */}
+          {/* Høyre: bilde + bildetekst */}
           <div className="relative">
-            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white/90 shadow-lg">
               <img
                 src={`${import.meta.env.BASE_URL}hero.jpg`}
                 alt={t("hero.imageAlt") as string}
                 className="h-80 w-full object-cover sm:h-96 lg:h-112"
                 loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                width={1280}
+                height={896}
               />
             </div>
             <p className="mt-4 text-center text-xs text-slate-400">

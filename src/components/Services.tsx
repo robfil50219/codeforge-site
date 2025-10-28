@@ -111,7 +111,6 @@ export default function Services() {
     }
   }
 
-  // (Kept minimal track/dot logic; safe no-ops)
   const trackRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -134,7 +133,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="scroll-mt-24 bg-white"
+      className="scroll-mt-24 bg-transparent" // ⬅️ samme som Pricing
       aria-labelledby="services-heading"
     >
       <Container className="py-16 sm:py-24">
@@ -143,7 +142,7 @@ export default function Services() {
           <h2 id="services-heading" className="text-3xl font-bold tracking-tight text-slate-900">
             {t("services.heading")}
           </h2>
-          <p className="mt-3 text-slate-600">{t("services.sub")}</p>
+        <p className="mt-3 text-slate-600">{t("services.sub")}</p>
         </div>
 
         {/* Primary services */}
