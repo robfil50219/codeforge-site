@@ -49,8 +49,8 @@ export default function About() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Photo */}
-          <div className="flex justify-center">
+          {/* Photo + Name */}
+          <div className="flex flex-col items-center text-center">
             <div className="relative">
               <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 backdrop-blur-sm">
                 <img
@@ -60,6 +60,14 @@ export default function About() {
                   loading="lazy"
                 />
               </div>
+            </div>
+
+            {/* Name + Title */}
+            <div className="mt-6">
+              <h3 className="text-2xl font-bold text-slate-900">Robert Filep</h3>
+<p className="mt-1 text-sky-700 font-medium">
+  Frontend-utvikler&nbsp;•&nbsp;Grunnlegger av CodeForge Studio
+</p>
             </div>
           </div>
 
