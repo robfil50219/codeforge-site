@@ -1,7 +1,6 @@
 // src/components/About.tsx
 import { type JSX } from "react";
 import { useTranslation } from "../lib/t";
-import SectionBackground from "./SectionBackground";
 import profileImg from "../assets/profileimage.png";
 
 // Icons
@@ -41,10 +40,12 @@ export default function About() {
   };
 
   return (
-    <section id="about" className="relative scroll-mt-24">
-      <SectionBackground />
-      {/* Desktop: gradient behind text column for readability */}
-      <div className="absolute inset-0 -z-10 hidden md:block bg-linear-to-l from-slate-900/60 to-transparent" />
+    <section
+      id="about"
+      className="relative scroll-mt-24 text-white"
+    >
+      {/* Samme type gradient-overlay som i Hero, men speilvendt mot venstre siden teksten ligger til høyre på desktop */}
+      <div className="absolute inset-0 -z-10 bg-linear-to-l from-slate-900/60 via-slate-900/40 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="grid items-center gap-12 md:grid-cols-2">
@@ -67,10 +68,14 @@ export default function About() {
             <p className="text-sm font-semibold tracking-widest text-sky-300 uppercase">
               {t("about.sectionLabel") as string}
             </p>
+
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               {t("about.heading") as string}
             </h2>
-            <p className="mt-4 text-lg text-slate-200">{t("about.copy") as string}</p>
+
+            <p className="mt-4 text-lg text-slate-200">
+              {t("about.copy") as string}
+            </p>
 
             {/* Highlights */}
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
