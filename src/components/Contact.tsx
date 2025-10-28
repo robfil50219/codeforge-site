@@ -1,6 +1,6 @@
+// src/components/Contact.tsx
 import { Mail, Github, Linkedin, Clock, MapPin } from "lucide-react";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
-import ContactForm from "./ContactForm";
 import Container from "./ui/Container";
 import { useTranslation } from "../lib/t";
 
@@ -13,12 +13,16 @@ export default function Contact() {
       className="scroll-mt-24 relative bg-white"
       aria-labelledby="contact-heading"
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      {/* bakgrunnsglød */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
         <div className="absolute left-1/2 top-10 h-64 w-xl -translate-x-1/2 rounded-full bg-sky-100/60 blur-3xl" />
       </div>
 
       <Container className="py-20">
-        {/* Heading */}
+        {/* Overskrift */}
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="contact-heading"
@@ -26,7 +30,10 @@ export default function Contact() {
           >
             {t("contact.heading") as string}
           </h2>
-          <p className="mt-3 text-slate-600">{t("contact.copy") as string}</p>
+
+          <p className="mt-3 text-slate-600">
+            {t("contact.copy") as string}
+          </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-500">
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 ring-1 ring-slate-200">
@@ -40,8 +47,9 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Cards */}
+        {/* Kontakt-kort */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* E-post */}
           <a
             href={MAILTO}
             className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
@@ -63,6 +71,7 @@ export default function Contact() {
             </div>
           </a>
 
+          {/* GitHub */}
           <a
             href="https://github.com/robfil50219"
             target="_blank"
@@ -86,6 +95,7 @@ export default function Contact() {
             </div>
           </a>
 
+          {/* LinkedIn */}
           <a
             href="https://www.linkedin.com/in/robert-filep-417146264"
             target="_blank"
@@ -110,24 +120,6 @@ export default function Contact() {
               </div>
             </div>
           </a>
-        </div>
-
-        {/* Form in CTA panel */}
-        <div className="mt-16 overflow-hidden rounded-2xl border border-slate-200 bg-linear-to-r from-sky-50 to-indigo-50 p-6 sm:p-10">
-          <div className="mx-auto max-w-3xl">
-            <h3 className="text-xl font-semibold text-slate-900 text-center">
-              {t("contact.formTitle") as string}
-            </h3>
-            <p className="mt-2 text-slate-600 text-center">
-              {t("contact.formCopy") as string}
-            </p>
-
-            <div className="mt-8">
-              <div className="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-                <ContactForm />
-              </div>
-            </div>
-          </div>
         </div>
       </Container>
     </section>
