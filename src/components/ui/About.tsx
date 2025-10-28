@@ -9,19 +9,22 @@ export default function About() {
   const tech = t("about.tech", { returnObjects: true }) as string[];
 
   return (
-    <section id="about" className="scroll-mt-24 bg-white py-16 sm:py-24">
+    <section id="about" className="relative scroll-mt-24 py-16 sm:py-24">
+      {/* IDENTISK overlay som i Hero */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-slate-900/18 backdrop-blur-[2px] mix-blend-normal"
+      />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Photo (locked square → circle) */}
+          {/* Foto – fjernet glow-blob helt */}
           <div className="flex justify-center">
             <div className="relative">
-              {/* soft glow */}
-              <div className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-sky-200/50 blur-2xl" />
-              {/* Perfect circle wrapper */}
-              <div className="relative aspect-square w-56 sm:w-64 rounded-full overflow-hidden ring-4 ring-white shadow-xl">
+              <div className="relative aspect-square w-56 sm:w-64 rounded-full overflow-hidden ring-4 ring-white/70 shadow-xl">
                 <img
                   src={profileImg}
-                  alt={t("about.alt")}
+                  alt={t("about.alt") as string}
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />
@@ -29,15 +32,15 @@ export default function About() {
             </div>
           </div>
 
-          {/* Text */}
+          {/* Tekst */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
-              {t("about.sectionLabel")}
+              {t("about.sectionLabel") as string}
             </p>
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              {t("about.heading")}
+              {t("about.heading") as string}
             </h2>
-            <p className="mt-4 text-lg text-slate-600">{t("about.copy")}</p>
+            <p className="mt-4 text-lg text-slate-600">{t("about.copy") as string}</p>
 
             {/* Highlights */}
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
