@@ -6,34 +6,34 @@ export default function Hero() {
   const { t } = useTranslation();
 
   return (
-    <section id="hero" className="relative scroll-mt-24 text-white">
-      {/* Gjennomsiktig base + gradient lik About */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-r from-slate-900/60 via-slate-900/40 to-transparent" />
+    <section id="hero" className="relative scroll-mt-24 text-slate-900">
+      {/* Transparent soft gradient – still lets background show through */}
+      <div className="absolute inset-0 -z-10 bg-linear-to-r from-white/80 via-white/60 to-white/40 backdrop-blur-[2px]" />
 
       <Container className="py-20 sm:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left: text */}
           <div className="max-w-xl">
-            <p className="text-sm font-semibold tracking-widest text-sky-300 uppercase">
+            <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
               {t("brand") as string}
             </p>
 
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight text-white">
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight text-slate-900">
               {t("hero.title") as string}
             </h1>
 
-            <p className="mt-3 text-lg font-medium text-sky-300">
+            <p className="mt-3 text-lg font-medium text-sky-700">
               {t("hero.tagline") as string}
             </p>
 
-            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-200">
+            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-700">
               {t("hero.blurb") as string}
             </p>
           </div>
 
           {/* Right: image */}
           <div className="relative">
-            <div className="overflow-hidden rounded-3xl border border-white/20 bg-white/5 backdrop-blur-[1px] shadow-xl">
+            <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 backdrop-blur-sm shadow-lg">
               <img
                 src={`${import.meta.env.BASE_URL}hero.jpg`}
                 alt={t("hero.imageAlt") as string}
@@ -46,13 +46,13 @@ export default function Hero() {
               />
             </div>
 
-            <p className="mt-4 text-center text-xs text-slate-400">
+            <p className="mt-4 text-center text-xs text-slate-600">
               {t("hero.imageCaption") as string} · Photo by{" "}
               <a
                 href="https://unsplash.com/photos/people-sitting-on-chair-in-front-of-computer-monitor-Fa9b57hffnM"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-sky-300/70 underline-offset-2 hover:text-slate-100 hover:decoration-sky-200"
+                className="underline decoration-sky-500/60 underline-offset-2 hover:text-sky-700 hover:decoration-sky-700"
               >
                 Sigmund / Unsplash
               </a>
