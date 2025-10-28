@@ -7,18 +7,16 @@ export default function Hero() {
 
   return (
     <section id="hero" className="relative scroll-mt-24 text-slate-900">
-      {/* Transparent soft gradient – still lets background show through */}
+      {/* Transparent soft gradient */}
       <div className="absolute inset-0 -z-10 bg-linear-to-r from-white/80 via-white/60 to-white/40 backdrop-blur-[2px]" />
 
       <Container className="py-20 sm:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left: text */}
           <div className="max-w-xl">
-            <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase">
-              {t("brand") as string}
-            </p>
+            {/* Removed "CODEFORGE STUDIO" line */}
 
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight text-slate-900">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight text-slate-900">
               {t("hero.title") as string}
             </h1>
 
@@ -46,8 +44,9 @@ export default function Hero() {
               />
             </div>
 
+            {/* Only keep the photo credit */}
             <p className="mt-4 text-center text-xs text-slate-600">
-              {t("hero.imageCaption") as string} · Photo by{" "}
+              Photo by{" "}
               <a
                 href="https://unsplash.com/photos/people-sitting-on-chair-in-front-of-computer-monitor-Fa9b57hffnM"
                 target="_blank"
