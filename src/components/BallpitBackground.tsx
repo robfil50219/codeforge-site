@@ -6,31 +6,26 @@ type Ball = {
   y: number;
   vx: number;
   vy: number;
-  r: number;   // visual radius
-  c: string;   // color
+  r: number;
+  c: string;
 };
 
 type Sprite = {
   cvs: HTMLCanvasElement;
-  hw: number;  // half width
-  hh: number;  // half height
+  hw: number;
+  hh: number;
 };
 
 type Settings = {
   count: number;
   rMin: number;
   rMax: number;
-  mouseRadius: number;
-  mouseForce: number;
-  alpha: number;          // global alpha for balls
-  topKeepout: number;     // "no balls" band at top (px)
-  dprCap: number;         // cap devicePixelRatio
-  maxSpeed: number;       // clamp speed
-  // Touch extras
-  touchRadius: number;    // influence radius while touching
-  touchForce: number;     // base force while touching
-  touchBurst: number;     // extra impulse on touch start
-  swipeBoost: number;     // extra force along swipe direction
+  alpha: number;
+  topKeepout: number; // keep balls away from top text on small screens
+  dprCap: number;
+  maxSpeed: number;
+  mouseRadius: number; // ✅ same values used for desktop & touch
+  mouseForce: number;  // ✅ same values used for desktop & touch
 };
 
 export default function BallpitBackground() {
@@ -45,7 +40,7 @@ export default function BallpitBackground() {
     if (!maybeCtx) return;
     const ctx: CanvasRenderingContext2D = maybeCtx;
 
-    // Brand colors from :root with fallbacks
+    // Brand colors (fallbacks)
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
@@ -57,7 +52,6 @@ export default function BallpitBackground() {
       "#0891B2", "#38BDF8",
     ];
 
-    // ------- Responsive settings -------
     const balls: Ball[] = [];
     let settings: Settings = getSettings();
     let nativeDpr = window.devicePixelRatio || 1;
@@ -65,25 +59,22 @@ export default function BallpitBackground() {
 
     let W = 0, H = 0, raf = 0, running = true;
 
-    function isMobile() { return window.innerWidth < 768; }
-    function isTablet() { return window.innerWidth >= 768 && window.innerWidth < 1024; }
+    const isMobile = () => window.innerWidth < 768;
+    const isTablet = () => window.innerWidth >= 768 && window.innerWidth < 1024;
 
     function getSettings(): Settings {
+      // Visual/Perf tweaks per breakpoint, BUT interaction strength stays desktop-like
       if (isMobile()) {
         return {
           count: 10,
           rMin: 10,
           rMax: 18,
-          mouseRadius: 70,
-          mouseForce: 0.6,
           alpha: 0.80,
           topKeepout: 280,
           dprCap: 1,
           maxSpeed: 0.55,
-          touchRadius: 130,
-          touchForce: 1.6,  // strong base force on touch
-          touchBurst: 2.0,  // burst impulse at touchstart
-          swipeBoost: 0.035 // extra push along swipe vector
+          mouseRadius: 90, // ✅ desktop values
+          mouseForce: 0.9, // ✅ desktop values
         };
       }
       if (isTablet()) {
@@ -91,47 +82,36 @@ export default function BallpitBackground() {
           count: 18,
           rMin: 12,
           rMax: 22,
-          mouseRadius: 85,
-          mouseForce: 0.8,
-          alpha: 0.88,
+          alpha: 0.90,
           topKeepout: 160,
           dprCap: 1.25,
-          maxSpeed: 0.6,
-          touchRadius: 140,
-          touchForce: 1.4,
-          touchBurst: 1.6,
-          swipeBoost: 0.03
+          maxSpeed: 0.60,
+          mouseRadius: 90,
+          mouseForce: 0.9,
         };
       }
       return {
         count: 26,
         rMin: 14,
         rMax: 28,
-        mouseRadius: 90,
-        mouseForce: 0.9,
         alpha: 0.95,
         topKeepout: 0,
         dprCap: 1.5,
         maxSpeed: 0.65,
-        touchRadius: 150,
-        touchForce: 1.2,
-        touchBurst: 1.2,
-        swipeBoost: 0.025
+        mouseRadius: 90,
+        mouseForce: 0.9,
       };
     }
 
-    // Interaction point (mouse OR touch)
+    // Unified pointer (mouse OR touch), same as desktop behavior
     const pointer = {
       x: -9999,
       y: -9999,
       r: settings.mouseRadius,
       force: settings.mouseForce,
-      active: false,
-      lastX: -9999,
-      lastY: -9999
     };
 
-    // Sprite cache
+    // Cache
     const spriteCache = new Map<string, Sprite>();
     const rand = (min: number, max: number) => Math.random() * (max - min) + min;
     const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
@@ -160,7 +140,7 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
-      // Shadow
+      // Shadow (slight blur)
       const rx = R * 1.05;
       const ry = Math.max(6, R * 0.45);
       const sx = cx + R * 0.30;
@@ -182,7 +162,7 @@ export default function BallpitBackground() {
       octx.restore();
       octx.filter = "none";
 
-      // Halo
+      // Subtle halo
       octx.save();
       const haloR = R * 1.1;
       const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
@@ -194,13 +174,13 @@ export default function BallpitBackground() {
       octx.fill();
       octx.restore();
 
-      // Ball
+      // Ball fill
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // Rim
+      // Rim shading
       const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
@@ -273,62 +253,24 @@ export default function BallpitBackground() {
       adjustBallCount(settings.count);
     }
 
-    // --- Touch helpers: big burst + swipe push ---
-    function burstImpulse(cx: number, cy: number, radius: number, power: number) {
-      const R2 = radius * radius;
-      for (const b of balls) {
-        const dx = b.x - cx;
-        const dy = b.y - cy;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < R2) {
-          const d = Math.max(10, Math.sqrt(d2));
-          const ux = dx / d;
-          const uy = dy / d;
-          const k = (1 - d / radius) * power; // stronger near center
-          b.vx += ux * k;
-          b.vy += uy * k;
-        }
-      }
-    }
-
-    function swipeImpulse(cx: number, cy: number, dx: number, dy: number, radius: number, boost: number) {
-      const len = Math.max(1, Math.hypot(dx, dy));
-      const ux = dx / len;
-      const uy = dy / len;
-      const R2 = radius * radius;
-      for (const b of balls) {
-        const bx = b.x - cx;
-        const by = b.y - cy;
-        const d2 = bx * bx + by * by;
-        if (d2 < R2) {
-          const d = Math.max(10, Math.sqrt(d2));
-          const falloff = (1 - d / radius);
-          const k = falloff * boost * len * 0.15; // scale with swipe distance
-          b.vx += ux * k;
-          b.vy += uy * k;
-        }
-      }
-    }
-
     function update() {
       ctx.clearRect(0, 0, W, H);
 
-      // movement + pointer/touch field
+      // movement + pointer field (desktop behavior everywhere)
       for (let i = 0; i < balls.length; i++) {
         const a = balls[i];
 
-        // base field (mouse on desktop, touch when active)
+        // same push logic used for mouse on desktop
         const dx = a.x - pointer.x;
         const dy = a.y - pointer.y;
-        const R = (pointer.active ? settings.touchRadius : pointer.r) + a.r;
+        const R = a.r + pointer.r;
         const rr = R * R;
         const d2 = dx * dx + dy * dy;
         if (d2 < rr) {
           const dist = Math.max(10, Math.sqrt(d2));
           const ux = dx / dist;
           const uy = dy / dist;
-          const force = pointer.active ? settings.touchForce : pointer.force;
-          const push = (1 - dist / R) * force;
+          const push = (1 - dist / R) * pointer.force;
           a.vx += ux * push;
           a.vy += uy * push;
         }
@@ -336,15 +278,11 @@ export default function BallpitBackground() {
         a.x += a.vx;
         a.y += a.vy;
 
-        // damping
-        a.vx *= 0.996;
-        a.vy *= 0.996;
+        // damping + speed cap
+        a.vx = clamp(a.vx * 0.996, -settings.maxSpeed, settings.maxSpeed);
+        a.vy = clamp(a.vy * 0.996, -settings.maxSpeed, settings.maxSpeed);
 
-        // speed cap
-        a.vx = clamp(a.vx, -settings.maxSpeed, settings.maxSpeed);
-        a.vy = clamp(a.vy, -settings.maxSpeed, settings.maxSpeed);
-
-        // walls with top keepout
+        // walls with top keepout band
         const minY = settings.topKeepout + a.r;
         if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
         if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
@@ -352,7 +290,7 @@ export default function BallpitBackground() {
         if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
       }
 
-      // collisions
+      // collisions (elastic, equal mass)
       for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
           const a = balls[i], b = balls[j];
@@ -398,43 +336,19 @@ export default function BallpitBackground() {
       if (running) raf = requestAnimationFrame(update);
     }
 
-    // Pointer (mouse/touch unified) — attach to window, canvas stays pointer-events-none
-    function onPointerDown(e: PointerEvent) {
-      pointer.active = true;
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
-      pointer.lastX = e.clientX;
-      pointer.lastY = e.clientY;
-
-      // Big burst on touch-capable devices
-      if (e.pointerType === "touch") {
-        burstImpulse(pointer.x, pointer.y, settings.touchRadius, settings.touchBurst);
-      }
-    }
-
+    // Pointer events (desktop & touch use the same values)
     function onPointerMove(e: PointerEvent) {
-      const prevX = pointer.x;
-      const prevY = pointer.y;
-
       pointer.x = e.clientX;
       pointer.y = e.clientY;
-
-      // Swipe push while finger moves
-      if (pointer.active && e.pointerType === "touch") {
-        const dx = pointer.x - prevX;
-        const dy = pointer.y - prevY;
-        if (dx !== 0 || dy !== 0) {
-          swipeImpulse(pointer.x, pointer.y, dx, dy, settings.touchRadius, settings.swipeBoost);
-        }
-      }
     }
-
+    function onPointerDown(e: PointerEvent) {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+    }
     function onPointerUp() {
-      pointer.active = false;
       pointer.x = -9999;
       pointer.y = -9999;
     }
-
     function onResize() {
       resizeCanvas();
     }
@@ -444,8 +358,8 @@ export default function BallpitBackground() {
     initBalls();
     update();
 
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     window.addEventListener("pointercancel", onPointerUp, { passive: true });
     window.addEventListener("resize", onResize);
@@ -453,8 +367,8 @@ export default function BallpitBackground() {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
-      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
       window.removeEventListener("resize", onResize);
