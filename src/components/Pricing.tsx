@@ -13,22 +13,50 @@ type PricingAcf = {
 
 export default function Pricing() {
   const { t } = useTranslation();
-  // ⬇️ Now generic: page.acf is typed
   const { page, loading } = useWpPage<PricingAcf>("pricing");
 
   // Safe fallbacks: use i18n if WP/ACF not present yet
-  const starterPrice = page?.acf?.starter_price ?? (t("pricing.starter.price") as string);
-  const proPrice = page?.acf?.pro_price ?? (t("pricing.pro.price") as string);
-  const customPrice = page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
+  const starterPrice =
+    page?.acf?.starter_price ?? (t("pricing.starter.price") as string);
+  const proPrice =
+    page?.acf?.pro_price ?? (t("pricing.pro.price") as string);
+  const customPrice =
+    page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
 
   const cardBase =
     "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg";
   const bullet =
     "mt-1 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 flex-shrink-0";
 
-  const starterFeatures = t("pricing.starter.features", { returnObjects: true }) as string[];
-  const proFeatures = t("pricing.pro.features", { returnObjects: true }) as string[];
-  const customFeatures = t("pricing.custom.features", { returnObjects: true }) as string[];
+  const starterFeatures = t("pricing.starter.features", {
+    returnObjects: true,
+  }) as string[];
+  const proFeatures = t("pricing.pro.features", {
+    returnObjects: true,
+  }) as string[];
+  const customFeatures = t("pricing.custom.features", {
+    returnObjects: true,
+  }) as string[];
+
+  // --- New: build mailto links with subject preset -----------------
+
+  // We URL-encode the subject so special chars and spaces don't break.
+  // Example result:
+  // mailto:robert@codeforgestudio.no?subject=CodeForge%20Studio%20%E2%80%93%20Starter
+  const encode = (s: string) =>
+    encodeURIComponent(s);
+
+  const mailStarter = `mailto:robert@codeforgestudio.no?subject=${encode(
+    "CodeForge Studio – Starter"
+  )}`;
+
+  const mailPro = `mailto:robert@codeforgestudio.no?subject=${encode(
+    "CodeForge Studio – Pro"
+  )}`;
+
+  const mailCustom = `mailto:robert@codeforgestudio.no?subject=${encode(
+    "CodeForge Studio – Skreddersydd løsning"
+  )}`;
 
   return (
     <section id="pricing" className="scroll-mt-24 bg-white">
@@ -38,7 +66,9 @@ export default function Pricing() {
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
             {t("pricing.heading") as string}
           </h2>
-          <p className="mt-3 text-slate-600">{t("pricing.sub") as string}</p>
+          <p className="mt-3 text-slate-600">
+            {t("pricing.sub") as string}
+          </p>
         </div>
 
         {loading ? (
@@ -79,7 +109,7 @@ export default function Pricing() {
                 </ul>
 
                 <a
-                  href="mailto:robert@codeforgestudio.no"
+                  href={mailStarter}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl",
                     "bg-slate-900 px-4 py-2 text-sm font-medium text-white",
@@ -128,7 +158,7 @@ export default function Pricing() {
                 </ul>
 
                 <a
-                  href="mailto:robert@codeforgestudio.no"
+                  href={mailPro}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl",
                     "bg-sky-600 px-4 py-2 text-sm font-medium text-white",
@@ -174,7 +204,7 @@ export default function Pricing() {
                 </ul>
 
                 <a
-                  href="mailto:robert@codeforgestudio.no"
+                  href={mailCustom}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl",
                     "border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700",
