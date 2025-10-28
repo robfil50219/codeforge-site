@@ -6,7 +6,7 @@ export default function Hero() {
   const { t } = useTranslation();
 
   return (
-    <section className="relative bg-transparent">
+    <section id="hero" className="relative bg-transparent">
       <Container className="py-20 sm:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Venstre: tekst */}
@@ -25,9 +25,9 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Høyre: bilde + bildetekst */}
+          {/* Høyre: bilde — ingen plate, ingen blur, minimal kant */}
           <div className="relative">
-            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white/90 shadow-lg">
+            <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-transparent">
               <img
                 src={`${import.meta.env.BASE_URL}hero.jpg`}
                 alt={t("hero.imageAlt") as string}

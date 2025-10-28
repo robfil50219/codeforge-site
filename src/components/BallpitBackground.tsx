@@ -1,297 +1,315 @@
 // src/components/BallpitBackground.tsx
 import { useEffect, useRef } from "react";
 
-type Props = {
-  colors?: string[];
-  count?: number;
-  minSize?: number;
-  maxSize?: number;
-  friction?: number;      // frame friction (0.990–0.999)
-  bounce?: number;        // restitution (0.80–0.98)
-  opacity?: number;       // canvas global alpha
-  mouseRadius?: number;   // px
-  mouseStrength?: number; // 0.05–1
-  force?: boolean;        // ignore prefers-reduced-motion
-  layer?: "front" | "behind";
-  shadowBlur?: number;    // glow
-  outlineAlpha?: number;  // thin outline for contrast
-};
-
 type Ball = {
   x: number;
   y: number;
   vx: number;
   vy: number;
-  r: number;
-  c: string; // hex
+  r: number;   // visual radius (sprites quantized to px)
+  c: string;   // color
 };
 
-// --- color helpers ---
-function clamp(n: number, a: number, b: number) { return Math.max(a, Math.min(b, n)); }
-function hexToRgb(hex: string) {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!m) return { r: 0, g: 0, b: 0 };
-  return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
-}
-function rgbToStr(r: number, g: number, b: number, a = 1) {
-  return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
-}
-function adjustLum(hex: string, factor: number) {
-  const { r, g, b } = hexToRgb(hex);
-  return { r: clamp(r * factor, 0, 255), g: clamp(g * factor, 0, 255), b: clamp(b * factor, 0, 255) };
-}
+type Sprite = {
+  cvs: HTMLCanvasElement;
+  hw: number;  // half width
+  hh: number;  // half height
+};
 
-export default function BallpitBackground({
-  colors = ["#00A0A0", "#14B8A6", "#06B6D4", "#0F4452", "#001920"],
-  count,
-  minSize = 12,
-  maxSize = 30,
-  friction = 0.995,
-  bounce = 0.96,
-  opacity = 1,
-  mouseRadius = 180,
-  mouseStrength = 0.45,
-  force = true,
-  layer = "behind",
-  shadowBlur = 12,
-  outlineAlpha = 0.25,
-}: Props) {
+export default function BallpitBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (!force && prefersReduced) return;
-
-    const canvas = canvasRef.current;
+    // Bind a non-null canvas and ctx once
+    const canvas = canvasRef.current as HTMLCanvasElement | null;
     if (!canvas) return;
 
-    // 🔧 Hard-type: sørger for at TS ikke tror ctx kan være null
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    // Hvis du vil ha runtime-guard i tillegg, fjern kommentaren under:
-    // if (!ctx) return;
+    const maybeCtx = canvas.getContext("2d");
+    if (!maybeCtx) return;
+    const ctx: CanvasRenderingContext2D = maybeCtx;
 
-    let w = 0, h = 0, dpr = 1;
-    let balls: Ball[] = [];
-    let mouseX = 0, mouseY = 0, hasMouse = false;
+    // --- DPR (cap for performance) ---
+    const nativeDpr = window.devicePixelRatio || 1;
+    let dpr = nativeDpr > 1.5 ? 1.5 : nativeDpr; // cap retina a bit for FPS
 
-    // Spatial grid for fast ball-ball collisions
-    let cellSize = (maxSize * 2) | 0; // one cell ~ two diameters
-    const grid = new Map<string, number[]>(); // key -> indices
+    let W = 0;
+    let H = 0;
+    let raf = 0;
+    let running = true;
 
-    const isMobile = () => window.innerWidth < 768;
-    const TARGET_COUNT = count ?? (isMobile() ? 32 : 72);
+    // --- Brand colors from :root with fallbacks ---
+    const rs = getComputedStyle(document.documentElement);
+    const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
+    const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
 
-    const rand = (a: number, b: number) => a + Math.random() * (b - a);
-    const pick = <T,>(arr: T[]) => arr[(Math.random() * arr.length) | 0];
+    const colors = [
+      SEA,
+      MIDNIGHT,
+      "#0BB3B3",
+      "#067A7A",
+      "#06B6D4",
+      "#22D3EE",
+      "#0891B2",
+      "#38BDF8",
+    ];
 
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = Math.max(1, Math.floor(w * dpr));
-      canvas.height = Math.max(1, Math.floor(h * dpr));
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
+    // --- Params ---
+    const BALLS_COUNT = 26;
+    const R_MIN = 14;
+    const R_MAX = 28;
 
-      cellSize = Math.max(16, (maxSize * 2) | 0);
+    // mouse repulsion
+    const mouse = { x: -9999, y: -9999, r: 90, force: 0.9 };
 
-      balls = Array.from({ length: TARGET_COUNT }).map(() => {
-        const r = rand(minSize, maxSize);
-        return {
-          x: rand(r, w - r),
-          y: rand(r, h - r),
-          vx: rand(-0.9, 0.9),
-          vy: rand(-0.9, 0.9),
+    // --- Resize using non-null canvas & ctx ---
+        function resize() {
+          W = window.innerWidth;
+          H = window.innerHeight;
+          canvas!.style.width = `${W}px`;
+          canvas!.style.height = `${H}px`;
+          canvas!.width = Math.floor(W * dpr);
+          canvas!.height = Math.floor(H * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+    // --- Utils ---
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+    const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
+
+    // --- Sprite cache keyed by color-radius ---
+    const spriteCache = new Map<string, Sprite>();
+
+    function getSprite(r: number, color: string): Sprite {
+      // quantize radius to reduce sprite variants
+      const R = Math.max(6, Math.round(r));
+      const key = `${color}-${R}`;
+
+      const hit = spriteCache.get(key);
+      if (hit) return hit;
+
+      // padding for shadow
+      const pad = Math.round(R * 1.05); // a bit more room for bigger shadow
+      const w = R * 2 + pad * 2;
+      const h = R * 2 + pad * 2;
+
+      const off = document.createElement("canvas");
+      off.width = Math.ceil(w * dpr);
+      off.height = Math.ceil(h * dpr);
+      const octx = off.getContext("2d");
+      if (!octx) {
+        const fallback: Sprite = { cvs: off, hw: w / 2, hh: h / 2 };
+        spriteCache.set(key, fallback);
+        return fallback;
+      }
+      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const cx = pad + R;
+      const cy = pad + R;
+
+      // --- Shadow: stronger + a little blur (offscreen, so cheap at runtime) ---
+      const rx = R * 1.05;
+      const ry = Math.max(6, R * 0.45);
+      const sx = cx + R * 0.30;
+      const sy = cy + R * 0.66;
+
+      octx.save();
+      // small blur ONLY for the shadow sprite drawing
+      octx.filter = "blur(3px)";
+      octx.translate(sx, sy);
+      octx.scale(1, ry / rx);
+
+      const sg = octx.createRadialGradient(0, 0, R * 0.12, 0, 0, rx);
+      sg.addColorStop(0, "rgba(15,23,42,0.22)");
+      sg.addColorStop(0.6, "rgba(15,23,42,0.14)");
+      sg.addColorStop(1, "rgba(15,23,42,0)");
+      octx.beginPath();
+      octx.arc(0, 0, rx, 0, Math.PI * 2);
+      octx.fillStyle = sg;
+      octx.fill();
+      octx.restore();
+      octx.filter = "none";
+
+      // Optional: a faint ambient halo to blend a touch
+      octx.save();
+      const haloR = R * 1.1;
+      const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
+      halo.addColorStop(0, "rgba(0,0,0,0)");
+      halo.addColorStop(1, "rgba(0,0,0,0.06)");
+      octx.beginPath();
+      octx.fillStyle = halo;
+      octx.arc(cx, cy, haloR, 0, Math.PI * 2);
+      octx.fill();
+      octx.restore();
+
+      // --- Ball: crisp rim (solid), subtle rim shading, small highlight ---
+      octx.beginPath();
+      octx.fillStyle = color;
+      octx.arc(cx, cy, R, 0, Math.PI * 2);
+      octx.fill();
+
+      const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
+      rim.addColorStop(0, "rgba(0,0,0,0)");
+      rim.addColorStop(1, "rgba(0,0,0,0.10)");
+      octx.beginPath();
+      octx.fillStyle = rim;
+      octx.arc(cx, cy, R, 0, Math.PI * 2);
+      octx.fill();
+
+      octx.beginPath();
+      octx.fillStyle = "rgba(255,255,255,0.10)";
+      octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
+      octx.fill();
+
+      const sprite: Sprite = { cvs: off, hw: w / 2, hh: h / 2 };
+      spriteCache.set(key, sprite);
+      return sprite;
+    }
+
+    // --- Balls ---
+    const balls: Ball[] = [];
+
+    function initBalls() {
+      balls.length = 0;
+      for (let i = 0; i < BALLS_COUNT; i++) {
+        const r = rand(R_MIN, R_MAX);
+        balls.push({
+          x: rand(r, W - r),
+          y: rand(r, H - r),
+          vx: rand(-0.55, 0.55),
+          vy: rand(-0.55, 0.55),
           r,
-          c: pick(colors),
-        };
-      });
-    };
-
-    const onMouseMove = (e: MouseEvent) => { mouseX = e.clientX; mouseY = e.clientY; hasMouse = true; };
-    const onTouchMove = (e: TouchEvent) => {
-      if (!e.touches?.length) return;
-      mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; hasMouse = true;
-    };
-
-    const cellKey = (ix: number, iy: number) => `${ix},${iy}`;
-
-    function buildGrid() {
-      grid.clear();
-      const inv = 1 / cellSize;
-      for (let i = 0; i < balls.length; i++) {
-        const b = balls[i];
-        const ix = Math.floor(b.x * inv);
-        const iy = Math.floor(b.y * inv);
-        const key = cellKey(ix, iy);
-        const bucket = grid.get(key);
-        if (bucket) bucket.push(i);
-        else grid.set(key, [i]);
+          c: colors[(Math.random() * colors.length) | 0],
+        });
       }
     }
 
-    function resolvePair(a: Ball, b: Ball) {
-      let dx = b.x - a.x;
-      let dy = b.y - a.y;
-      let dist = Math.hypot(dx, dy);
-      const minDist = a.r + b.r;
+    // --- Sim/Render loop ---
+    function update() {
+      ctx.clearRect(0, 0, W, H);
 
-      if (dist === 0) {
-        // jitter to avoid NaN
-        const angle = Math.random() * Math.PI * 2;
-        dx = Math.cos(angle) * 0.01;
-        dy = Math.sin(angle) * 0.01;
-        dist = Math.hypot(dx, dy);
-      }
-
-      if (dist < minDist) {
-        // push them apart equally
-        const nx = dx / dist;
-        const ny = dy / dist;
-        const overlap = (minDist - dist) * 0.5;
-        a.x -= nx * overlap; a.y -= ny * overlap;
-        b.x += nx * overlap; b.y += ny * overlap;
-
-        // elastic collision (equal mass): swap normal components (with restitution)
-        const tx = -ny, ty = nx; // tangent
-        const v1n = a.vx * nx + a.vy * ny;
-        const v1t = a.vx * tx + a.vy * ty;
-        const v2n = b.vx * nx + b.vy * ny;
-        const v2t = b.vx * tx + b.vy * ty;
-
-        const v1nAfter = v2n * bounce;
-        const v2nAfter = v1n * bounce;
-
-        a.vx = v1nAfter * nx + v1t * tx;
-        a.vy = v1nAfter * ny + v1t * ty;
-        b.vx = v2nAfter * nx + v2t * tx;
-        b.vy = v2nAfter * ny + v2t * ty;
-      }
-    }
-
-    function collide() {
-      const inv = 1 / cellSize;
+      // movement + mouse repulsion
       for (let i = 0; i < balls.length; i++) {
         const a = balls[i];
-        const ix = Math.floor(a.x * inv);
-        const iy = Math.floor(a.y * inv);
 
-        // Check current cell + neighbors (3x3)
-        for (let oy = -1; oy <= 1; oy++) {
-          for (let ox = -1; ox <= 1; ox++) {
-            const key = cellKey(ix + ox, iy + oy);
-            const bucket = grid.get(key);
-            if (!bucket) continue;
-
-            for (let k = 0; k < bucket.length; k++) {
-              const j = bucket[k];
-              if (j <= i) continue; // avoid double work
-              resolvePair(a, balls[j]);
-            }
-          }
-        }
-      }
-    }
-
-    function drawBall(b: Ball) {
-      const center = adjustLum(b.c, 1.25); // brighter middle
-      const edge = adjustLum(b.c, 0.9);    // darker edge
-      const grad = ctx.createRadialGradient(
-        b.x - b.r * 0.25, b.y - b.r * 0.25, b.r * 0.1,
-        b.x, b.y, b.r
-      );
-      grad.addColorStop(0, rgbToStr(center.r, center.g, center.b, 1));
-      grad.addColorStop(1, rgbToStr(edge.r, edge.g, edge.b, 1));
-
-      ctx.save();
-      if (shadowBlur > 0) {
-        ctx.shadowColor = rgbToStr(center.r, center.g, center.b, 0.9);
-        ctx.shadowBlur = shadowBlur;
-      }
-      ctx.beginPath();
-      ctx.fillStyle = grad;
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      if (outlineAlpha > 0) {
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.lineWidth = 1.25;
-        ctx.strokeStyle = `rgba(0,0,0,${outlineAlpha})`;
-        ctx.stroke();
-      }
-    }
-
-    const step = () => {
-      // 1) integrate forces/velocities
-      for (let i = 0; i < balls.length; i++) {
-        const b = balls[i];
-
-        // mouse repulsion
-        if (hasMouse) {
-          const dx = b.x - mouseX;
-          const dy = b.y - mouseY;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 0 && dist < mouseRadius) {
-            const f = (1 - dist / mouseRadius) * mouseStrength;
-            const nx = dx / dist, ny = dy / dist;
-            b.vx += nx * f;
-            b.vy += ny * f;
-          }
+        const dx = a.x - mouse.x;
+        const dy = a.y - mouse.y;
+        const rr = (a.r + mouse.r) * (a.r + mouse.r);
+        const d2 = dx * dx + dy * dy;
+        if (d2 < rr) {
+          const dist = Math.max(10, Math.sqrt(d2));
+          const ux = dx / dist;
+          const uy = dy / dist;
+          const push = (1 - dist / Math.sqrt(rr)) * mouse.force;
+          a.vx += ux * push;
+          a.vy += uy * push;
         }
 
-        // friction + integrate
-        b.vx *= friction;
-        b.vy *= friction;
-        b.x += b.vx;
-        b.y += b.vy;
+        a.x += a.vx;
+        a.y += a.vy;
+
+        // light damping for stability
+        a.vx *= 0.996;
+        a.vy *= 0.996;
 
         // wall collisions
-        if (b.x - b.r < 0) { b.x = b.r; b.vx = -b.vx * bounce; }
-        if (b.x + b.r > w) { b.x = w - b.r; b.vx = -b.vx * bounce; }
-        if (b.y - b.r < 0) { b.y = b.r; b.vy = -b.vy * bounce; }
-        if (b.y + b.r > h) { b.y = h - b.r; b.vy = -b.vy * bounce; }
+        if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
+        if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
+        if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
+        if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
       }
 
-      // 2) build spatial grid and resolve ball-ball collisions
-            buildGrid();
-            collide();
+      // ball–ball collisions (equal mass, elastic)
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const a = balls[i], b = balls[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const minDist = a.r + b.r;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > 0 && d2 < minDist * minDist) {
+            const dist = Math.sqrt(d2);
+            const nx = dx / dist;
+            const ny = dy / dist;
 
-      // 3) draw
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.globalAlpha = opacity;
-      for (let i = 0; i < balls.length; i++) drawBall(balls[i]);
-      ctx.restore();
+            // separate
+            const overlap = (minDist - dist) / 2;
+            a.x -= nx * overlap; a.y -= ny * overlap;
+            b.x += nx * overlap; b.y += ny * overlap;
 
-      rafRef.current = requestAnimationFrame(step);
-    };
+            // swap normal components (elastic, equal mass)
+            const avn = a.vx * nx + a.vy * ny;
+            const atn = -a.vx * ny + a.vy * nx;
+            const bvn = b.vx * nx + b.vy * ny;
+            const btn = -b.vx * ny + b.vy * nx;
 
+            const avn2 = bvn;
+            const bvn2 = avn;
+
+            a.vx = avn2 * nx + atn * -ny;
+            a.vy = avn2 * ny + atn * nx;
+            b.vx = bvn2 * nx + btn * -ny;
+            b.vy = bvn2 * ny + btn * nx;
+          }
+        }
+      }
+
+      // draw via sprites (fast)
+      for (let i = 0; i < balls.length; i++) {
+        const b = balls[i];
+        const sprite = getSprite(b.r, b.c);
+        ctx.drawImage(sprite.cvs, Math.round(b.x - sprite.hw), Math.round(b.y - sprite.hh));
+      }
+
+      if (running) raf = requestAnimationFrame(update);
+    }
+
+    // --- Events ---
+    function onMove(e: MouseEvent) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }
+    function onLeave() {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    }
+    function onResize() {
+      // adjust DPR on huge areas to keep FPS up
+      const area = window.innerWidth * window.innerHeight;
+      dpr = nativeDpr;
+      if (area > 2_000_000 && nativeDpr > 1.25) dpr = 1.25;
+      if (area > 3_500_000 && nativeDpr > 1) dpr = 1;
+      resize();
+      for (const b of balls) {
+        b.x = clamp(b.x, b.r, W - b.r);
+        b.y = clamp(b.y, b.r, H - b.r);
+      }
+    }
+
+    // --- Init ---
     resize();
-    step();
-    window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    setTimeout(() => {
+      initBalls();
+      update();
+    }, 0);
 
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseleave", onLeave);
+    window.addEventListener("resize", onResize);
+
+    // Cleanup
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("touchmove", onTouchMove);
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("resize", onResize);
     };
-  }, [
-    colors, count, minSize, maxSize, friction, bounce, opacity,
-    mouseRadius, mouseStrength, force, shadowBlur, outlineAlpha,
-  ]);
+  }, []);
 
-  const zClass = layer === "front" ? "z-30" : "z-0"; // behind = z-0
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 ${zClass} pointer-events-none`}
+      className="fixed inset-0 -z-10 pointer-events-none"
       aria-hidden="true"
     />
   );

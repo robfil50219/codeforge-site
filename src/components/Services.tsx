@@ -23,8 +23,22 @@ import {
   CardDescription,
   CardList,
 } from "./ui/Card";
-import { toneStyle, type Tone } from "../utils/tone";
 import ProcessStrip from "./ProcessStrip";
+
+// Lokal tone-type + mapping (uten glow)
+type Tone = "sky" | "indigo" | "emerald" | "slate";
+const toneStyle = (tone?: Tone) => {
+  switch (tone) {
+    case "sky":
+      return { ring: "ring-sky-100", bg: "bg-sky-50", icon: "text-sky-600" };
+    case "indigo":
+      return { ring: "ring-indigo-100", bg: "bg-indigo-50", icon: "text-indigo-600" };
+    case "emerald":
+      return { ring: "ring-emerald-100", bg: "bg-emerald-50", icon: "text-emerald-600" };
+    default:
+      return { ring: "ring-slate-200", bg: "bg-slate-50", icon: "text-slate-700" };
+  }
+};
 
 type Service = {
   title: string;
@@ -37,7 +51,6 @@ type Service = {
 export default function Services() {
   const { t } = useTranslation();
 
-  // Primary & Extras (content from i18n)
   const primary: Service[] = [
     {
       title: t("services.primary.uiux.title"),
@@ -86,14 +99,11 @@ export default function Services() {
     },
   ];
 
-  // Process data + localized details
   const steps = t("services.process.steps", {
     returnObjects: true,
   }) as { step: string; text: string }[];
 
-  const detailsRaw = t("services.process.details", {
-    returnObjects: true,
-  }) as unknown;
+  const detailsRaw = t("services.process.details", { returnObjects: true }) as unknown;
 
   type Detail = { title: string; body: string };
   let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
@@ -125,7 +135,7 @@ export default function Services() {
     const track = trackRef.current;
     const stepEl = stepRefs.current[idx];
     if (!track || !stepEl) return;
-    // intentionally left minimal
+    // no-op
   }
 
   const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
@@ -133,7 +143,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="scroll-mt-24 bg-transparent" // ⬅️ samme som Pricing
+      className="scroll-mt-24 bg-transparent"
       aria-labelledby="services-heading"
     >
       <Container className="py-16 sm:py-24">
@@ -142,7 +152,7 @@ export default function Services() {
           <h2 id="services-heading" className="text-3xl font-bold tracking-tight text-slate-900">
             {t("services.heading")}
           </h2>
-        <p className="mt-3 text-slate-600">{t("services.sub")}</p>
+          <p className="mt-3 text-slate-600">{t("services.sub")}</p>
         </div>
 
         {/* Primary services */}
@@ -151,10 +161,7 @@ export default function Services() {
             const toneCls = toneStyle(tone);
             return (
               <Card key={title}>
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
-                />
+                {/* Fjernet glød-diven her */}
                 <CardHeader>
                   <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
                     <Icon className={`h-6 w-6 ${toneCls.icon}`} />
@@ -189,10 +196,7 @@ export default function Services() {
             const toneCls = toneStyle(tone);
             return (
               <Card key={title}>
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl ${toneCls.glow} transition duration-300 group-hover:scale-125`}
-                />
+                {/* Fjernet glød-diven her også */}
                 <CardHeader>
                   <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
                     <Icon className={`h-6 w-6 ${toneCls.icon}`} />

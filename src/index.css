@@ -28,7 +28,8 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background: #f8fafc; /* default: slate-50-ish */
+  /* ENDRET fra #f8fafc til hvit for å fjerne "haze"-følelsen bak Hero */
+  background: #ffffff;
   color: #0f172a; /* slate-900-ish */
 }
 
@@ -64,7 +65,9 @@ input[type="reset"] {
   cursor: pointer;
 }
 
-/* ---------- Glass utilities ---------- */
+/* ---------- Glass utilities ----------
+   OBS: Hvis du IKKE vil ha noe “frosted glass”-effekt noe sted,
+   kan du kommentere ut backdrop-filter-linjene under. */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.25);
