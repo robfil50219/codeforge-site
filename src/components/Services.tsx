@@ -15,30 +15,44 @@ import {
 } from "lucide-react";
 
 import Container from "./ui/Container";
-import {
-  Card,
-  CardHeader,
-  CardIcon,
-  CardTitle,
-  CardDescription,
-  CardList,
-} from "./ui/Card";
 import ProcessStrip from "./ProcessStrip";
 
-// Lokal tone-type + mapping (uten glow)
+/**
+ * Tone system for the little icon bubble at the top of each service card.
+ * We return inline color values so we can style via style={}
+ * instead of relying on Tailwind classes that don't behave well in dark mode.
+ */
 type Tone = "sky" | "indigo" | "emerald" | "slate";
-const toneStyle = (tone?: Tone) => {
+
+function toneStyle(tone?: Tone) {
   switch (tone) {
     case "sky":
-      return { ring: "ring-sky-100", bg: "bg-sky-50", icon: "text-sky-600" };
+      return {
+        bgLight: "rgba(186, 230, 253, 0.6)", // sky-200-ish
+        ringLight: "rgba(186, 230, 253, 0.9)",
+        icon: "#00a0a0", // brand teal
+      };
     case "indigo":
-      return { ring: "ring-indigo-100", bg: "bg-indigo-50", icon: "text-indigo-600" };
+      return {
+        bgLight: "rgba(199, 210, 254, 0.6)", // indigo-200-ish
+        ringLight: "rgba(199, 210, 254, 0.9)",
+        icon: "#6366f1",
+      };
     case "emerald":
-      return { ring: "ring-emerald-100", bg: "bg-emerald-50", icon: "text-emerald-600" };
+      return {
+        bgLight: "rgba(167, 243, 208, 0.6)", // emerald-200-ish
+        ringLight: "rgba(167, 243, 208, 0.9)",
+        icon: "#10b981",
+      };
     default:
-      return { ring: "ring-slate-200", bg: "bg-slate-50", icon: "text-slate-700" };
+      // slate / neutral
+      return {
+        bgLight: "rgba(226,232,240,0.6)", // slate-200-ish
+        ringLight: "rgba(226,232,240,0.9)",
+        icon: "rgba(148,163,184,1)", // slate-400
+      };
   }
-};
+}
 
 type Service = {
   title: string;
@@ -51,6 +65,7 @@ type Service = {
 export default function Services() {
   const { t } = useTranslation();
 
+  // Primary "core" offerings
   const primary: Service[] = [
     {
       title: t("services.primary.uiux.title"),
@@ -75,6 +90,7 @@ export default function Services() {
     },
   ];
 
+  // "Extras" / supporting services
   const extras: Service[] = [
     {
       title: t("services.extras.cms.title"),
@@ -99,20 +115,26 @@ export default function Services() {
     },
   ];
 
+  // Process data (the strip below cards)
   const steps = t("services.process.steps", {
     returnObjects: true,
   }) as { step: string; text: string }[];
 
-  const detailsRaw = t("services.process.details", { returnObjects: true }) as unknown;
+  const detailsRaw = t("services.process.details", {
+    returnObjects: true,
+  }) as unknown;
 
   type Detail = { title: string; body: string };
+
   let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
+
   if (detailsRaw && typeof detailsRaw === "object" && !Array.isArray(detailsRaw)) {
     const entries = Object.entries(
       detailsRaw as Record<string, { title?: string; body?: string }>
     )
-      .sort(([a], [b]) => Number(a) - Number(b))
+      .sort(([a, b]) => Number(a) - Number(b))
       .map(([, v]) => ({ title: v?.title ?? "", body: v?.body ?? "" }));
+
     if (entries.length) {
       details = entries.map((d, i) => ({
         title: d.title || steps[i]?.step || "",
@@ -121,6 +143,7 @@ export default function Services() {
     }
   }
 
+  // Refs for (future) animated indicator in ProcessStrip
   const trackRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -135,7 +158,7 @@ export default function Services() {
     const track = trackRef.current;
     const stepEl = stepRefs.current[idx];
     if (!track || !stepEl) return;
-    // no-op
+    // placeholder for future dot alignment logic
   }
 
   const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
@@ -143,41 +166,68 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="scroll-mt-24 bg-transparent"
+      className="scroll-mt-24 transition-colors duration-500 bg-transparent"
       aria-labelledby="services-heading"
     >
       <Container className="py-16 sm:py-24">
-        {/* Heading */}
+        {/* Section heading */}
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="services-heading" className="text-3xl font-bold tracking-tight text-slate-900">
+          <h2
+            id="services-heading"
+            className="text-heading text-3xl font-bold tracking-tight"
+          >
             {t("services.heading")}
           </h2>
-          <p className="mt-3 text-slate-600">{t("services.sub")}</p>
+
+          <p className="mt-3 text-body">
+            {t("services.sub")}
+          </p>
         </div>
 
-        {/* Primary services */}
+        {/* Primary services cards */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {primary.map(({ title, blurb, points, Icon, tone }) => {
-            const toneCls = toneStyle(tone);
+            const toneVars = toneStyle(tone);
+
             return (
-              <Card key={title}>
-                {/* Fjernet glød-diven her */}
-                <CardHeader>
-                  <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
-                    <Icon className={`h-6 w-6 ${toneCls.icon}`} />
-                  </CardIcon>
-                  <CardTitle>{title}</CardTitle>
-                  <CardDescription>{blurb}</CardDescription>
-                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                    {points.map((p) => (
-                      <li key={p} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 text-slate-400" />
-                        <span>{p}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardHeader>
-              </Card>
+              <div key={title} className="surface-card p-6 flex flex-col">
+                {/* icon chip */}
+                <div
+                  className="shrink-0 inline-flex items-center justify-center rounded-xl border text-[11px] font-semibold"
+                  style={{
+                    backgroundColor: toneVars.bgLight,
+                    borderColor: toneVars.ringLight,
+                    boxShadow: `0 12px 24px ${toneVars.ringLight}`,
+                  }}
+                >
+                  <Icon
+                    className="h-6 w-6"
+                    style={{ color: toneVars.icon }}
+                  />
+                </div>
+
+                {/* title / blurb */}
+                <h3 className="text-heading text-lg font-semibold mt-4">
+                  {title}
+                </h3>
+
+                <p className="text-body text-sm leading-relaxed mt-2">
+                  {blurb}
+                </p>
+
+                {/* bullet list */}
+                <ul className="mt-4 space-y-2 text-sm">
+                  {points.map((p) => (
+                    <li
+                      key={p}
+                      className="flex items-start gap-2 text-body text-sm leading-relaxed"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
         </div>
@@ -190,22 +240,48 @@ export default function Services() {
           details={details}
         />
 
-        {/* Extras */}
+        {/* Extras cards */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {extras.map(({ title, blurb, points, Icon, tone }) => {
-            const toneCls = toneStyle(tone);
+            const toneVars = toneStyle(tone);
+
             return (
-              <Card key={title}>
-                {/* Fjernet glød-diven her også */}
-                <CardHeader>
-                  <CardIcon className={`${toneCls.bg} ${toneCls.ring}`}>
-                    <Icon className={`h-6 w-6 ${toneCls.icon}`} />
-                  </CardIcon>
-                  <CardTitle>{title}</CardTitle>
-                  <CardDescription>{blurb}</CardDescription>
-                  <CardList items={points} />
-                </CardHeader>
-              </Card>
+              <div key={title} className="surface-card p-6 flex flex-col">
+                {/* icon chip */}
+                <div
+                  className="shrink-0 inline-flex items-center justify-center rounded-xl border text-[11px] font-semibold"
+                  style={{
+                    backgroundColor: toneVars.bgLight,
+                    borderColor: toneVars.ringLight,
+                    boxShadow: `0 12px 24px ${toneVars.ringLight}`,
+                  }}
+                >
+                  <Icon
+                    className="h-6 w-6"
+                    style={{ color: toneVars.icon }}
+                  />
+                </div>
+
+                <h3 className="text-heading text-lg font-semibold mt-4">
+                  {title}
+                </h3>
+
+                <p className="text-body text-sm leading-relaxed mt-2">
+                  {blurb}
+                </p>
+
+                <ul className="mt-4 space-y-2 text-sm">
+                  {points.map((p) => (
+                    <li
+                      key={p}
+                      className="flex items-start gap-2 text-body text-sm leading-relaxed"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
         </div>

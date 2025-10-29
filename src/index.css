@@ -9,54 +9,64 @@
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
   /* Brand palette */
-  --color-brand-sea: #00a0a0;        /* accent / highlight */
-  --color-brand-midnight: #0f4452;   /* teal-ink body, glass in dark */
-  --color-brand-salt: #f6fafa;       /* off-white ui text in dark */
-  --color-brand-black: #001920;      /* page background in dark */
+  --color-brand-sea: #00a0a0;        /* accent / highlight teal */
+  --color-brand-midnight: #0f4452;   /* deep teal / ink */
+  --color-brand-salt: #f6fafa;       /* off-white for dark text */
+  --color-brand-black: #001920;      /* near-black / page bg in dark */
 
-  /* LIGHT MODE SURFACES */
+  /* LIGHT MODE surfaces */
   --bg-page: #ffffff;
-  --text-page: #0f172a;
+  --text-page: #0f172a;        /* main body text (slate-900-ish) */
+  --text-dim: #4b5563;         /* slate-600 */
+  --text-heading: #0f172a;     /* headings and strong text */
+  --text-link: #075985;        /* sky-900-ish link */
+  --text-link-hover: #0e7490;  /* cyan-700-ish hover */
 
   /* cards in light */
   --card-bg: rgba(255, 255, 255, 1);
   --card-border: rgba(0, 0, 0, 0.05);
   --card-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
 
-  /* navbar / bubble glass in light */
+  /* navbar / bubbles / glass in light */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.25);
   --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 
-  /* pill bg / chip bg (light) */
+  /* chip bg in light (small pills like "Let's talk") */
   --chip-bg: rgba(255, 255, 255, 0.8);
   --chip-border: rgba(0, 0, 0, 0.08);
 }
 
-/* DARK THEME OVERRIDES
-   Activated by <html class="dark">
+/* DARK THEME
+   This is activated when <html class="dark">.
+   Your Dark/Light button already toggles that.
 */
 :root.dark {
-  --bg-page: var(--color-brand-black);     /* inky page bg */
-  --text-page: var(--color-brand-salt);    /* soft white */
+  /* global surfaces */
+  --bg-page: var(--color-brand-black);      /* #001920 */
+  --text-page: var(--color-brand-salt);     /* #F6FAFA */
+  --text-dim: rgba(246, 250, 250, 0.6);     /* 60% salt */
+  --text-heading: var(--color-brand-salt);  /* bright headings in dark */
+  --text-link: var(--color-brand-sea);      /* teal accent pops */
+  --text-link-hover: #4ddbd6;               /* brighter teal hover */
 
   /* cards in dark */
-  --card-bg: rgba(15, 68, 82, 0.4);        /* translucent teal glass */
+  --card-bg: rgba(15, 68, 82, 0.4);         /* translucent teal glass */
   --card-border: rgba(255, 255, 255, 0.12);
   --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
 
-  /* navbar / bubble glass in dark */
-  --glass-bg: rgba(15, 68, 82, 0.75);      /* deeper than before */
+  /* navbar / floating bubble glass in dark */
+  --glass-bg: rgba(15, 68, 82, 0.75);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 
-  /* pill bg / chip bg (dark) */
+  /* pill / chip bg in dark */
   --chip-bg: rgba(255, 255, 255, 0.05);
   --chip-border: rgba(255, 255, 255, 0.2);
 }
 
 /* ---------------------------------
-   Base layout
+   Base layout / global elements
    --------------------------------- */
 
 html,
@@ -64,22 +74,29 @@ body,
 #root {
   height: 100%;
   width: 100%;
-  overflow-x: clip;
+  overflow-x: clip; /* avoid random horizontal scrollbars */
 }
 
+/* smooth anchor scroll for section jumps */
 html {
   scroll-behavior: smooth;
 }
 
+/* the page background + default text */
 body {
   font-family: var(--font-sans);
   background: var(--bg-page);
   color: var(--text-page);
-  transition: background-color 0.5s ease, color 0.5s ease,
-    filter 0.5s ease, background 0.5s ease;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    background 0.5s ease,
+    filter 0.5s ease;
 }
 
-/* Media defaults */
+/* Media defaults so images/icons don’t overflow.
+   NOTE: we do NOT force height:auto globally on img, or it would
+   break components that intentionally set a fixed h-* class. */
 img,
 svg,
 video,
@@ -87,19 +104,25 @@ canvas {
   max-width: 100%;
   display: block;
 }
+
+/* Opt-in helper:
+   <img class="auto-h" ... /> will auto-size height */
 img.auto-h {
   height: auto;
 }
 
-/* Focus / selection */
+/* Better focus outline */
 :focus-visible {
-  outline: 2px solid rgb(59 130 246);
+  outline: 2px solid rgb(59 130 246); /* blue-500 */
   outline-offset: 2px;
 }
+
+/* Text selection highlight */
 ::selection {
-  background: rgb(224 242 254);
+  background: rgb(224 242 254); /* sky-100 */
 }
 
+/* Cursor for anything that acts like a button */
 button,
 a,
 [role="button"],
@@ -110,18 +133,21 @@ input[type="reset"] {
 }
 
 /* ---------------------------------
-   Utility surfaces (glass, card, chip)
+   Surface utility classes
    --------------------------------- */
 
-/* Frosted glass panel (navbar, bubble trigger, etc.) */
+/* Frosted glass panel (navbar bg, mobile bubble toggle, etc.) */
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-radius: 0.75rem;
+  border-radius: 0.75rem; /* rounded-lg */
   box-shadow: var(--glass-shadow);
-  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+  transition:
+    background 0.4s,
+    box-shadow 0.4s,
+    border-color 0.4s;
 }
 
 /* Card surface (contact cards, pricing tiers, etc.) */
@@ -130,26 +156,74 @@ input[type="reset"] {
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
   border-radius: 0.75rem;
-  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+  transition:
+    background 0.4s,
+    box-shadow 0.4s,
+    border-color 0.4s;
 }
 
-/* Chips / badges like "Svarer innen 24 t" */
+/* Chip / pill surface (like "Let's talk", "Dark", "Svarer innen 24 t") */
 .surface-chip {
   background: var(--chip-bg);
   border: 1px solid var(--chip-border);
   border-radius: 9999px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition:
+    background 0.4s,
+    box-shadow 0.4s,
+    border-color 0.4s;
 }
 
-/* subtle idle float for 'alive' feeling */
+/* Gentle idle float (apply to .glass or .surface-card to make it feel “alive”) */
 .glass-animated {
   animation: liquidGlass 14s ease-in-out infinite;
 }
+
 @keyframes liquidGlass {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-2px) scale(1.01); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.01);
+  }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .glass-animated { animation: none !important; }
+  .glass-animated {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------
+   Text utility classes
+   --------------------------------- */
+
+/* main paragraph / generic copy */
+.text-body {
+  color: var(--text-page);
+  transition: color 0.4s;
+}
+
+/* subdued / helper / meta text
+   ex: small descriptions, "Svarer innen 24 t", footer tiny text */
+.text-dim {
+  color: var(--text-dim);
+  transition: color 0.4s;
+}
+
+/* headings, hero titles, section titles */
+.text-heading {
+  color: var(--text-heading);
+  transition: color 0.4s;
+}
+
+/* inline link / CTA accent text */
+.text-link {
+  color: var(--text-link);
+  transition: color 0.15s;
+}
+
+.text-link:hover {
+  color: var(--text-link-hover);
 }

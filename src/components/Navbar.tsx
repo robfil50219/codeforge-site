@@ -5,22 +5,18 @@ import MobileBubbleNav from "./MobileBubbleNav";
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
-  // On mount, sync state with current <html> class
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  // Smooth scroll helper for desktop nav
-  function scrollToId(id: string) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  }
-
   function toggleTheme() {
     document.documentElement.classList.toggle("dark");
     setIsDark((v) => !v);
+  }
+
+  function scrollToId(id: string) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
@@ -28,9 +24,7 @@ export default function Navbar() {
       <header className="sticky top-0 z-50">
         <div
           className={[
-            "h-16 flex items-center",
-            "px-4 sm:px-6 lg:px-8",
-            // use our glass util instead of repeating tailwind classes
+            "h-16 flex items-center px-4 sm:px-6 lg:px-8",
             "glass rounded-none rounded-b-none! border-b border-white/10 dark:border-white/10",
           ].join(" ")}
         >
@@ -41,7 +35,7 @@ export default function Navbar() {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-page)"
+              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-heading"
               aria-label="Go to home"
             >
               <img
@@ -49,14 +43,13 @@ export default function Navbar() {
                 alt="CodeForge Studio logo"
                 className="h-10 w-10 sm:h-12 sm:w-12 rounded"
               />
-
               <span className="text-xl sm:text-2xl tracking-[0.04em]">
                 CODEFORGE STUDIO
               </span>
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-body">
               <button
                 onClick={() => scrollToId("services")}
                 className="hover:opacity-80 transition"
@@ -85,23 +78,23 @@ export default function Navbar() {
                 Contact
               </button>
 
-              {/* Fancy CTA */}
+              {/* CTA chip */}
               <button
                 onClick={() => scrollToId("contact")}
                 className={[
                   "surface-chip text-xs font-medium",
-                  "px-3 py-1.5 text-(--text-page)",
+                  "px-3 py-1.5 text-heading",
                 ].join(" ")}
               >
                 Let’s talk
               </button>
 
-              {/* Theme toggle */}
+              {/* Theme chip */}
               <button
                 onClick={toggleTheme}
                 className={[
                   "surface-chip text-xs font-medium",
-                  "px-3 py-1.5 text-(--text-page)",
+                  "px-3 py-1.5 text-heading",
                 ].join(" ")}
               >
                 {isDark ? "Light" : "Dark"}
@@ -111,7 +104,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile floating nav */}
       <MobileBubbleNav />
     </>
   );

@@ -9,10 +9,15 @@ type ProcessStripProps = {
   icons: LucideIcon[];
   title: string;
   /** Localized details for each step (title + body) */
-  details?: Detail[]; // optional but recommended
+  details?: Detail[];
 };
 
-export default function ProcessStrip({ steps, icons, title, details }: ProcessStripProps) {
+export default function ProcessStrip({
+  steps,
+  icons,
+  title,
+  details,
+}: ProcessStripProps) {
   const processCardRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -20,6 +25,8 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
 
   const [dotLeft, setDotLeft] = useState<number>(0);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  // --- positioning helpers ---------------------------------------------------
 
   function positionDotAtIndex(idx: number) {
     const track = trackRef.current;
@@ -40,13 +47,13 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
     const stepRect = stepEl.getBoundingClientRect();
     const centerX = stepRect.left + stepRect.width / 2 - trackRect.left;
 
-    // Set position just below the icons row.
+    // place below icons row
     dropdown.style.left = `${centerX}px`;
     dropdown.style.top = `120px`;
     dropdown.style.transform = `translate(-50%, 0)`;
   }
 
-  // Initial + resize
+  // initial mount + resize
   useEffect(() => {
     positionDotAtIndex(0);
     const onResize = () => {
@@ -58,7 +65,7 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
     return () => window.removeEventListener("resize", onResize);
   }, [openIdx]);
 
-  // Reposition while scroll (keeps card centered under icon if the page moves)
+  // keep dropdown anchored if user scrolls page
   useEffect(() => {
     const onScroll = () => {
       if (openIdx !== null) {
@@ -70,18 +77,22 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
     return () => window.removeEventListener("scroll", onScroll);
   }, [openIdx]);
 
-  // Reposition when openIdx changes
+  // whenever we change which step is open, re-place dropdown
   useEffect(() => {
     positionDropdown(openIdx);
     if (openIdx !== null) positionDotAtIndex(openIdx);
   }, [openIdx]);
 
-  // Close on outside click
+  // close on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const t = e.target as Node;
       const clickedStep = stepRefs.current.some((step) => step?.contains(t));
-      if (dropdownRef.current && !dropdownRef.current.contains(t) && !clickedStep) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(t) &&
+        !clickedStep
+      ) {
         setOpenIdx(null);
       }
     }
@@ -91,7 +102,7 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openIdx]);
 
-  // Close on Escape
+  // close on Escape
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpenIdx(null);
@@ -100,23 +111,34 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  // --- render ---------------------------------------------------------------
+
   return (
     <div
       ref={processCardRef}
-      className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm relative"
+      className={[
+        "mt-16 sm:mt-20 relative",
+        // adaptive card surface to match the rest of the site
+        "surface-card",
+        "rounded-2xl p-6 sm:p-8",
+      ].join(" ")}
     >
-      <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase text-center">
+      {/* Section label */}
+      <p className="text-dim text-xs font-semibold tracking-widest uppercase text-center">
         {title}
       </p>
 
       {/* Desktop strip */}
-      <div ref={trackRef} className="relative mt-12 hidden h-40 sm:flex items-start">
-        {/* Dotted baseline above icons */}
+      <div
+        ref={trackRef}
+        className="relative mt-12 hidden h-40 sm:flex items-start"
+      >
+        {/* baseline dotted line */}
         <div
           className="absolute left-4 right-4 top-4 h-0.5"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(90deg, rgba(148,163,184,0.9) 0 6px, transparent 6px 14px)",
+              "repeating-linear-gradient(90deg, rgba(148,163,184,0.4) 0 6px, transparent 6px 14px)",
           }}
           aria-hidden="true"
         />
@@ -126,6 +148,7 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
           {steps.map((x, idx) => {
             const Icon = icons[idx % icons.length];
             const isOpen = openIdx === idx;
+
             return (
               <div
                 key={x.step}
@@ -135,9 +158,12 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
                 className="relative flex flex-col items-center"
                 onMouseEnter={() => positionDotAtIndex(idx)}
               >
-                {/* Anchor dot on the line */}
+                {/* anchor dot on line */}
                 <div className="relative h-0">
-                  <div className="absolute left-1/2 top-4 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-300 z-0" />
+                  <div
+                    className="absolute left-1/2 top-4 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--text-dim)/50 z-0"
+                    aria-hidden="true"
+                  />
                 </div>
 
                 {/* Icon button */}
@@ -145,20 +171,34 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
                   aria-expanded={isOpen}
-                  className="mt-8 grid place-items-center rounded-xl ring-1 ring-slate-200 bg-white shadow-sm w-14 h-14 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  className={[
+                    "mt-8 grid place-items-center w-14 h-14 rounded-xl",
+                    "glass",
+                    "transition-all duration-300",
+                    isOpen
+                      ? "ring-2 ring-(--color-brand-sea) shadow-[0_0_25px_rgba(255,255,255,0.3)] scale-105"
+                      : "ring-0 hover:scale-105 active:scale-95",
+                  ].join(" ")}
                 >
-                  <Icon className="h-5 w-5 text-sky-600" />
+                  <Icon
+                    className="h-5 w-5"
+                    style={{ color: "var(--color-brand-sea)" }}
+                  />
                 </button>
 
-                {/* Text button (doesn’t expand the card itself) */}
+                {/* Title/text */}
                 <button
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
                   aria-expanded={isOpen}
-                  className="mt-3 text-center rounded px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  className={[
+                    "mt-3 text-center rounded px-1 transition-colors duration-300",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand-sea)",
+                    isOpen ? "text-heading" : "text-body",
+                  ].join(" ")}
                 >
-                  <div className="font-semibold text-slate-900">{x.step}</div>
-                  <div className="text-sm text-slate-600">{x.text}</div>
+                  <div className="font-semibold text-heading">{x.step}</div>
+                  <div className="text-sm text-dim">{x.text}</div>
                 </button>
               </div>
             );
@@ -170,30 +210,34 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
           className="pointer-events-none absolute top-4 -translate-x-1/2 -translate-y-1/2 z-10"
           style={{
             left: dotLeft,
-            transition: "left 280ms cubic-bezier(0.22, 1, 0.36, 1)",
+            transition:
+              "left 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s",
           }}
           aria-hidden="true"
         >
-          {/* Glow */}
+          {/* soft outer glow */}
           <div
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full blur-xs"
             style={{
               background:
-                "radial-gradient(closest-side, rgba(59,130,246,0.22), rgba(14,165,233,0))",
-              filter: "blur(4px)",
+                "radial-gradient(closest-side, rgba(0,160,160,0.25), rgba(0,0,0,0))",
+              filter:
+                openIdx !== null
+                  ? "brightness(1.2) saturate(1.2)"
+                  : "brightness(1) saturate(1)",
             }}
           />
-          {/* Dot */}
+          {/* main dot */}
           <div
             className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-md ring-1 ring-white"
             style={{
               background:
-                "linear-gradient(145deg, #38bdf8 0%, #3b82f6 70%, #1d4ed8 100%)",
+                "linear-gradient(145deg, var(--color-brand-sea) 0%, #3b82f6 70%, #1d4ed8 100%)",
               boxShadow:
                 "0 3px 6px rgba(2,132,199,0.35), 0 0 0 2px rgba(255,255,255,0.85)",
             }}
           />
-          {/* Inner sparkle */}
+          {/* inner sparkle */}
           <div
             className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
@@ -203,28 +247,51 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
           />
         </div>
 
-        {/* Dropdown card */}
+        {/* Dropdown card (details) */}
         <div
           ref={dropdownRef}
-          className={`absolute z-20 w-full max-w-md transition-all duration-300 ease-out ${
+          className={[
+            "absolute z-20 w-full max-w-md origin-top",
+            "transition-all duration-300 ease-out",
             openIdx === null
               ? "pointer-events-none opacity-0 translate-y-2 scale-[0.98]"
-              : "opacity-100 translate-y-0 scale-100"
-          }`}
+              : "opacity-100 translate-y-0 scale-100",
+          ].join(" ")}
+          style={{
+            // the JS sets left/top/transform dynamically
+          }}
         >
           {/* caret */}
           <div
-            className={`mx-auto -mb-2 h-3 w-3 rotate-45 border border-slate-200 bg-white shadow-sm`}
+            className={[
+              "-mb-2 mx-auto h-3 w-3 rotate-45",
+              "surface-card",
+              "border border-transparent shadow-xl",
+            ].join(" ")}
+            style={{
+              borderColor: "rgba(255,255,255,0.2)",
+            }}
             aria-hidden="true"
           />
-          <div className="rounded-xl border border-slate-200 bg-white shadow-xl">
+
+          {/* body */}
+          <div
+            className={[
+              "surface-card rounded-xl shadow-xl",
+              "border border-transparent",
+            ].join(" ")}
+            style={{
+              borderColor: "rgba(255,255,255,0.2)",
+            }}
+          >
             <div className="p-4">
               {openIdx !== null && (
                 <>
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-heading text-sm font-semibold">
                     {details?.[openIdx]?.title ?? steps[openIdx].step}
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">
+
+                  <p className="mt-1 text-body text-sm leading-relaxed">
                     {details?.[openIdx]?.body ?? steps[openIdx].text}
                   </p>
                 </>
@@ -234,50 +301,65 @@ export default function ProcessStrip({ steps, icons, title, details }: ProcessSt
         </div>
       </div>
 
-      {/* Mobile vertical list with expandable details */}
-<ol className="sm:hidden mt-6 space-y-6">
-  {steps.map((x, idx) => {
-    const Icon = icons[idx % icons.length];
-    const isOpen = openIdx === idx;
+      {/* Mobile vertical version */}
+      <ol className="sm:hidden mt-8 space-y-6">
+        {steps.map((x, idx) => {
+          const Icon = icons[idx % icons.length];
+          const isOpen = openIdx === idx;
 
-    return (
-      <li key={x.step} className="relative pl-10">
-        {/* Step icon */}
-        <span className="absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-full bg-sky-50 ring-1 ring-sky-100">
-          <Icon className="h-4 w-4 text-sky-600" />
-        </span>
+          return (
+            <li key={x.step} className="relative pl-10">
+              {/* connector line */}
+              {idx < steps.length - 1 && (
+                <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-(--text-dim)/30" />
+              )}
 
-        {/* Vertical connector line */}
-        {idx < steps.length - 1 && (
-          <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-slate-200" />
-        )}
+              {/* Step icon */}
+              <span
+                className={[
+                  "absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-full",
+                  "glass border border-white/20 shadow-lg",
+                ].join(" ")}
+              >
+                <Icon
+                  className="h-4 w-4"
+                  style={{ color: "var(--color-brand-sea)" }}
+                />
+              </span>
 
-        {/* Clickable label */}
-        <button
-          type="button"
-          onClick={() => setOpenIdx(isOpen ? null : idx)}
-          aria-expanded={isOpen}
-          className="w-full text-left"
-        >
-          <div className="font-semibold text-slate-900">{x.step}</div>
-          <div className="text-sm text-slate-600">{x.text}</div>
-        </button>
+              {/* Clickable label */}
+              <button
+                type="button"
+                onClick={() => setOpenIdx(isOpen ? null : idx)}
+                aria-expanded={isOpen}
+                className="w-full text-left"
+              >
+                <div className="text-heading font-semibold">{x.step}</div>
+                <div className="text-dim text-sm">{x.text}</div>
+              </button>
 
-        {/* Expanded details */}
-        {isOpen && (
-          <div className="mt-2 rounded-lg border border-slate-200 bg-white p-3 shadow-md">
-            <div className="text-sm font-semibold text-slate-900">
-              {details?.[idx]?.title ?? x.step}
-            </div>
-            <p className="mt-1 text-sm text-slate-600">
-              {details?.[idx]?.body ?? x.text}
-            </p>
-          </div>
-        )}
-      </li>
-    );
-  })}
-</ol>
+              {/* Expanded details */}
+              <div
+                className={[
+                  "mt-2 origin-top transition-all duration-300 ease-out",
+                  isOpen
+                    ? "opacity-100 scale-100 translate-y-0"
+                    : "pointer-events-none opacity-0 scale-[0.98] -translate-y-1",
+                ].join(" ")}
+              >
+                <div className="surface-card rounded-lg shadow-md p-3">
+                  <div className="text-heading text-sm font-semibold">
+                    {details?.[idx]?.title ?? x.step}
+                  </div>
+                  <p className="mt-1 text-body text-sm leading-relaxed">
+                    {details?.[idx]?.body ?? x.text}
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
