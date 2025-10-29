@@ -27,6 +27,7 @@ function Home() {
 
   return (
     <>
+      {/* SEO / social meta */}
       <title>{title}</title>
       <meta name="description" content={desc} />
       <meta name="robots" content="index,follow" />
@@ -41,6 +42,7 @@ function Home() {
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={desc} />
 
+      {/* PAGE CONTENT */}
       <Hero />
       <Services />
       {/* <Work /> */}
@@ -55,17 +57,26 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        {/* Background canvas lives at z-0 */}
+        {/* Background canvas behind everything */}
         <BallpitBackground />
 
-        {/* Everything else sits above it */}
-        <div className="relative z-10 min-h-screen flex flex-col text-slate-900">
+        {/* Foreground app content */}
+        <div className="relative z-10 min-h-screen flex flex-col text-slate-900 dark:text-[#F6FAFA]">
           <ScrollToTop />
+
+          {/* Glass header + bubble nav */}
           <Navbar />
+
+          {/* Cookie / consent */}
           <ConsentBanner />
 
-          {/* Keep main transparent so sections decide their own bg */}
-          <main className="flex-1">
+          {/* Main content.
+             pt-16 = space for sticky header (h-16).
+             pb-24 = space above floating bubble nav on mobile.
+             md:pb-0 = remove extra bottom padding on desktop,
+                       because bubble nav is hidden there.
+          */}
+          <main className="flex-1 pt-16 pb-24 md:pb-0">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/privacy" element={<PrivacyPage />} />
@@ -74,6 +85,7 @@ export default function App() {
             </Routes>
           </main>
 
+          {/* Footer */}
           <Footer />
         </div>
       </ErrorBoundary>
