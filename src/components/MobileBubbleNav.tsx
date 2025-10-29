@@ -8,6 +8,7 @@ import {
   User,
   CircleDot,
   Settings2,
+  X,
 } from "lucide-react";
 
 type MobileBubbleNavProps = {
@@ -38,16 +39,10 @@ export default function MobileBubbleNav({
       <button
         className={[
           "fixed bottom-4 right-4 z-50 md:hidden",
-          // base chip style (samme som før)
           "surface-chip px-4 py-2 text-heading text-xs font-semibold shadow-lg",
-
-          // EXTRA for mørk modus: gjør den tydeligere
-          // litt lysere bakgrunn + klarere kant + litt glow
-          "dark:bg-[rgba(0,160,160,0.18)]", // teal-ish wash
+          "dark:bg-[rgba(0,160,160,0.18)]",
           "dark:border dark:border-[rgba(0,160,160,0.6)]",
           "dark:shadow-[0_20px_40px_rgba(0,0,0,0.9),0_0_16px_rgba(0,160,160,0.4)]",
-
-          // liten press-feedback
           "active:scale-95 transition-transform",
         ].join(" ")}
         onClick={() => setOpen((v) => !v)}
@@ -64,8 +59,32 @@ export default function MobileBubbleNav({
           className={[
             "fixed bottom-20 right-4 z-50 md:hidden w-56 rounded-xl border shadow-xl",
             "bg-(--bg-page) border-(--card-border) text-(--text-page)",
+            "animate-in fade-in slide-in-from-bottom-4 duration-300",
           ].join(" ")}
         >
+          {/* Lukk-knapp øverst til høyre */}
+          <div className="flex justify-end border-b border-(--card-border) px-3 py-2">
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Lukk meny"
+              className={[
+                "relative group p-1 rounded-md transition-transform duration-300",
+                "hover:scale-110 active:scale-95",
+              ].join(" ")}
+            >
+              {/* bakgrunnslyseffekt */}
+              <span className="absolute inset-0 rounded-md bg-[rgba(255,255,255,0.1)] opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
+              {/* selve X */}
+              <X
+                className={[
+                  "relative z-10 h-4 w-4 text-(--text-heading)",
+                  "transition-transform duration-500",
+                  "group-hover:rotate-90 group-hover:text-(--color-brand-sea)",
+                ].join(" ")}
+              />
+            </button>
+          </div>
+
           <ul className="p-3 text-sm">
             {/* Navigasjon */}
             <li>
@@ -108,28 +127,22 @@ export default function MobileBubbleNav({
               </button>
             </li>
 
-            {/* Stille / interaktiv bakgrunn */}
+            {/* Skillelinje */}
             <li className="mt-2 border-t border-(--card-border) pt-2">
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
-                onClick={() => {
-                  toggleBackgroundMode();
-                  // beholder menyen åpen
-                }}
+                onClick={toggleBackgroundMode}
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
               </button>
             </li>
 
-            {/* Lys / Mørk tema */}
+            {/* Tema */}
             <li>
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
-                onClick={() => {
-                  toggleTheme();
-                  // menyen forblir åpen
-                }}
+                onClick={toggleTheme}
               >
                 {isDark ? (
                   <>
