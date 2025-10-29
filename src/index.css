@@ -1,25 +1,70 @@
 /* Tailwind v4 single import */
 @import "tailwindcss";
 
-/* Optional: define design tokens with v4 @theme (so you can use text-brand-sea, bg-brand-sea, etc.) */
+/* ---------------------------------
+   Design tokens
+   --------------------------------- */
 :root {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
   /* Brand palette */
-  --color-brand-sea: #00A0A0;
-  --color-brand-midnight: #0F4452;
-  --color-brand-salt: #F6FAFA;
-  --color-brand-black: #001920;
+  --color-brand-sea: #00a0a0;        /* accent / highlight */
+  --color-brand-midnight: #0f4452;   /* teal-ink body, glass in dark */
+  --color-brand-salt: #f6fafa;       /* off-white ui text in dark */
+  --color-brand-black: #001920;      /* page background in dark */
+
+  /* LIGHT MODE SURFACES */
+  --bg-page: #ffffff;
+  --text-page: #0f172a;
+
+  /* cards in light */
+  --card-bg: rgba(255, 255, 255, 1);
+  --card-border: rgba(0, 0, 0, 0.05);
+  --card-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+
+  /* navbar / bubble glass in light */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+
+  /* pill bg / chip bg (light) */
+  --chip-bg: rgba(255, 255, 255, 0.8);
+  --chip-border: rgba(0, 0, 0, 0.08);
 }
 
-/* Base app tweaks */
+/* DARK THEME OVERRIDES
+   Activated by <html class="dark">
+*/
+:root.dark {
+  --bg-page: var(--color-brand-black);     /* inky page bg */
+  --text-page: var(--color-brand-salt);    /* soft white */
+
+  /* cards in dark */
+  --card-bg: rgba(15, 68, 82, 0.4);        /* translucent teal glass */
+  --card-border: rgba(255, 255, 255, 0.12);
+  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+
+  /* navbar / bubble glass in dark */
+  --glass-bg: rgba(15, 68, 82, 0.75);      /* deeper than before */
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  /* pill bg / chip bg (dark) */
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --chip-border: rgba(255, 255, 255, 0.2);
+}
+
+/* ---------------------------------
+   Base layout
+   --------------------------------- */
+
 html,
 body,
 #root {
   height: 100%;
   width: 100%;
-  overflow-x: clip; /* avoid horizontal scroll */
+  overflow-x: clip;
 }
 
 html {
@@ -28,14 +73,13 @@ html {
 
 body {
   font-family: var(--font-sans);
-  /* ENDRET fra #f8fafc til hvit for å fjerne "haze"-følelsen bak Hero */
-  background: #ffffff;
-  color: #0f172a; /* slate-900-ish */
+  background: var(--bg-page);
+  color: var(--text-page);
+  transition: background-color 0.5s ease, color 0.5s ease,
+    filter 0.5s ease, background 0.5s ease;
 }
 
-/* Media defaults so images/icons don’t overflow
-   IMPORTANT: do NOT force height:auto globally, it breaks circular avatars
-   that rely on w/h utilities (e.g., w-56 h-56). */
+/* Media defaults */
 img,
 svg,
 video,
@@ -43,11 +87,11 @@ canvas {
   max-width: 100%;
   display: block;
 }
-/* If you need auto height for a specific image, opt-in:
-   <img class="auto-h" ... /> */
-img.auto-h { height: auto; }
+img.auto-h {
+  height: auto;
+}
 
-/* Optional: nicer focus & selection */
+/* Focus / selection */
 :focus-visible {
   outline: 2px solid rgb(59 130 246);
   outline-offset: 2px;
@@ -65,35 +109,47 @@ input[type="reset"] {
   cursor: pointer;
 }
 
-/* ---------- Glass utilities ----------
-   OBS: Hvis du IKKE vil ha noe “frosted glass”-effekt noe sted,
-   kan du kommentere ut backdrop-filter-linjene under. */
+/* ---------------------------------
+   Utility surfaces (glass, card, chip)
+   --------------------------------- */
+
+/* Frosted glass panel (navbar, bubble trigger, etc.) */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-radius: 0.75rem; /* md rounded by default */
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+  box-shadow: var(--glass-shadow);
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
 }
 
+/* Card surface (contact cards, pricing tiers, etc.) */
+.surface-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 0.75rem;
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+}
+
+/* Chips / badges like "Svarer innen 24 t" */
+.surface-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+}
+
+/* subtle idle float for 'alive' feeling */
 .glass-animated {
   animation: liquidGlass 14s ease-in-out infinite;
 }
-
 @keyframes liquidGlass {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-2px) scale(1.01);
-  }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.01); }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .glass-animated {
-    animation: none !important;
-  }
+  .glass-animated { animation: none !important; }
 }
-

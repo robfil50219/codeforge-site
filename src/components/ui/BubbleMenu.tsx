@@ -17,26 +17,19 @@ export default function BubbleMenu({ items, className }: Props) {
 
   return (
     <div className={className ?? ""}>
-      {/* Main toggle */}
+      {/* Main toggle (glass button) */}
       <button
         onClick={() => setOpen((v) => !v)}
         className={[
-          "flex h-12 w-12 items-center justify-center rounded-full",
-          // ✨ glass effect
-          "bg-white/25 dark:bg-[#0F4452]/60 backdrop-blur-2xl",
-          // border + glow
-          "border border-white/30 dark:border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.15)]",
-          // 💡 added hover glow
-          "hover:shadow-[0_0_25px_rgba(255,255,255,0.3)]",
-          // smooth scaling
-          "hover:scale-105 active:scale-95 transition",
+          "glass rounded-full h-12 w-12 flex items-center justify-center",
+          "hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition",
         ].join(" ")}
         aria-label={open ? "Close menu" : "Open menu"}
       >
         {open ? (
-          <X className="w-5 h-5 text-[#0F4452] dark:text-[#F6FAFA]" />
+          <X className="w-5 h-5 text-(--text-page)" />
         ) : (
-          <MoreVertical className="w-5 h-5 text-[#0F4452] dark:text-[#F6FAFA]" />
+          <MoreVertical className="w-5 h-5 text-(--text-page)" />
         )}
       </button>
 
@@ -48,13 +41,9 @@ export default function BubbleMenu({ items, className }: Props) {
               key={item.label}
               onClick={item.onClick}
               className={[
-                "flex h-12 w-12 items-center justify-center rounded-full",
-                // ✨ translucent glass style
-                "bg-white/20 dark:bg-[#0F4452]/60 backdrop-blur-xl",
-                // soft border + drop
-                "border border-white/20 dark:border-white/10 shadow-[0_0_12px_rgba(0,0,0,0.25)]",
-                // text + hover
-                "text-[#0F4452] dark:text-[#F6FAFA] hover:scale-110 active:scale-95 transition",
+                "glass rounded-full h-12 w-12 flex items-center justify-center",
+                "hover:scale-110 active:scale-95 transition",
+                "text-(--text-page) text-[11px] font-semibold",
               ].join(" ")}
               aria-label={item.label}
               title={item.label}

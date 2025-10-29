@@ -1,20 +1,37 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
 
 export default function Navbar() {
+  const [isDark, setIsDark] = useState(false);
+
+  // On mount, sync state with current <html> class
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  // Smooth scroll helper for desktop nav
+  function scrollToId(id: string) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
+  function toggleTheme() {
+    document.documentElement.classList.toggle("dark");
+    setIsDark((v) => !v);
+  }
+
   return (
     <>
       <header className="sticky top-0 z-50">
         <div
           className={[
-            // size + layout
             "h-16 flex items-center",
-            // responsive padding
             "px-4 sm:px-6 lg:px-8",
-            // glass look
-            "backdrop-blur-xl bg-white/40 dark:bg-[#001920]/40",
-            "border-b border-white/10 dark:border-white/10",
-            "shadow-lg shadow-black/10",
+            // use our glass util instead of repeating tailwind classes
+            "glass rounded-none rounded-b-none! border-b border-white/10 dark:border-white/10",
           ].join(" ")}
         >
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
@@ -24,7 +41,7 @@ export default function Navbar() {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-[#0F4452] dark:text-[#F6FAFA]"
+              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-page)"
               aria-label="Go to home"
             >
               <img
@@ -39,53 +56,57 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-              <a
-                href="#services"
-                className="text-[#0F4452] hover:text-[#001920] dark:text-[#F6FAFA] dark:hover:text-white transition"
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
+              <button
+                onClick={() => scrollToId("services")}
+                className="hover:opacity-80 transition"
               >
                 Services
-              </a>
+              </button>
 
-              <a
-                href="#pricing"
-                className="text-[#0F4452] hover:text-[#001920] dark:text-[#F6FAFA] dark:hover:text-white transition"
+              <button
+                onClick={() => scrollToId("pricing")}
+                className="hover:opacity-80 transition"
               >
                 Pricing
-              </a>
+              </button>
 
-              <a
-                href="#about"
-                className="text-[#0F4452] hover:text-[#001920] dark:text-[#F6FAFA] dark:hover:text-white transition"
+              <button
+                onClick={() => scrollToId("about")}
+                className="hover:opacity-80 transition"
               >
                 About
-              </a>
+              </button>
 
-              <a
-                href="#contact"
-                className="text-[#0F4452] hover:text-[#001920] dark:text-[#F6FAFA] dark:hover:text-white transition"
+              <button
+                onClick={() => scrollToId("contact")}
+                className="hover:opacity-80 transition"
               >
                 Contact
-              </a>
+              </button>
 
               {/* Fancy CTA */}
-              <a
-                href="#contact"
-                className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs text-[#0F4452] dark:text-[#F6FAFA] backdrop-blur-sm hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/8 transition"
+              <button
+                onClick={() => scrollToId("contact")}
+                className={[
+                  "surface-chip text-xs font-medium",
+                  "px-3 py-1.5 text-(--text-page)",
+                ].join(" ")}
               >
                 Let’s talk
-              </a>
-            </nav>
+              </button>
 
-            {/* Desktop theme toggle */}
-            <button
-              onClick={() => {
-                document.documentElement.classList.toggle("dark");
-              }}
-              className="hidden md:inline-flex rounded-full border border-white/20 bg-white/10 px-2 py-1 text-xs text-[#0F4452] dark:text-[#F6FAFA] backdrop-blur-sm hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/8 transition"
-            >
-              Dark
-            </button>
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                className={[
+                  "surface-chip text-xs font-medium",
+                  "px-3 py-1.5 text-(--text-page)",
+                ].join(" ")}
+              >
+                {isDark ? "Light" : "Dark"}
+              </button>
+            </nav>
           </div>
         </div>
       </header>
