@@ -4,32 +4,33 @@ import { Github, Linkedin, Mail } from "lucide-react";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
 import Container from "./ui/Container";
-import useSmoothScroll from "../hooks/useSmoothScroll";
 import { useTranslation } from "../lib/t";
 
 export default function Footer() {
   const { t } = useTranslation();
-  const { handleAnchorClick } = useSmoothScroll(80);
   const year = new Date().getFullYear();
 
-  const nav = [
-    { id: "services", label: t("nav.services") as string },
-    { id: "pricing",  label: t("nav.pricing")  as string },
-    { id: "about",    label: t("nav.about")    as string },
-    { id: "contact",  label: t("nav.contact")  as string },
-  ] as const;
-
   return (
-    <footer className="mt-24 border-t border-slate-200 bg-white">
-      <Container className="py-10">
-        {/* Top: brand + nav + socials */}
-        <div className="grid gap-8 sm:grid-cols-3">
-          {/* Brand */}
+    <footer
+      className={[
+        "w-full",
+        // theme-aware background + text
+        "bg-(--bg-page) text-(--text-page)",
+        // subtle top border
+        "border-t border-(--card-border)",
+      ].join(" ")}
+    >
+      <Container className="py-12">
+        {/* TOP ROW */}
+        <div className="grid gap-10 lg:grid-cols-[1fr_auto]">
+          {/* BRAND */}
           <div>
             <Link
               to="/"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-slate-900"
+              onClick={() =>
+                window.scrollTo({ top: 0, behavior: "smooth" })
+              }
+              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
               aria-label="Back to home"
             >
               <img
@@ -41,84 +42,101 @@ export default function Footer() {
                 {(t("brand") as string).toUpperCase()}
               </span>
             </Link>
-            <p className="mt-3 text-sm text-slate-600">{t("hero.tagline") as string}</p>
+
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-(--text-dim)">
+              {t("hero.tagline") as string}
+            </p>
           </div>
 
-          {/* Quick links */}
-          <nav aria-label={t("footer.navLabel") as string} className="sm:justify-self-center">
-            <ul className="space-y-2 text-sm">
-              {nav.map((item) => (
-                <li key={item.id}>
-                  <Link
-                    to={"/#" + item.id}
-                    onClick={(e) => handleAnchorClick(e, item.id)}
-                    className="text-slate-600 hover:text-slate-900 transition"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Socials */}
-          <div className="sm:justify-self-end">
-            <div className="text-sm font-medium text-slate-900">
+          {/* CONTACT */}
+          <div className="max-w-xs lg:justify-self-end">
+            <div className="text-sm font-semibold text-(--text-heading)">
               {t("footer.connect") as string}
             </div>
-            <ul className="mt-3 flex items-center gap-3">
-              <li>
-                <a
-                  href="https://github.com/robfil50219"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="GitHub"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50"
-                >
-                  <Github className="h-5 w-5 text-slate-700" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.linkedin.com/in/robert-filep-417146264"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="LinkedIn"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50"
-                >
-                  <Linkedin className="h-5 w-5 text-[#0a66c2]" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={MAILTO}
-                  aria-label={`Email ${CONTACT_EMAIL}`}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50"
-                >
-                  <Mail className="h-5 w-5 text-sky-600" />
-                </a>
-              </li>
-            </ul>
-            <p className="mt-3 text-xs text-slate-500">{CONTACT_EMAIL}</p>
+
+            <div className="mt-4 flex items-center gap-3">
+              {/* GitHub */}
+              <a
+                href="https://github.com/robfil50219"
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="GitHub"
+                className={[
+                  "inline-flex h-10 w-10 items-center justify-center rounded-lg",
+                  "bg-(--card-bg) border border-(--card-border)",
+                  "shadow-sm transition hover:shadow-lg",
+                ].join(" ")}
+              >
+                <Github className="h-5 w-5 text-(--text-heading)" />
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/in/robert-filep-417146264"
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="LinkedIn"
+                className={[
+                  "inline-flex h-10 w-10 items-center justify-center rounded-lg",
+                  "bg-(--card-bg) border border-(--card-border)",
+                  "shadow-sm transition hover:shadow-lg",
+                ].join(" ")}
+              >
+                <Linkedin className="h-5 w-5 text-(--color-brand-sea)" />
+              </a>
+
+              {/* Email */}
+              <a
+                href={MAILTO}
+                aria-label={`Email ${CONTACT_EMAIL}`}
+                className={[
+                  "inline-flex h-10 w-10 items-center justify-center rounded-lg",
+                  "bg-(--card-bg) border border-(--card-border)",
+                  "shadow-sm transition hover:shadow-lg",
+                ].join(" ")}
+              >
+                <Mail className="h-5 w-5 text-(--color-brand-sea)" />
+              </a>
+            </div>
+
+            <p className="mt-4 break-all text-xs text-(--text-dim)">
+              {CONTACT_EMAIL}
+            </p>
           </div>
         </div>
 
-        {/* Bottom: legal line */}
-        <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        {/* DIVIDER */}
+        <div className="mt-10 border-t border-(--card-border) pt-6" />
+
+        {/* BOTTOM ROW */}
+        <div className="flex flex-col gap-4 text-xs text-(--text-dim) md:flex-row md:items-center md:justify-between">
           <p>
             © {year} CodeForge Studio. {t("footer.rights") as string}
           </p>
-          <div className="flex items-center gap-4">
-            <Link to="/privacy" className="hover:text-slate-700">
+
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <Link
+              to="/privacy"
+              className="transition hover:text-(--text-heading)"
+            >
               {t("footer.privacy") as string}
             </Link>
-            <Link to="/terms" className="hover:text-slate-700">
+
+            <Link
+              to="/terms"
+              className="transition hover:text-(--text-heading)"
+            >
               {t("footer.terms") as string}
             </Link>
+
             <button
               type="button"
               onClick={resetConsent}
-              className="text-slate-500 hover:text-slate-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded"
+              className={[
+                "cursor-pointer rounded",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--card-border)",
+                "transition hover:text-(--text-heading)",
+              ].join(" ")}
               aria-label={t("consent.manage") as string}
             >
               {t("consent.manage") as string}
