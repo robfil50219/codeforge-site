@@ -5,39 +5,95 @@ import { useTranslation } from "../lib/t";
 export default function PrivacyPage() {
   const { t } = useTranslation();
   const { page, loading } = useWpPage("privacy-policy"); // WP slug
-  const locale = "no-NO"; // site is Norwegian-only for now
+  const locale = "no-NO"; // still Norwegian-only
+
+  const lastUpdated = page
+    ? new Date(page.modified).toLocaleDateString(locale)
+    : null;
 
   return (
-    <main className="bg-white">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-        {/* Title from local copy (body comes from WP) */}
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          {t("privacy.heading") as string}
-        </h1>
+    <main
+      className={[
+        "min-h-screen bg-(--bg-page) text-(--text-page) transition-colors duration-300",
+        "pt-24 pb-16 px-4 sm:px-6 lg:px-8",
+      ].join(" ")}
+    >
+      <div className="mx-auto max-w-3xl">
+        <section
+          className={[
+            "surface-card rounded-2xl border border-(--card-border)",
+            "p-6 sm:p-8",
+          ].join(" ")}
+        >
+          {/* Heading */}
+          <h1 className="text-(--text-heading) text-2xl font-bold tracking-tight sm:text-3xl">
+            {t("privacy.heading") as string}
+          </h1>
 
-        {page ? (
-          <>
-            <p className="mt-2 text-xs text-slate-500">
+          {/* Last updated */}
+          {lastUpdated && (
+            <p className="mt-2 text-xs text-(--text-dim)">
               {(t("privacy.lastUpdated") as string) ?? "Sist oppdatert"}{" "}
-              {new Date(page.modified).toLocaleDateString(locale)}
+              {lastUpdated}
             </p>
+          )}
+
+          {/* Body (WordPress HTML) */}
+          {page ? (
             <article
-              className="prose prose-slate mt-6"
+              className={[
+                "prose prose-slate max-w-none mt-6",
+
+                // force WP markup to inherit your palette
+                "**:text-(--text-page)",
+                "[&_h1]:text-(--text-heading)",
+                "[&_h2]:text-(--text-heading)",
+                "[&_h3]:text-(--text-heading)",
+                "[&_strong]:text-(--text-heading)",
+                "[&_a]:text-(--color-brand-sea) [&_a]:no-underline hover:[&_a]:underline",
+              ].join(" ")}
               dangerouslySetInnerHTML={{ __html: page.content.rendered }}
             />
-          </>
-        ) : loading ? (
-          <p className="mt-3 text-slate-600">{(t("loading") as string) ?? "Laster …"}</p>
-        ) : (
-          <p className="mt-3 text-slate-600">{t("privacy.intro") as string}</p>
-        )}
+          ) : loading ? (
+            <p className="mt-6 text-(--text-dim) text-sm">
+              {(t("loading") as string) ?? "Laster …"}
+            </p>
+          ) : (
+            <>
+              <p className="mt-6 text-(--text-page) leading-relaxed">
+                {t("privacy.intro") as string}
+              </p>
+              <p className="mt-4 text-(--text-page) leading-relaxed">
+                Vi kunne ikke laste personvernerklæringen akkurat nå. Ta kontakt
+                på{" "}
+                <a
+                  href="mailto:robert@codeforgestudio.no"
+                  className="text-(--color-brand-sea) hover:opacity-80"
+                >
+                  robert@codeforgestudio.no
+                </a>{" "}
+                hvis du trenger mer informasjon.
+              </p>
+            </>
+          )}
 
-        <a
-          href="/"
-          className="mt-10 inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
-        >
-          {t("privacy.back") as string}
-        </a>
+          {/* Back CTA */}
+          <a
+            href="/"
+            className={[
+              "mt-10 inline-flex items-center justify-center rounded-xl text-sm font-medium",
+              "px-4 py-2 transition",
+
+              // light mode button style
+              "bg-slate-900 text-white hover:bg-slate-800",
+
+              // dark mode button style (match pricing CTAs)
+              "dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110",
+            ].join(" ")}
+          >
+            {t("privacy.back") as string}
+          </a>
+        </section>
       </div>
     </main>
   );
