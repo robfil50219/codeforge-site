@@ -50,10 +50,10 @@
   --text-link: var(--color-brand-sea);      /* teal accent pops */
   --text-link-hover: #4ddbd6;               /* brighter teal hover */
 
-  /* cards in dark */
-  --card-bg: rgba(15, 68, 82, 0.4);         /* translucent teal glass */
-  --card-border: rgba(255, 255, 255, 0.12);
-  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+  /* cards in dark — now solid instead of glass */
+  --card-bg: var(--color-brand-midnight);   /* solid deep teal (#0f4452) */
+  --card-border: rgba(255, 255, 255, 0.1);  /* subtle light edge */
+  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.8); /* soft deep shadow */
 
   /* navbar / floating bubble glass in dark */
   --glass-bg: rgba(15, 68, 82, 0.75);

@@ -8,7 +8,6 @@ type ProcessStripProps = {
   steps: Step[];
   icons: LucideIcon[];
   title: string;
-  /** Localized details for each step (title + body) */
   details?: Detail[];
 };
 
@@ -25,8 +24,6 @@ export default function ProcessStrip({
 
   const [dotLeft, setDotLeft] = useState<number>(0);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
-
-  // --- positioning helpers ---------------------------------------------------
 
   function positionDotAtIndex(idx: number) {
     const track = trackRef.current;
@@ -47,13 +44,12 @@ export default function ProcessStrip({
     const stepRect = stepEl.getBoundingClientRect();
     const centerX = stepRect.left + stepRect.width / 2 - trackRect.left;
 
-    // place below icons row
     dropdown.style.left = `${centerX}px`;
     dropdown.style.top = `120px`;
     dropdown.style.transform = `translate(-50%, 0)`;
   }
 
-  // initial mount + resize
+  // init + resize
   useEffect(() => {
     positionDotAtIndex(0);
     const onResize = () => {
@@ -65,7 +61,7 @@ export default function ProcessStrip({
     return () => window.removeEventListener("resize", onResize);
   }, [openIdx]);
 
-  // keep dropdown anchored if user scrolls page
+  // keep dropdown anchored if scrolling
   useEffect(() => {
     const onScroll = () => {
       if (openIdx !== null) {
@@ -77,13 +73,13 @@ export default function ProcessStrip({
     return () => window.removeEventListener("scroll", onScroll);
   }, [openIdx]);
 
-  // whenever we change which step is open, re-place dropdown
+  // when openIdx changes
   useEffect(() => {
     positionDropdown(openIdx);
     if (openIdx !== null) positionDotAtIndex(openIdx);
   }, [openIdx]);
 
-  // close on outside click
+  // click-outside to close
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const t = e.target as Node;
@@ -96,13 +92,14 @@ export default function ProcessStrip({
         setOpenIdx(null);
       }
     }
+
     if (openIdx !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openIdx]);
 
-  // close on Escape
+  // ESC to close
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpenIdx(null);
@@ -111,29 +108,27 @@ export default function ProcessStrip({
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // --- render ---------------------------------------------------------------
-
   return (
     <div
       ref={processCardRef}
       className={[
         "mt-16 sm:mt-20 relative",
-        // adaptive card surface to match the rest of the site
-        "surface-card",
-        "rounded-2xl p-6 sm:p-8",
+        // ✅ use same theme surface as other cards
+        "surface-card rounded-2xl p-6 sm:p-8",
+        "transition-colors duration-300",
       ].join(" ")}
     >
-      {/* Section label */}
+      {/* section label */}
       <p className="text-dim text-xs font-semibold tracking-widest uppercase text-center">
         {title}
       </p>
 
-      {/* Desktop strip */}
+      {/* desktop / tablet timeline */}
       <div
         ref={trackRef}
         className="relative mt-12 hidden h-40 sm:flex items-start"
       >
-        {/* baseline dotted line */}
+        {/* dotted rail */}
         <div
           className="absolute left-4 right-4 top-4 h-0.5"
           style={{
@@ -143,7 +138,7 @@ export default function ProcessStrip({
           aria-hidden="true"
         />
 
-        {/* Steps */}
+        {/* all steps */}
         <div className="grid w-full grid-cols-3">
           {steps.map((x, idx) => {
             const Icon = icons[idx % icons.length];
@@ -158,25 +153,26 @@ export default function ProcessStrip({
                 className="relative flex flex-col items-center"
                 onMouseEnter={() => positionDotAtIndex(idx)}
               >
-                {/* anchor dot on line */}
+                {/* little dot on the rail */}
                 <div className="relative h-0">
                   <div
-                    className="absolute left-1/2 top-4 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--text-dim)/50 z-0"
+                    className="absolute left-1/2 top-4 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-400 dark:bg-slate-500 z-0"
                     aria-hidden="true"
                   />
                 </div>
 
-                {/* Icon button */}
+                {/* icon bubble */}
                 <button
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
                   aria-expanded={isOpen}
                   className={[
                     "mt-8 grid place-items-center w-14 h-14 rounded-xl",
-                    "glass",
+                    // ✅ solid themed card surface for the bubble:
+                    "surface-card border border-(--card-border) shadow-md",
                     "transition-all duration-300",
                     isOpen
-                      ? "ring-2 ring-(--color-brand-sea) shadow-[0_0_25px_rgba(255,255,255,0.3)] scale-105"
+                      ? "ring-2 ring-(--color-brand-sea) scale-105 shadow-[0_0_25px_rgba(255,255,255,0.3)]"
                       : "ring-0 hover:scale-105 active:scale-95",
                   ].join(" ")}
                 >
@@ -186,7 +182,7 @@ export default function ProcessStrip({
                   />
                 </button>
 
-                {/* Title/text */}
+                {/* label under icon */}
                 <button
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
@@ -194,7 +190,6 @@ export default function ProcessStrip({
                   className={[
                     "mt-3 text-center rounded px-1 transition-colors duration-300",
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand-sea)",
-                    isOpen ? "text-heading" : "text-body",
                   ].join(" ")}
                 >
                   <div className="font-semibold text-heading">{x.step}</div>
@@ -205,7 +200,7 @@ export default function ProcessStrip({
           })}
         </div>
 
-        {/* Moving highlight dot */}
+        {/* glowing orb that tracks current step */}
         <div
           className="pointer-events-none absolute top-4 -translate-x-1/2 -translate-y-1/2 z-10"
           style={{
@@ -215,7 +210,7 @@ export default function ProcessStrip({
           }}
           aria-hidden="true"
         >
-          {/* soft outer glow */}
+          {/* glow */}
           <div
             className="h-8 w-8 rounded-full blur-xs"
             style={{
@@ -227,7 +222,7 @@ export default function ProcessStrip({
                   : "brightness(1) saturate(1)",
             }}
           />
-          {/* main dot */}
+          {/* core dot */}
           <div
             className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-md ring-1 ring-white"
             style={{
@@ -237,7 +232,7 @@ export default function ProcessStrip({
                 "0 3px 6px rgba(2,132,199,0.35), 0 0 0 2px rgba(255,255,255,0.85)",
             }}
           />
-          {/* inner sparkle */}
+          {/* sparkle highlight */}
           <div
             className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
@@ -247,7 +242,7 @@ export default function ProcessStrip({
           />
         </div>
 
-        {/* Dropdown card (details) */}
+        {/* dropdown / popover */}
         <div
           ref={dropdownRef}
           className={[
@@ -257,32 +252,22 @@ export default function ProcessStrip({
               ? "pointer-events-none opacity-0 translate-y-2 scale-[0.98]"
               : "opacity-100 translate-y-0 scale-100",
           ].join(" ")}
-          style={{
-            // the JS sets left/top/transform dynamically
-          }}
         >
           {/* caret */}
           <div
             className={[
-              "-mb-2 mx-auto h-3 w-3 rotate-45",
-              "surface-card",
-              "border border-transparent shadow-xl",
+              "-mb-2 mx-auto h-3 w-3 rotate-45 shadow-md border",
+              // ✅ caret also uses card surface color now
+              "surface-card border-(--card-border)",
             ].join(" ")}
-            style={{
-              borderColor: "rgba(255,255,255,0.2)",
-            }}
             aria-hidden="true"
           />
 
           {/* body */}
           <div
             className={[
-              "surface-card rounded-xl shadow-xl",
-              "border border-transparent",
+              "surface-card rounded-xl shadow-xl border border-(--card-border)",
             ].join(" ")}
-            style={{
-              borderColor: "rgba(255,255,255,0.2)",
-            }}
           >
             <div className="p-4">
               {openIdx !== null && (
@@ -301,7 +286,7 @@ export default function ProcessStrip({
         </div>
       </div>
 
-      {/* Mobile vertical version */}
+      {/* mobile vertical timeline */}
       <ol className="sm:hidden mt-8 space-y-6">
         {steps.map((x, idx) => {
           const Icon = icons[idx % icons.length];
@@ -311,14 +296,15 @@ export default function ProcessStrip({
             <li key={x.step} className="relative pl-10">
               {/* connector line */}
               {idx < steps.length - 1 && (
-                <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-(--text-dim)/30" />
+                <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-slate-300 dark:bg-slate-600" />
               )}
 
-              {/* Step icon */}
+              {/* step icon bubble */}
               <span
                 className={[
-                  "absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-full",
-                  "glass border border-white/20 shadow-lg",
+                  "absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-xl border shadow-md",
+                  // ✅ use same solid surface for mobile badges too
+                  "surface-card border-(--card-border)",
                 ].join(" ")}
               >
                 <Icon
@@ -327,7 +313,7 @@ export default function ProcessStrip({
                 />
               </span>
 
-              {/* Clickable label */}
+              {/* clickable label */}
               <button
                 type="button"
                 onClick={() => setOpenIdx(isOpen ? null : idx)}
@@ -338,7 +324,7 @@ export default function ProcessStrip({
                 <div className="text-dim text-sm">{x.text}</div>
               </button>
 
-              {/* Expanded details */}
+              {/* expanded details */}
               <div
                 className={[
                   "mt-2 origin-top transition-all duration-300 ease-out",
@@ -347,7 +333,7 @@ export default function ProcessStrip({
                     : "pointer-events-none opacity-0 scale-[0.98] -translate-y-1",
                 ].join(" ")}
               >
-                <div className="surface-card rounded-lg shadow-md p-3">
+                <div className="surface-card rounded-lg shadow-md border border-(--card-border) p-3">
                   <div className="text-heading text-sm font-semibold">
                     {details?.[idx]?.title ?? x.step}
                   </div>
