@@ -15,41 +15,41 @@ import {
 import Container from "./ui/Container";
 import ProcessStrip from "./ProcessStrip";
 
-// Tone colors for icon chips
+// Tone color system for icon chips
 type Tone = "sky" | "indigo" | "emerald" | "slate";
 
 function toneStyle(tone?: Tone) {
   switch (tone) {
     case "sky":
       return {
-        bgLight: "rgba(186,230,253,0.6)",
-        bgDark: "rgba(0,160,160,0.15)",
-        ringLight: "rgba(186,230,253,0.8)",
-        ringDark: "rgba(0,160,160,0.3)",
+        bgLight: "rgba(186,230,253,1)",
+        bgDark: "rgba(0,160,160,0.25)",
+        ringLight: "rgba(186,230,253,1)",
+        ringDark: "rgba(0,160,160,0.4)",
         icon: "#00A0A0",
       };
     case "indigo":
       return {
-        bgLight: "rgba(199,210,254,0.6)",
-        bgDark: "rgba(99,102,241,0.15)",
-        ringLight: "rgba(199,210,254,0.8)",
-        ringDark: "rgba(99,102,241,0.3)",
+        bgLight: "rgba(199,210,254,1)",
+        bgDark: "rgba(99,102,241,0.25)",
+        ringLight: "rgba(199,210,254,1)",
+        ringDark: "rgba(99,102,241,0.4)",
         icon: "#6366F1",
       };
     case "emerald":
       return {
-        bgLight: "rgba(167,243,208,0.6)",
-        bgDark: "rgba(16,185,129,0.15)",
-        ringLight: "rgba(167,243,208,0.8)",
-        ringDark: "rgba(16,185,129,0.3)",
+        bgLight: "rgba(167,243,208,1)",
+        bgDark: "rgba(16,185,129,0.25)",
+        ringLight: "rgba(167,243,208,1)",
+        ringDark: "rgba(16,185,129,0.4)",
         icon: "#10B981",
       };
     default:
       return {
-        bgLight: "rgba(226,232,240,0.6)",
+        bgLight: "rgba(241,245,249,1)",
         bgDark: "rgba(255,255,255,0.08)",
-        ringLight: "rgba(226,232,240,0.8)",
-        ringDark: "rgba(255,255,255,0.25)",
+        ringLight: "rgba(241,245,249,1)",
+        ringDark: "rgba(255,255,255,0.2)",
         icon: "#94A3B8",
       };
   }
@@ -121,14 +121,15 @@ export default function Services() {
 
   const detailsRaw = t("services.process.details", { returnObjects: true }) as unknown;
   type Detail = { title: string; body: string };
-
   let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
+
   if (detailsRaw && typeof detailsRaw === "object" && !Array.isArray(detailsRaw)) {
     const entries = Object.entries(
       detailsRaw as Record<string, { title?: string; body?: string }>
     )
       .sort(([a, b]) => Number(a) - Number(b))
       .map(([, v]) => ({ title: v?.title ?? "", body: v?.body ?? "" }));
+
     if (entries.length) {
       details = entries.map((d, i) => ({
         title: d.title || steps[i]?.step || "",
@@ -168,21 +169,15 @@ export default function Services() {
           <p className="mt-3 text-body">{t("services.sub")}</p>
         </div>
 
-        {/* Primary cards */}
+        {/* Primary services */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {primary.map(({ title, blurb, points, Icon, tone }) => {
             const toneVars = toneStyle(tone);
             return (
-              <div
-                key={title}
-                className="surface-card p-6 flex flex-col rounded-xl 
-                           shadow-[0_8px_24px_rgba(0,0,0,0.12)] 
-                           dark:shadow-[0_8px_24px_rgba(255,255,255,0.08)] 
-                           transition-shadow duration-300"
-              >
-                {/* icon chip */}
+              <div key={title} className="surface-card p-6 flex flex-col rounded-xl group">
+                {/* icon chip with NO shadow */}
                 <div
-                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2"
+                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2 transition-colors duration-300"
                   style={{
                     backgroundColor: `color-mix(in srgb, ${toneVars.bgLight} 70%, ${toneVars.bgDark} 30%)`,
                     borderColor: `color-mix(in srgb, ${toneVars.ringLight} 70%, ${toneVars.ringDark} 30%)`,
@@ -207,7 +202,6 @@ export default function Services() {
           })}
         </div>
 
-        {/* Process */}
         <ProcessStrip
           steps={steps}
           icons={stepIcons}
@@ -215,20 +209,14 @@ export default function Services() {
           details={details}
         />
 
-        {/* Extras cards */}
+        {/* Extra services */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {extras.map(({ title, blurb, points, Icon, tone }) => {
             const toneVars = toneStyle(tone);
             return (
-              <div
-                key={title}
-                className="surface-card p-6 flex flex-col rounded-xl 
-                           shadow-[0_8px_24px_rgba(0,0,0,0.12)] 
-                           dark:shadow-[0_8px_24px_rgba(255,255,255,0.08)] 
-                           transition-shadow duration-300"
-              >
+              <div key={title} className="surface-card p-6 flex flex-col rounded-xl group">
                 <div
-                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2"
+                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2 transition-colors duration-300"
                   style={{
                     backgroundColor: `color-mix(in srgb, ${toneVars.bgLight} 70%, ${toneVars.bgDark} 30%)`,
                     borderColor: `color-mix(in srgb, ${toneVars.ringLight} 70%, ${toneVars.ringDark} 30%)`,
