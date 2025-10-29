@@ -1,17 +1,15 @@
 // src/components/BallpitBackground.tsx
 import { useEffect, useRef } from "react";
 
-type Ball = { x: number; y: number; vx: number; vy: number; r: number; c: string };
-type Sprite = { cvs: HTMLCanvasElement; hw: number; hh: number };
-
+// ---- ambient typing for the toggle flag on window
 declare global {
   interface Window {
     __BALLPIT_DISABLED?: boolean;
   }
-  interface WindowEventMap {
-    "ballpit-toggle": CustomEvent<{ disabled: boolean }>;
-  }
 }
+
+type Ball = { x: number; y: number; vx: number; vy: number; r: number; c: string };
+type Sprite = { cvs: HTMLCanvasElement; hw: number; hh: number };
 
 export default function BallpitBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -22,9 +20,11 @@ export default function BallpitBackground() {
     const ctxRaw = el.getContext("2d");
     if (!ctxRaw) return;
 
+    // locals (non-null after guards)
     const canvas: HTMLCanvasElement = el;
     const ctx: CanvasRenderingContext2D = ctxRaw;
 
+    // env profile
     const nativeDpr = window.devicePixelRatio || 1;
     const isCoarse = matchMedia("(pointer: coarse)").matches;
     const isSmall = matchMedia("(max-width: 768px)").matches;
@@ -32,20 +32,24 @@ export default function BallpitBackground() {
 
     const CONFIG = isMobile
       ? { BALLS: 14, R_MIN: 12, R_MAX: 22, DPR_CAP: 1.25, MOUSE_R: 120, MOUSE_FORCE: 1.25 }
-      : { BALLS: 26, R_MIN: 14, R_MAX: 28, DPR_CAP: 1.5, MOUSE_R: 90, MOUSE_FORCE: 0.9 };
+      : { BALLS: 26, R_MIN: 14, R_MAX: 28, DPR_CAP: 1.5, MOUSE_R: 90,  MOUSE_FORCE: 0.9  };
 
     let dpr = Math.min(nativeDpr, CONFIG.DPR_CAP);
     let W = 0, H = 0;
     let raf = 0;
-    let running = window.__BALLPIT_DISABLED === true ? false : true;
+    let running = true;
+    let frozen = window.__BALLPIT_DISABLED === true; // ← starts in sync with header toggle
 
+    // brand colors
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
     const colors = [SEA, MIDNIGHT, "#0BB3B3", "#067A7A", "#06B6D4", "#22D3EE", "#0891B2", "#38BDF8"];
 
+    // mouse proxy
     const mouse = { x: -9999, y: -9999, r: CONFIG.MOUSE_R, force: CONFIG.MOUSE_FORCE };
 
+    // size / DPR
     function resize() {
       W = window.innerWidth;
       H = window.innerHeight;
@@ -56,6 +60,7 @@ export default function BallpitBackground() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
+    // utils
     const rand = (min: number, max: number) => Math.random() * (max - min) + min;
     const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
@@ -63,7 +68,7 @@ export default function BallpitBackground() {
     const spriteCache = new Map<string, Sprite>();
     function getSprite(r: number, color: string): Sprite {
       const R = Math.max(6, Math.round(r));
-      const key = `${color}-${R}-${dpr}`;
+      const key = `${color}-${R}`;
       const hit = spriteCache.get(key);
       if (hit) return hit;
 
@@ -80,7 +85,7 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
-      // soft ground shadow
+      // soft shadow
       const rx = R * 1.05;
       const ry = Math.max(6, R * 0.45);
       const sx = cx + R * 0.3;
@@ -91,8 +96,8 @@ export default function BallpitBackground() {
       octx.translate(sx, sy);
       octx.scale(1, ry / rx);
       const sg = octx.createRadialGradient(0, 0, R * 0.12, 0, 0, rx);
-      sg.addColorStop(0, "rgba(15,23,42,0.20)");
-      sg.addColorStop(0.8, "rgba(15,23,42,0.08)");
+      sg.addColorStop(0, "rgba(15,23,42,0.22)");
+      sg.addColorStop(0.6, "rgba(15,23,42,0.14)");
       sg.addColorStop(1, "rgba(15,23,42,0)");
       octx.beginPath();
       octx.arc(0, 0, rx, 0, Math.PI * 2);
@@ -101,14 +106,23 @@ export default function BallpitBackground() {
       octx.restore();
       octx.filter = "none";
 
-      // body
+      // halo
+      const haloR = R * 1.1;
+      const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
+      halo.addColorStop(0, "rgba(0,0,0,0)");
+      halo.addColorStop(1, "rgba(0,0,0,0.06)");
+      octx.beginPath();
+      octx.fillStyle = halo;
+      octx.arc(cx, cy, haloR, 0, Math.PI * 2);
+      octx.fill();
+
+      // body + rim + spec
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // gentle rim
-      const rim = octx.createRadialGradient(cx, cy, R * 0.65, cx, cy, R);
+      const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
       octx.beginPath();
@@ -116,7 +130,6 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // spec highlight
       octx.beginPath();
       octx.fillStyle = "rgba(255,255,255,0.10)";
       octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
@@ -129,7 +142,8 @@ export default function BallpitBackground() {
 
     // balls
     const balls: Ball[] = [];
-    (function seedBalls() {
+    function initBalls() {
+      balls.length = 0;
       for (let i = 0; i < CONFIG.BALLS; i++) {
         const r = rand(CONFIG.R_MIN, CONFIG.R_MAX);
         balls.push({
@@ -141,88 +155,80 @@ export default function BallpitBackground() {
           c: colors[(Math.random() * colors.length) | 0],
         });
       }
-    })();
-
-    function drawStaticFrame() {
-      ctx.clearRect(0, 0, W, H);
-      for (let i = 0; i < balls.length; i++) {
-        const b = balls[i];
-        const sprite = getSprite(b.r, b.c);
-        ctx.drawImage(sprite.cvs, Math.round(b.x - sprite.hw), Math.round(b.y - sprite.hh));
-      }
     }
 
     function update() {
-      if (!running) return;
-
       ctx.clearRect(0, 0, W, H);
 
-      // move + mouse force
-      for (let i = 0; i < balls.length; i++) {
-        const a = balls[i];
-        const dx = a.x - mouse.x;
-        const dy = a.y - mouse.y;
-        const rr = (a.r + mouse.r) * (a.r + mouse.r);
-        const d2 = dx * dx + dy * dy;
-        if (d2 < rr) {
-          const dist = Math.max(10, Math.sqrt(d2));
-          const ux = dx / dist;
-          const uy = dy / dist;
-          const push = (1 - dist / Math.sqrt(rr)) * mouse.force;
-          a.vx += ux * push;
-          a.vy += uy * push;
+      if (!frozen) {
+        // integrate motion + mouse push
+        for (let i = 0; i < balls.length; i++) {
+          const a = balls[i];
+
+          const dx = a.x - mouse.x;
+          const dy = a.y - mouse.y;
+          const rr = (a.r + mouse.r) * (a.r + mouse.r);
+          const d2 = dx * dx + dy * dy;
+          if (d2 < rr) {
+            const dist = Math.max(10, Math.sqrt(d2));
+            const ux = dx / dist;
+            const uy = dy / dist;
+            const push = (1 - dist / Math.sqrt(rr)) * mouse.force;
+            a.vx += ux * push;
+            a.vy += uy * push;
+          }
+
+          a.x += a.vx;
+          a.y += a.vy;
+
+          a.vx *= 0.996;
+          a.vy *= 0.996;
+
+          if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
+          if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
+          if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
+          if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
         }
 
-        a.x += a.vx;
-        a.y += a.vy;
+        // collisions
+        for (let i = 0; i < balls.length; i++) {
+          for (let j = i + 1; j < balls.length; j++) {
+            const a = balls[i], b = balls[j];
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const minDist = a.r + b.r;
+            const d2 = dx * dx + dy * dy;
+            if (d2 > 0 && d2 < minDist * minDist) {
+              const dist = Math.sqrt(d2);
+              const nx = dx / dist, ny = dy / dist;
+              const overlap = (minDist - dist) / 2;
+              a.x -= nx * overlap; a.y -= ny * overlap;
+              b.x += nx * overlap; b.y += ny * overlap;
 
-        a.vx *= 0.996;
-        a.vy *= 0.996;
+              const avn = a.vx * nx + a.vy * ny;
+              const atn = -a.vx * ny + a.vy * nx;
+              const bvn = b.vx * nx + b.vy * ny;
+              const btn = -b.vx * ny + b.vy * nx;
 
-        if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
-        if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
-        if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
-        if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
-      }
-
-      // collisions
-      for (let i = 0; i < balls.length; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-          const a = balls[i], b = balls[j];
-          const dx = b.x - a.x, dy = b.y - a.y;
-          const minDist = a.r + b.r;
-          const d2 = dx * dx + dy * dy;
-          if (d2 > 0 && d2 < minDist * minDist) {
-            const dist = Math.sqrt(d2);
-            const nx = dx / dist, ny = dy / dist;
-            const overlap = (minDist - dist) / 2;
-            a.x -= nx * overlap; a.y -= ny * overlap;
-            b.x += nx * overlap; b.y += ny * overlap;
-
-            const avn = a.vx * nx + a.vy * ny;
-            const atn = -a.vx * ny + a.vy * nx;
-            const bvn = b.vx * nx + b.vy * ny;
-            const btn = -b.vx * ny + b.vy * nx;
-
-            a.vx = bvn * nx + atn * -ny;
-            a.vy = bvn * ny + atn *  nx;
-            b.vx = avn * nx + btn * -ny;
-            b.vy = avn * ny + btn *  nx;
+              a.vx = bvn * nx + atn * -ny;
+              a.vy = bvn * ny + atn *  nx;
+              b.vx = avn * nx + btn * -ny;
+              b.vy = avn * ny + btn *  nx;
+            }
           }
         }
       }
 
-      // draw
+      // draw always
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i];
         const sprite = getSprite(b.r, b.c);
         ctx.drawImage(sprite.cvs, Math.round(b.x - sprite.hw), Math.round(b.y - sprite.hh));
       }
 
-      raf = requestAnimationFrame(update);
+      if (running) raf = requestAnimationFrame(update);
     }
 
-    // inputs
+    // input handlers
     const moveTo = (x: number, y: number) => { mouse.x = x; mouse.y = y; };
     const onPointerMove = (e: PointerEvent) => moveTo(e.clientX, e.clientY);
     const onMouseMove = (e: MouseEvent) => moveTo(e.clientX, e.clientY);
@@ -245,61 +251,49 @@ export default function BallpitBackground() {
         b.x = clamp(b.x, b.r, W - b.r);
         b.y = clamp(b.y, b.r, H - b.r);
       }
-      if (!running) drawStaticFrame();
     };
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        if (running) {
-          running = false;
-          cancelAnimationFrame(raf);
-        }
-      } else if (window.__BALLPIT_DISABLED !== true) {
-        if (!running) {
-          running = true;
-          raf = requestAnimationFrame(update);
+    // 🔄 listen to header/mobile toggle
+    const onToggle = (e: Event) => {
+      // CustomEvent<{disabled:boolean}>
+      const ce = e as CustomEvent<{ disabled: boolean }>;
+      frozen = ce.detail.disabled;
+      if (!frozen) {
+        // give subtle nudge so it resumes
+        for (const b of balls) {
+          if (Math.abs(b.vx) < 0.05 && Math.abs(b.vy) < 0.05) {
+            b.vx += (Math.random() - 0.5) * 0.4;
+            b.vy += (Math.random() - 0.5) * 0.4;
+          }
         }
       }
     };
+    window.addEventListener("ballpit-toggle", onToggle);
 
-    const onToggle = (e: CustomEvent<{ disabled: boolean }>) => {
-      const disabled = e.detail?.disabled ?? window.__BALLPIT_DISABLED === true;
-      window.__BALLPIT_DISABLED = !!disabled;
-
-      if (disabled) {
-        running = false;
-        cancelAnimationFrame(raf);
-        drawStaticFrame();
-      } else if (!running) {
-        running = true;
-        raf = requestAnimationFrame(update);
-      }
-    };
-
-    // init
+    // --- init sequence (✅ important order)
     resize();
-    if (isMobile) { mouse.x = W * 0.5; mouse.y = H * 0.5; }
-    if (running) raf = requestAnimationFrame(update);
-    else drawStaticFrame();
+    if (isMobile) { mouse.x = (window.innerWidth * 0.5); mouse.y = (window.innerHeight * 0.5); }
+    // wait one frame so layout is applied before placing balls
+    requestAnimationFrame(() => {
+      initBalls();              // now W/H are valid → no (0,0) clumping
+      raf = requestAnimationFrame(update);
+    });
 
     // listeners
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
-
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     window.addEventListener("mouseleave", onLeave);
-
     window.addEventListener("touchstart", onTouchMove, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("touchend", onPointerUp, { passive: true });
     window.addEventListener("touchcancel", onLeave);
-
     window.addEventListener("resize", onResize);
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("ballpit-toggle", onToggle);
 
+    // cleanup
     return () => {
+      running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
@@ -311,7 +305,6 @@ export default function BallpitBackground() {
       window.removeEventListener("touchend", onPointerUp);
       window.removeEventListener("touchcancel", onLeave);
       window.removeEventListener("resize", onResize);
-      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("ballpit-toggle", onToggle);
     };
   }, []);

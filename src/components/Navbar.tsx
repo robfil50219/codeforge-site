@@ -1,9 +1,8 @@
-// src/components/Navbar.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
 
-// Augment the Window type so we can store/read our background flag safely
+// Define the global types once (keeps TypeScript happy)
 declare global {
   interface Window {
     __BALLPIT_DISABLED?: boolean;
@@ -19,7 +18,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains("dark"));
-    // sync initial static/interactive state from global flag if present
+    // sync background mode from global flag
     setIsStaticBg(window.__BALLPIT_DISABLED === true);
   }, []);
 
@@ -31,12 +30,14 @@ export default function Navbar() {
   function toggleBackgroundMode() {
     const next = !isStaticBg;
     setIsStaticBg(next);
-    // Let BallpitBackground know (typed CustomEvent payload)
+
+    // Notify BallpitBackground
     const evt: CustomEvent<BallpitToggleDetail> = new CustomEvent("ballpit-toggle", {
       detail: { disabled: next },
     });
     window.dispatchEvent(evt);
-    // keep a global hint so initial mount can read it
+
+    // Store global state
     window.__BALLPIT_DISABLED = next;
   }
 
@@ -50,33 +51,31 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 w-full">
         <div
           className={[
-            // Layout
             "h-16 flex items-center px-4 sm:px-6 lg:px-8",
             "border-b border-(--card-border)",
-            // Solid background (no transparency/glass)
             "bg-(--bg-page)",
             "shadow-sm",
           ].join(" ")}
         >
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
-            {/* Brand / logo */}
+            {/* === Logo + text (animated) === */}
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
+              className="flex items-center gap-2 sm:gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
               aria-label="Til forsiden"
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
                 alt="CodeForge Studio logo"
-                className="h-10 w-10 sm:h-12 sm:w-12"
+                className="h-10 w-10 sm:h-12 sm:w-12 animate-flame-breathe"
               />
-              <span className="text-xl sm:text-2xl tracking-[0.04em]">
+              <span className="text-xl sm:text-2xl tracking-[0.04em] animate-text-glide anim-delay-200">
                 CODEFORGE STUDIO
               </span>
             </Link>
 
-            {/* Desktop nav */}
+            {/* === Desktop navigation === */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button
                 onClick={() => scrollToId("services")}
@@ -106,18 +105,19 @@ export default function Navbar() {
                 Kontakt
               </button>
 
-              {/* Background mode chip */}
+              {/* === Toggle background === */}
               <button
                 onClick={toggleBackgroundMode}
-                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
                 aria-pressed={isStaticBg}
+                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
               >
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
               </button>
 
-              {/* Theme chip */}
+              {/* === Theme toggle === */}
               <button
                 onClick={toggleTheme}
+                aria-pressed={isDark}
                 className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
               >
                 {isDark ? "Lys" : "Mørk"}
@@ -127,7 +127,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobilmeny (flytende knapp + panel) */}
+      {/* === Mobil flytende meny === */}
       <MobileBubbleNav
         scrollToId={scrollToId}
         isDark={isDark}
