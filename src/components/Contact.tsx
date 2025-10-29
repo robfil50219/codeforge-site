@@ -13,13 +13,6 @@ export default function Contact() {
       className="scroll-mt-24 bg-transparent"
       aria-labelledby="contact-heading"
     >
-      {/* bakgrunnsglød */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-      >
-        <div className="absolute left-1/2 top-10 h-64 w-xl -translate-x-1/2 rounded-full bg-sky-100/60 blur-3xl" />
-      </div>
 
       <Container className="py-20">
         {/* Overskrift */}
