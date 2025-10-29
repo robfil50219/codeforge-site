@@ -13,6 +13,7 @@ export default function BallpitBackground() {
     const ctxRaw = el.getContext("2d");
     if (!ctxRaw) return;
 
+    // stable locals so TS knows they’re not null
     const canvas: HTMLCanvasElement = el;
     const ctx: CanvasRenderingContext2D = ctxRaw;
 
@@ -31,10 +32,12 @@ export default function BallpitBackground() {
     let H = 0;
     let raf = 0;
 
-    // IMPORTANT: this controls if animation is running
+    // running = component mounted.
+    // paused = "stille bakgrunn" (we freeze motion but still draw frame so canvas stays visible)
     let running = true;
+    let paused = document.body.classList.contains("static-background");
 
-    // read brand tokens from :root
+    // --- brand colors ---
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
@@ -50,7 +53,7 @@ export default function BallpitBackground() {
       "#38BDF8",
     ];
 
-    // pseudo-mouse repulsion source
+    // --- mouse proxy (for push effect) ---
     const mouse = {
       x: -9999,
       y: -9999,
@@ -58,7 +61,12 @@ export default function BallpitBackground() {
       force: CONFIG.MOUSE_FORCE,
     };
 
-    // canvas sizing
+    // --- utils ---
+    const clamp = (v: number, lo: number, hi: number) =>
+      v < lo ? lo : v > hi ? hi : v;
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    // DPR + canvas sizing
     function resize() {
       W = window.innerWidth;
       H = window.innerHeight;
@@ -69,12 +77,7 @@ export default function BallpitBackground() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    // utils
-    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
-    const clamp = (v: number, lo: number, hi: number) =>
-      v < lo ? lo : v > hi ? hi : v;
-
-    // sprite cache (draw balls with nice shading once, then reuse)
+    // --- sprite cache for balls ---
     const spriteCache = new Map<string, Sprite>();
     function getSprite(r: number, color: string): Sprite {
       const R = Math.max(6, Math.round(r));
@@ -95,7 +98,7 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
-      // subtle shadow ellipse
+      // soft drop shadow / depth
       const rx = R * 1.05;
       const ry = Math.max(6, R * 0.45);
       const sx = cx + R * 0.3;
@@ -116,7 +119,7 @@ export default function BallpitBackground() {
       octx.restore();
       octx.filter = "none";
 
-      // faint outer halo (gives depth, not neon)
+      // subtle rim/shine
       const haloR = R * 1.1;
       const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
       halo.addColorStop(0, "rgba(0,0,0,0)");
@@ -126,13 +129,13 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, haloR, 0, Math.PI * 2);
       octx.fill();
 
-      // main fill
+      // body
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // rim darkening around edge
+      // rim darkening
       const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
@@ -141,7 +144,7 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // small glossy spec
+      // highlight
       octx.beginPath();
       octx.fillStyle = "rgba(255,255,255,0.10)";
       octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
@@ -152,7 +155,7 @@ export default function BallpitBackground() {
       return sprite;
     }
 
-    // sim state
+    // --- balls ---
     const balls: Ball[] = [];
     function initBalls() {
       balls.length = 0;
@@ -169,18 +172,13 @@ export default function BallpitBackground() {
       }
     }
 
-    // core loop
-    function update() {
-      // if paused, don't advance physics, don't schedule next frame
-      if (!running) return;
-
-      ctx.clearRect(0, 0, W, H);
-
-      // move balls & mouse push
+    // --- physics update step (skipped if paused) ---
+    function stepPhysics() {
+      // mouse push + velocity + wall bounce
       for (let i = 0; i < balls.length; i++) {
         const a = balls[i];
 
-        // apply mouse force only if running
+        // mouse repel
         const dx = a.x - mouse.x;
         const dy = a.y - mouse.y;
         const rr = (a.r + mouse.r) * (a.r + mouse.r);
@@ -194,47 +192,72 @@ export default function BallpitBackground() {
           a.vy += uy * push;
         }
 
+        // integrate
         a.x += a.vx;
         a.y += a.vy;
 
+        // friction
         a.vx *= 0.996;
         a.vy *= 0.996;
 
-        // bounce walls
-        if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
-        if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
-        if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
-        if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
+        // walls
+        if (a.x - a.r < 0) {
+          a.x = a.r;
+          a.vx *= -1;
+        }
+        if (a.x + a.r > W) {
+          a.x = W - a.r;
+          a.vx *= -1;
+        }
+        if (a.y - a.r < 0) {
+          a.y = a.r;
+          a.vy *= -1;
+        }
+        if (a.y + a.r > H) {
+          a.y = H - a.r;
+          a.vy *= -1;
+        }
       }
 
-      // resolve ball-ball collisions
+      // collisions between balls
       for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
-          const a = balls[i], b = balls[j];
-          const dx = b.x - a.x, dy = b.y - a.y;
+          const a = balls[i];
+          const b = balls[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
           const minDist = a.r + b.r;
           const d2 = dx * dx + dy * dy;
           if (d2 > 0 && d2 < minDist * minDist) {
             const dist = Math.sqrt(d2);
-            const nx = dx / dist, ny = dy / dist;
+            const nx = dx / dist;
+            const ny = dy / dist;
             const overlap = (minDist - dist) / 2;
-            a.x -= nx * overlap; a.y -= ny * overlap;
-            b.x += nx * overlap; b.y += ny * overlap;
 
+            // separate
+            a.x -= nx * overlap;
+            a.y -= ny * overlap;
+            b.x += nx * overlap;
+            b.y += ny * overlap;
+
+            // simple elastic swap along collision normal
             const avn = a.vx * nx + a.vy * ny;
             const atn = -a.vx * ny + a.vy * nx;
             const bvn = b.vx * nx + b.vy * ny;
             const btn = -b.vx * ny + b.vy * nx;
 
             a.vx = bvn * nx + atn * -ny;
-            a.vy = bvn * ny + atn *  nx;
+            a.vy = bvn * ny + atn * nx;
             b.vx = avn * nx + btn * -ny;
-            b.vy = avn * ny + btn *  nx;
+            b.vy = avn * ny + btn * nx;
           }
         }
       }
+    }
 
-      // draw sprites
+    // --- draw step (always draw, even if paused) ---
+    function drawFrame() {
+      ctx.clearRect(0, 0, W, H);
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i];
         const sprite = getSprite(b.r, b.c);
@@ -244,12 +267,24 @@ export default function BallpitBackground() {
           Math.round(b.y - sprite.hh)
         );
       }
-
-      // next frame
-      raf = requestAnimationFrame(update);
     }
 
-    // pointer helpers
+    // --- main loop ---
+    function tick() {
+      // check paused state from DOM every frame
+      paused = document.body.classList.contains("static-background");
+
+      if (!paused) {
+        stepPhysics();
+      }
+      drawFrame();
+
+      if (running) {
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    // --- pointer / touch handlers ---
     const moveTo = (x: number, y: number) => {
       mouse.x = x;
       mouse.y = y;
@@ -287,38 +322,15 @@ export default function BallpitBackground() {
       }
     };
 
-    // 🔌 observe body.classList for "static-bg"
-    function syncRunningFromBody() {
-      const shouldPause = document.body.classList.contains("static-bg");
-      if (shouldPause && running) {
-        // pause
-        running = false;
-        // after pause we do NOT clear canvas -> stays frozen
-      } else if (!shouldPause && !running) {
-        // resume
-        running = true;
-        raf = requestAnimationFrame(update);
-      }
-    }
-
-    // MutationObserver to watch for class changes on <body>
-    const observer = new MutationObserver(syncRunningFromBody);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    // INIT
+    // --- init ---
     resize();
     if (isMobile) {
+      // for mobile, start the mouse in middle so they get some spacing
       mouse.x = W * 0.5;
       mouse.y = H * 0.5;
     }
     initBalls();
-
-    // set initial running state based on body
-    syncRunningFromBody();
-
-    if (running) {
-      raf = requestAnimationFrame(update);
-    }
+    raf = requestAnimationFrame(tick);
 
     // listeners
     window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -335,11 +347,10 @@ export default function BallpitBackground() {
 
     window.addEventListener("resize", onResize);
 
-    // CLEANUP
+    // cleanup
     return () => {
       running = false;
       cancelAnimationFrame(raf);
-      observer.disconnect();
 
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);

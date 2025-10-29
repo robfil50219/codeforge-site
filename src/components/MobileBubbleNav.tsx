@@ -1,72 +1,143 @@
-import BubbleMenu from "./ui/BubbleMenu";
-import { Moon, Phone, Info, DollarSign, Wrench } from "lucide-react";
+import { useState } from "react";
+import {
+  Sun,
+  Moon,
+  PhoneCall,
+  Palette,
+  Rocket,
+  User,
+  CircleDot,
+  Settings2,
+} from "lucide-react";
 
-export default function MobileBubbleNav() {
-  const bubbleItems = [
-    {
-      icon: <Wrench className="w-4 h-4" />,
-      label: "Services",
-      onClick: () => {
-        document.getElementById("services")?.scrollIntoView({
-          behavior: "smooth",
-        });
-      },
-    },
-    {
-      icon: <DollarSign className="w-4 h-4" />,
-      label: "Pricing",
-      onClick: () => {
-        document.getElementById("pricing")?.scrollIntoView({
-          behavior: "smooth",
-        });
-      },
-    },
-    {
-      icon: <Info className="w-4 h-4" />,
-      label: "About",
-      onClick: () => {
-        document.getElementById("about")?.scrollIntoView({
-          behavior: "smooth",
-        });
-      },
-    },
-    {
-      icon: <Phone className="w-4 h-4" />,
-      label: "Contact",
-      onClick: () => {
-        document.getElementById("contact")?.scrollIntoView({
-          behavior: "smooth",
-        });
-      },
-    },
-    {
-      icon: <Moon className="w-4 h-4" />,
-      label: "Theme",
-      onClick: () => {
-        document.documentElement.classList.toggle("dark");
-      },
-    },
-  ];
+type MobileBubbleNavProps = {
+  scrollToId: (id: string) => void;
+  isDark: boolean;
+  toggleTheme: () => void;
+  isStaticBg: boolean;
+  toggleBackgroundMode: () => void;
+};
+
+export default function MobileBubbleNav({
+  scrollToId,
+  isDark,
+  toggleTheme,
+  isStaticBg,
+  toggleBackgroundMode,
+}: MobileBubbleNavProps) {
+  const [open, setOpen] = useState(false);
+
+  function go(id: string) {
+    scrollToId(id);
+    setOpen(false);
+  }
 
   return (
-    <div className="fixed bottom-6 right-6 z-9999 md:hidden">
-      <div
+    <>
+      {/* Flytende knapp (mobil) */}
+      <button
         className={[
-          "backdrop-blur-xl bg-white/20 dark:bg-[#001920]/40",
-          "border border-white/10 shadow-xl shadow-black/20 rounded-2xl",
-          "p-2 flex items-center justify-center",
+          "fixed bottom-4 right-4 z-50 md:hidden",
+          "surface-chip px-4 py-2 text-heading text-xs font-semibold shadow-lg",
         ].join(" ")}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-label="Meny"
       >
-        <BubbleMenu
-          items={bubbleItems}
+        <Settings2 className="inline-block h-4 w-4 align-middle mr-1" />
+        Meny
+      </button>
+
+      {/* Selve meny-panelet */}
+      {open && (
+        <div
           className={[
-            "backdrop-blur-xl bg-white/20 dark:bg-[#001920]/40",
-            "border border-white/10 shadow-xl shadow-black/20 rounded-2xl",
-            "text-[#0F4452] dark:text-[#F6FAFA]",
-            "transition-all duration-300",
+            "fixed bottom-20 right-4 z-50 md:hidden w-56 rounded-xl border shadow-xl",
+            "bg-(--bg-page) border-(--card-border) text-(--text-page)",
           ].join(" ")}
-        />
-      </div>
-    </div>
+        >
+          <ul className="p-3 text-sm">
+            {/* Navigasjon */}
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => go("services")}
+              >
+                <Palette className="inline-block h-4 w-4 mr-2 align-middle" />
+                Tjenester
+              </button>
+            </li>
+
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => go("pricing")}
+              >
+                <Rocket className="inline-block h-4 w-4 mr-2 align-middle" />
+                Priser
+              </button>
+            </li>
+
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => go("about")}
+              >
+                <User className="inline-block h-4 w-4 mr-2 align-middle" />
+                Om oss
+              </button>
+            </li>
+
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => go("contact")}
+              >
+                <PhoneCall className="inline-block h-4 w-4 mr-2 align-middle" />
+                Kontakt
+              </button>
+            </li>
+
+            {/* Stille / interaktiv bakgrunn */}
+            <li className="mt-2 border-t border-(--card-border) pt-2">
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => {
+                  toggleBackgroundMode();
+                  // beholder menyen åpen på mobil,
+                  // så du kan trykke igjen uten å åpne menyen hver gang
+                }}
+              >
+                <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
+                {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
+              </button>
+            </li>
+
+            {/* Lys / Mørk tema */}
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={() => {
+                  toggleTheme();
+                  // samme her: vi lar menyen forbli åpen
+                }}
+              >
+                {isDark ? (
+                  <>
+                    <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
+                    Lys
+                  </>
+                ) : (
+                  <>
+                    <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
+                    Mørk
+                  </>
+                )}
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
+    </>
   );
 }
