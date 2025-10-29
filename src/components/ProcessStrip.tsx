@@ -17,128 +17,191 @@ export default function ProcessStrip({
   title,
   details,
 }: ProcessStripProps) {
-  const processCardRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const railRef = useRef<HTMLDivElement | null>(null);
+  const iconRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const [dotLeft, setDotLeft] = useState<number>(0);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [centers, setCenters] = useState<number[]>([]);
+  const [dotLeft, setDotLeft] = useState<number>(0);
+  const [barLeft, setBarLeft] = useState<number>(0);
+  const [barWidth, setBarWidth] = useState<number>(0);
 
-  function positionDotAtIndex(idx: number) {
-    const track = trackRef.current;
-    const stepEl = stepRefs.current[idx];
-    if (!track || !stepEl) return;
-    const trackRect = track.getBoundingClientRect();
-    const stepRect = stepEl.getBoundingClientRect();
-    setDotLeft(stepRect.left + stepRect.width / 2 - trackRect.left);
+  // --- geometry helpers -----------------------------------------------------
+  function computeCenters() {
+    const rail = railRef.current;
+    if (!rail) return [];
+    const rect = rail.getBoundingClientRect();
+    return iconRefs.current.map((btn) => {
+      if (!btn) return 0;
+      const r = btn.getBoundingClientRect();
+      return r.left + r.width / 2 - rect.left;
+    });
+  }
+
+  function updateGeometry(idx: number | null) {
+    const centers = computeCenters();
+    setCenters(centers);
+    if (!centers.length) return;
+    const first = centers[0];
+    const active = centers[idx ?? 0] ?? first;
+    setDotLeft(active);
+    setBarLeft(Math.min(first, active));
+    setBarWidth(Math.abs(active - first));
   }
 
   function positionDropdown(idx: number | null) {
     const dropdown = dropdownRef.current;
-    const track = trackRef.current;
-    const stepEl = idx !== null ? stepRefs.current[idx] : null;
-    if (!dropdown || !track || !stepEl) return;
-
-    const trackRect = track.getBoundingClientRect();
-    const stepRect = stepEl.getBoundingClientRect();
-    const centerX = stepRect.left + stepRect.width / 2 - trackRect.left;
-
-    dropdown.style.left = `${centerX}px`;
+    const rail = railRef.current;
+    if (!dropdown || !rail || idx === null) return;
+    const railRect = rail.getBoundingClientRect();
+    const btn = iconRefs.current[idx];
+    if (!btn) return;
+    const btnRect = btn.getBoundingClientRect();
+    const cx = btnRect.left + btnRect.width / 2 - railRect.left;
+    dropdown.style.left = `${cx}px`;
     dropdown.style.top = `120px`;
     dropdown.style.transform = `translate(-50%, 0)`;
   }
 
-  // init + resize
+  // --- effects --------------------------------------------------------------
   useEffect(() => {
-    positionDotAtIndex(0);
+    const i = openIdx ?? 0;
+    updateGeometry(i);
+    positionDropdown(openIdx);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openIdx]);
+
+  useEffect(() => {
     const onResize = () => {
-      const idx = openIdx ?? 0;
-      positionDotAtIndex(idx);
-      positionDropdown(idx);
+      const i = openIdx ?? 0;
+      updateGeometry(i);
+      positionDropdown(openIdx);
     };
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openIdx]);
 
-  // keep dropdown anchored if scrolling
   useEffect(() => {
     const onScroll = () => {
-      if (openIdx !== null) {
-        positionDropdown(openIdx);
-        positionDotAtIndex(openIdx);
-      }
+      const i = openIdx ?? 0;
+      updateGeometry(i);
+      positionDropdown(openIdx);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openIdx]);
 
-  // when openIdx changes
-  useEffect(() => {
-    positionDropdown(openIdx);
-    if (openIdx !== null) positionDotAtIndex(openIdx);
-  }, [openIdx]);
-
-  // click-outside to close
+  // close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const t = e.target as Node;
-      const clickedStep = stepRefs.current.some((step) => step?.contains(t));
+      const clickedIcon = iconRefs.current.some((el) => el?.contains(t));
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(t) &&
-        !clickedStep
+        !clickedIcon
       ) {
         setOpenIdx(null);
       }
     }
-
     if (openIdx !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openIdx]);
 
-  // ESC to close
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpenIdx(null);
-    }
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  // --- render ---------------------------------------------------------------
   return (
-    <div
-      ref={processCardRef}
-      className={[
-        "mt-16 sm:mt-20 relative",
-        // ✅ use same theme surface as other cards
-        "surface-card rounded-2xl p-6 sm:p-8",
-        "transition-colors duration-300",
-      ].join(" ")}
-    >
-      {/* section label */}
+    <div ref={cardRef} className="mt-16 sm:mt-20 relative surface-card rounded-2xl p-6 sm:p-8">
       <p className="text-dim text-xs font-semibold tracking-widest uppercase text-center">
         {title}
       </p>
 
-      {/* desktop / tablet timeline */}
-      <div
-        ref={trackRef}
-        className="relative mt-12 hidden h-40 sm:flex items-start"
-      >
-        {/* dotted rail */}
+      {/* DESKTOP STRIP */}
+      <div className="relative mt-12 hidden h-40 sm:flex items-start">
         <div
-          className="absolute left-4 right-4 top-4 h-0.5"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(90deg, rgba(148,163,184,0.4) 0 6px, transparent 6px 14px)",
-          }}
+          ref={railRef}
+          className="absolute left-4 right-4 top-4 h-6 pointer-events-none"
           aria-hidden="true"
-        />
+        >
+          {/* dotted baseline */}
+          <div
+            className="absolute left-0 right-0 top-1/2 h-0.5 -translate-y-1/2"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(90deg, rgba(148,163,184,0.35) 0 6px, transparent 6px 14px)",
+            }}
+          />
 
-        {/* all steps */}
+          {/* progress bar */}
+          <div
+            className="absolute top-1/2 h-0.5 -translate-y-1/2 transition-all duration-300"
+            style={{
+              left: barLeft,
+              width: barWidth,
+              backgroundColor: "var(--color-brand-sea)",
+            }}
+          />
+
+          {/* anchor dots */}
+          {centers.map((cx, i) => (
+            <div
+              key={i}
+              className="absolute h-2.5 w-2.5 rounded-full bg-(--text-dim)/50"
+              style={{
+                left: cx,
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          ))}
+
+          {/* orb */}
+          <div
+            className="absolute z-30"
+            style={{
+              left: dotLeft,
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              transition: "left 260ms cubic-bezier(0.22,1,0.36,1)",
+            }}
+          >
+            {/* subtle glass orb */}
+            <div
+              className="relative h-8 w-8 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.55), rgba(0,0,0,0.15) 70%)",
+                border: "1px solid rgba(255,255,255,0.4)",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                backdropFilter: "blur(1.5px)",
+                WebkitBackdropFilter: "blur(1.5px)",
+              }}
+            >
+              <div
+                className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle at 40% 40%, rgba(255,255,255,0.9), rgba(0,160,160,0.4) 60%, rgba(0,0,0,0) 100%)",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* steps */}
         <div className="grid w-full grid-cols-3">
           {steps.map((x, idx) => {
             const Icon = icons[idx % icons.length];
@@ -147,32 +210,21 @@ export default function ProcessStrip({
             return (
               <div
                 key={x.step}
-                ref={(el) => {
-                  stepRefs.current[idx] = el;
-                }}
                 className="relative flex flex-col items-center"
-                onMouseEnter={() => positionDotAtIndex(idx)}
+                onMouseEnter={() => updateGeometry(idx)}
               >
-                {/* little dot on the rail */}
-                <div className="relative h-0">
-                  <div
-                    className="absolute left-1/2 top-4 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-400 dark:bg-slate-500 z-0"
-                    aria-hidden="true"
-                  />
-                </div>
-
-                {/* icon bubble */}
                 <button
+                  ref={(el) => {
+                    iconRefs.current[idx] = el;
+                  }}
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
                   aria-expanded={isOpen}
                   className={[
-                    "mt-8 grid place-items-center w-14 h-14 rounded-xl",
-                    // ✅ solid themed card surface for the bubble:
-                    "surface-card border border-(--card-border) shadow-md",
+                    "mt-16 grid place-items-center w-14 h-14 rounded-xl surface-card border border-(--card-border) shadow-md",
                     "transition-all duration-300",
                     isOpen
-                      ? "ring-2 ring-(--color-brand-sea) scale-105 shadow-[0_0_25px_rgba(255,255,255,0.3)]"
+                      ? "ring-2 ring-(--color-brand-sea) scale-105"
                       : "ring-0 hover:scale-105 active:scale-95",
                   ].join(" ")}
                 >
@@ -182,17 +234,15 @@ export default function ProcessStrip({
                   />
                 </button>
 
-                {/* label under icon */}
                 <button
                   type="button"
                   onClick={() => setOpenIdx(isOpen ? null : idx)}
                   aria-expanded={isOpen}
-                  className={[
-                    "mt-3 text-center rounded px-1 transition-colors duration-300",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand-sea)",
-                  ].join(" ")}
+                  className="mt-4 text-center rounded px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand-sea)"
                 >
-                  <div className="font-semibold text-heading">{x.step}</div>
+                  <div className="text-heading font-semibold">
+                    {idx + 1}. {x.step}
+                  </div>
                   <div className="text-sm text-dim">{x.text}</div>
                 </button>
               </div>
@@ -200,144 +250,78 @@ export default function ProcessStrip({
           })}
         </div>
 
-        {/* glowing orb that tracks current step */}
-        <div
-          className="pointer-events-none absolute top-4 -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{
-            left: dotLeft,
-            transition:
-              "left 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s",
-          }}
-          aria-hidden="true"
-        >
-          {/* glow */}
-          <div
-            className="h-8 w-8 rounded-full blur-xs"
-            style={{
-              background:
-                "radial-gradient(closest-side, rgba(0,160,160,0.25), rgba(0,0,0,0))",
-              filter:
-                openIdx !== null
-                  ? "brightness(1.2) saturate(1.2)"
-                  : "brightness(1) saturate(1)",
-            }}
-          />
-          {/* core dot */}
-          <div
-            className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-md ring-1 ring-white"
-            style={{
-              background:
-                "linear-gradient(145deg, var(--color-brand-sea) 0%, #3b82f6 70%, #1d4ed8 100%)",
-              boxShadow:
-                "0 3px 6px rgba(2,132,199,0.35), 0 0 0 2px rgba(255,255,255,0.85)",
-            }}
-          />
-          {/* sparkle highlight */}
-          <div
-            className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.25))",
-            }}
-          />
-        </div>
-
-        {/* dropdown / popover */}
+        {/* dropdown card */}
         <div
           ref={dropdownRef}
           className={[
-            "absolute z-20 w-full max-w-md origin-top",
-            "transition-all duration-300 ease-out",
+            "absolute z-50 w-full max-w-md origin-top transition-all duration-300 ease-out",
             openIdx === null
               ? "pointer-events-none opacity-0 translate-y-2 scale-[0.98]"
               : "opacity-100 translate-y-0 scale-100",
           ].join(" ")}
         >
-          {/* caret */}
           <div
-            className={[
-              "-mb-2 mx-auto h-3 w-3 rotate-45 shadow-md border",
-              // ✅ caret also uses card surface color now
-              "surface-card border-(--card-border)",
-            ].join(" ")}
+            className="-mb-2 mx-auto h-3 w-3 rotate-45 surface-card border border-(--card-border) shadow-md"
             aria-hidden="true"
           />
-
-          {/* body */}
-          <div
-            className={[
-              "surface-card rounded-xl shadow-xl border border-(--card-border)",
-            ].join(" ")}
-          >
-            <div className="p-4">
-              {openIdx !== null && (
-                <>
-                  <div className="text-heading text-sm font-semibold">
-                    {details?.[openIdx]?.title ?? steps[openIdx].step}
-                  </div>
-
-                  <p className="mt-1 text-body text-sm leading-relaxed">
-                    {details?.[openIdx]?.body ?? steps[openIdx].text}
-                  </p>
-                </>
-              )}
-            </div>
+          <div className="surface-card rounded-xl shadow-xl border border-(--card-border) p-4 text-center">
+            {openIdx !== null && (
+              <>
+                <div className="text-dim text-sm tracking-wide uppercase">
+                  {details?.[openIdx]?.title ?? steps[openIdx].step}
+                </div>
+                <div className="text-heading text-xl font-semibold mt-1">
+                  {steps[openIdx].step}
+                </div>
+                <p className="text-body text-base leading-relaxed mt-4">
+                  {details?.[openIdx]?.body ?? steps[openIdx].text}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
 
-      {/* mobile vertical timeline */}
+      {/* MOBILE VERSION */}
       <ol className="sm:hidden mt-8 space-y-6">
         {steps.map((x, idx) => {
           const Icon = icons[idx % icons.length];
           const isOpen = openIdx === idx;
-
           return (
             <li key={x.step} className="relative pl-10">
-              {/* connector line */}
               {idx < steps.length - 1 && (
-                <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-slate-300 dark:bg-slate-600" />
+                <span className="absolute left-3.5 top-8 -bottom-3 w-0.5 bg-(--text-dim)/30" />
               )}
-
-              {/* step icon bubble */}
-              <span
-                className={[
-                  "absolute left-0 top-1.5 inline-grid h-7 w-7 place-items-center rounded-xl border shadow-md",
-                  // ✅ use same solid surface for mobile badges too
-                  "surface-card border-(--card-border)",
-                ].join(" ")}
-              >
+              <span className="absolute left-0 top-1.5 inline-grid h-8 w-8 place-items-center rounded-xl surface-card border border-(--card-border) shadow-md">
                 <Icon
                   className="h-4 w-4"
                   style={{ color: "var(--color-brand-sea)" }}
                 />
               </span>
-
-              {/* clickable label */}
               <button
                 type="button"
                 onClick={() => setOpenIdx(isOpen ? null : idx)}
                 aria-expanded={isOpen}
                 className="w-full text-left"
               >
-                <div className="text-heading font-semibold">{x.step}</div>
-                <div className="text-dim text-sm">{x.text}</div>
+                <div className="text-heading font-semibold text-base leading-tight">
+                  {idx + 1}. {x.step}
+                </div>
+                <div className="text-dim text-sm leading-relaxed">{x.text}</div>
               </button>
-
-              {/* expanded details */}
               <div
                 className={[
-                  "mt-2 origin-top transition-all duration-300 ease-out",
+                  "origin-top transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   isOpen
-                    ? "opacity-100 scale-100 translate-y-0"
+                    ? "opacity-100 scale-100 translate-y-2"
                     : "pointer-events-none opacity-0 scale-[0.98] -translate-y-1",
                 ].join(" ")}
               >
-                <div className="surface-card rounded-lg shadow-md border border-(--card-border) p-3">
+                <div className="surface-card mt-3 rounded-lg shadow-md border border-(--card-border) p-3">
                   <div className="text-heading text-sm font-semibold">
                     {details?.[idx]?.title ?? x.step}
                   </div>
-                  <p className="mt-1 text-body text-sm leading-relaxed">
+                  <p className="text-body text-sm leading-relaxed mt-2">
                     {details?.[idx]?.body ?? x.text}
                   </p>
                 </div>
