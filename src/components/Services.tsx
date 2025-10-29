@@ -1,4 +1,3 @@
-// src/components/Services.tsx
 import { useEffect, useRef } from "react";
 import { useTranslation } from "../lib/t";
 import {
@@ -13,43 +12,45 @@ import {
   Rocket,
   type LucideIcon,
 } from "lucide-react";
-
 import Container from "./ui/Container";
 import ProcessStrip from "./ProcessStrip";
 
-/**
- * Tone system for the little icon bubble at the top of each service card.
- * We return inline color values so we can style via style={}
- * instead of relying on Tailwind classes that don't behave well in dark mode.
- */
+// Tone colors for icon chips
 type Tone = "sky" | "indigo" | "emerald" | "slate";
 
 function toneStyle(tone?: Tone) {
   switch (tone) {
     case "sky":
       return {
-        bgLight: "rgba(186, 230, 253, 0.6)", // sky-200-ish
-        ringLight: "rgba(186, 230, 253, 0.9)",
-        icon: "#00a0a0", // brand teal
+        bgLight: "rgba(186,230,253,0.6)",
+        bgDark: "rgba(0,160,160,0.15)",
+        ringLight: "rgba(186,230,253,0.8)",
+        ringDark: "rgba(0,160,160,0.3)",
+        icon: "#00A0A0",
       };
     case "indigo":
       return {
-        bgLight: "rgba(199, 210, 254, 0.6)", // indigo-200-ish
-        ringLight: "rgba(199, 210, 254, 0.9)",
-        icon: "#6366f1",
+        bgLight: "rgba(199,210,254,0.6)",
+        bgDark: "rgba(99,102,241,0.15)",
+        ringLight: "rgba(199,210,254,0.8)",
+        ringDark: "rgba(99,102,241,0.3)",
+        icon: "#6366F1",
       };
     case "emerald":
       return {
-        bgLight: "rgba(167, 243, 208, 0.6)", // emerald-200-ish
-        ringLight: "rgba(167, 243, 208, 0.9)",
-        icon: "#10b981",
+        bgLight: "rgba(167,243,208,0.6)",
+        bgDark: "rgba(16,185,129,0.15)",
+        ringLight: "rgba(167,243,208,0.8)",
+        ringDark: "rgba(16,185,129,0.3)",
+        icon: "#10B981",
       };
     default:
-      // slate / neutral
       return {
-        bgLight: "rgba(226,232,240,0.6)", // slate-200-ish
-        ringLight: "rgba(226,232,240,0.9)",
-        icon: "rgba(148,163,184,1)", // slate-400
+        bgLight: "rgba(226,232,240,0.6)",
+        bgDark: "rgba(255,255,255,0.08)",
+        ringLight: "rgba(226,232,240,0.8)",
+        ringDark: "rgba(255,255,255,0.25)",
+        icon: "#94A3B8",
       };
   }
 }
@@ -65,7 +66,6 @@ type Service = {
 export default function Services() {
   const { t } = useTranslation();
 
-  // Primary "core" offerings
   const primary: Service[] = [
     {
       title: t("services.primary.uiux.title"),
@@ -90,7 +90,6 @@ export default function Services() {
     },
   ];
 
-  // "Extras" / supporting services
   const extras: Service[] = [
     {
       title: t("services.extras.cms.title"),
@@ -115,26 +114,21 @@ export default function Services() {
     },
   ];
 
-  // Process data (the strip below cards)
-  const steps = t("services.process.steps", {
-    returnObjects: true,
-  }) as { step: string; text: string }[];
+  const steps = t("services.process.steps", { returnObjects: true }) as {
+    step: string;
+    text: string;
+  }[];
 
-  const detailsRaw = t("services.process.details", {
-    returnObjects: true,
-  }) as unknown;
-
+  const detailsRaw = t("services.process.details", { returnObjects: true }) as unknown;
   type Detail = { title: string; body: string };
 
   let details: Detail[] = steps.map((s) => ({ title: s.step, body: s.text }));
-
   if (detailsRaw && typeof detailsRaw === "object" && !Array.isArray(detailsRaw)) {
     const entries = Object.entries(
       detailsRaw as Record<string, { title?: string; body?: string }>
     )
       .sort(([a, b]) => Number(a) - Number(b))
       .map(([, v]) => ({ title: v?.title ?? "", body: v?.body ?? "" }));
-
     if (entries.length) {
       details = entries.map((d, i) => ({
         title: d.title || steps[i]?.step || "",
@@ -143,23 +137,19 @@ export default function Services() {
     }
   }
 
-  // Refs for (future) animated indicator in ProcessStrip
   const trackRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-
   useEffect(() => {
+    const positionDotAtIndex = (idx: number) => {
+      const track = trackRef.current;
+      const stepEl = stepRefs.current[idx];
+      if (!track || !stepEl) return;
+    };
     positionDotAtIndex(0);
     const onResize = () => positionDotAtIndex(0);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-
-  function positionDotAtIndex(idx: number) {
-    const track = trackRef.current;
-    const stepEl = stepRefs.current[idx];
-    if (!track || !stepEl) return;
-    // placeholder for future dot alignment logic
-  }
 
   const stepIcons: LucideIcon[] = [Search, Palette, Rocket];
 
@@ -170,58 +160,43 @@ export default function Services() {
       aria-labelledby="services-heading"
     >
       <Container className="py-16 sm:py-24">
-        {/* Section heading */}
+        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
-          <h2
-            id="services-heading"
-            className="text-heading text-3xl font-bold tracking-tight"
-          >
+          <h2 id="services-heading" className="text-heading text-3xl font-bold tracking-tight">
             {t("services.heading")}
           </h2>
-
-          <p className="mt-3 text-body">
-            {t("services.sub")}
-          </p>
+          <p className="mt-3 text-body">{t("services.sub")}</p>
         </div>
 
-        {/* Primary services cards */}
+        {/* Primary cards */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {primary.map(({ title, blurb, points, Icon, tone }) => {
             const toneVars = toneStyle(tone);
-
             return (
-              <div key={title} className="surface-card p-6 flex flex-col">
+              <div
+                key={title}
+                className="surface-card p-6 flex flex-col rounded-xl 
+                           shadow-[0_8px_24px_rgba(0,0,0,0.12)] 
+                           dark:shadow-[0_8px_24px_rgba(255,255,255,0.08)] 
+                           transition-shadow duration-300"
+              >
                 {/* icon chip */}
                 <div
-                  className="shrink-0 inline-flex items-center justify-center rounded-xl border text-[11px] font-semibold"
+                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2"
                   style={{
-                    backgroundColor: toneVars.bgLight,
-                    borderColor: toneVars.ringLight,
-                    boxShadow: `0 12px 24px ${toneVars.ringLight}`,
+                    backgroundColor: `color-mix(in srgb, ${toneVars.bgLight} 70%, ${toneVars.bgDark} 30%)`,
+                    borderColor: `color-mix(in srgb, ${toneVars.ringLight} 70%, ${toneVars.ringDark} 30%)`,
                   }}
                 >
-                  <Icon
-                    className="h-6 w-6"
-                    style={{ color: toneVars.icon }}
-                  />
+                  <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                {/* title / blurb */}
-                <h3 className="text-heading text-lg font-semibold mt-4">
-                  {title}
-                </h3>
+                <h3 className="text-heading text-lg font-semibold mt-4">{title}</h3>
+                <p className="text-body text-sm leading-relaxed mt-2">{blurb}</p>
 
-                <p className="text-body text-sm leading-relaxed mt-2">
-                  {blurb}
-                </p>
-
-                {/* bullet list */}
                 <ul className="mt-4 space-y-2 text-sm">
                   {points.map((p) => (
-                    <li
-                      key={p}
-                      className="flex items-start gap-2 text-body text-sm leading-relaxed"
-                    >
+                    <li key={p} className="flex items-start gap-2 text-body leading-relaxed">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
                       <span>{p}</span>
                     </li>
@@ -232,7 +207,7 @@ export default function Services() {
           })}
         </div>
 
-        {/* Process strip */}
+        {/* Process */}
         <ProcessStrip
           steps={steps}
           icons={stepIcons}
@@ -244,38 +219,30 @@ export default function Services() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {extras.map(({ title, blurb, points, Icon, tone }) => {
             const toneVars = toneStyle(tone);
-
             return (
-              <div key={title} className="surface-card p-6 flex flex-col">
-                {/* icon chip */}
+              <div
+                key={title}
+                className="surface-card p-6 flex flex-col rounded-xl 
+                           shadow-[0_8px_24px_rgba(0,0,0,0.12)] 
+                           dark:shadow-[0_8px_24px_rgba(255,255,255,0.08)] 
+                           transition-shadow duration-300"
+              >
                 <div
-                  className="shrink-0 inline-flex items-center justify-center rounded-xl border text-[11px] font-semibold"
+                  className="inline-flex max-w-max items-center gap-2 rounded-xl border text-[11px] font-semibold px-3 py-2"
                   style={{
-                    backgroundColor: toneVars.bgLight,
-                    borderColor: toneVars.ringLight,
-                    boxShadow: `0 12px 24px ${toneVars.ringLight}`,
+                    backgroundColor: `color-mix(in srgb, ${toneVars.bgLight} 70%, ${toneVars.bgDark} 30%)`,
+                    borderColor: `color-mix(in srgb, ${toneVars.ringLight} 70%, ${toneVars.ringDark} 30%)`,
                   }}
                 >
-                  <Icon
-                    className="h-6 w-6"
-                    style={{ color: toneVars.icon }}
-                  />
+                  <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                <h3 className="text-heading text-lg font-semibold mt-4">
-                  {title}
-                </h3>
-
-                <p className="text-body text-sm leading-relaxed mt-2">
-                  {blurb}
-                </p>
+                <h3 className="text-heading text-lg font-semibold mt-4">{title}</h3>
+                <p className="text-body text-sm leading-relaxed mt-2">{blurb}</p>
 
                 <ul className="mt-4 space-y-2 text-sm">
                   {points.map((p) => (
-                    <li
-                      key={p}
-                      className="flex items-start gap-2 text-body text-sm leading-relaxed"
-                    >
+                    <li key={p} className="flex items-start gap-2 text-body leading-relaxed">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
                       <span>{p}</span>
                     </li>
