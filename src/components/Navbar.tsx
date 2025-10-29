@@ -5,14 +5,37 @@ import MobileBubbleNav from "./MobileBubbleNav";
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
+  const [interactiveBg, setInteractiveBg] = useState(true);
 
   useEffect(() => {
+    // Sjekk dark mode status
     setIsDark(document.documentElement.classList.contains("dark"));
+
+    // Les bakgrunnsvalg fra localStorage
+    const savedBg = localStorage.getItem("interactiveBg");
+    if (savedBg === "false") {
+      setInteractiveBg(false);
+      document.body.classList.add("static-bg");
+    }
   }, []);
 
   function toggleTheme() {
     document.documentElement.classList.toggle("dark");
     setIsDark((v) => !v);
+  }
+
+  function toggleBackground() {
+    setInteractiveBg((prev) => {
+      const newValue = !prev;
+      if (newValue) {
+        document.body.classList.remove("static-bg");
+        localStorage.setItem("interactiveBg", "true");
+      } else {
+        document.body.classList.add("static-bg");
+        localStorage.setItem("interactiveBg", "false");
+      }
+      return newValue;
+    });
   }
 
   function scrollToId(id: string) {
@@ -27,14 +50,12 @@ export default function Navbar() {
           className={[
             "h-16 flex items-center px-4 sm:px-6 lg:px-8",
             "border-b border-(--card-border)",
-            // Solid bakgrunn (ingen glass)
             "bg-(--bg-page)",
-            // Flat design uten runde kanter
             "shadow-sm",
           ].join(" ")}
         >
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
-            {/* Logo / brand */}
+            {/* Logo */}
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -59,21 +80,18 @@ export default function Navbar() {
               >
                 Tjenester
               </button>
-
               <button
                 onClick={() => scrollToId("pricing")}
                 className="hover:opacity-80 transition"
               >
                 Priser
               </button>
-
               <button
                 onClick={() => scrollToId("about")}
                 className="hover:opacity-80 transition"
               >
                 Om oss
               </button>
-
               <button
                 onClick={() => scrollToId("contact")}
                 className="hover:opacity-80 transition"
@@ -81,13 +99,10 @@ export default function Navbar() {
                 Kontakt
               </button>
 
-              {/* CTA – behold chip-stil */}
+              {/* CTA */}
               <button
                 onClick={() => scrollToId("contact")}
-                className={[
-                  "surface-chip text-xs font-medium",
-                  "px-3 py-1.5 text-heading",
-                ].join(" ")}
+                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
               >
                 La oss prate
               </button>
@@ -95,12 +110,17 @@ export default function Navbar() {
               {/* Tema-knapp */}
               <button
                 onClick={toggleTheme}
-                className={[
-                  "surface-chip text-xs font-medium",
-                  "px-3 py-1.5 text-heading",
-                ].join(" ")}
+                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
               >
                 {isDark ? "Lyst tema" : "Mørkt tema"}
+              </button>
+
+              {/* 🎈 Ny knapp: bakgrunn av/på */}
+              <button
+                onClick={toggleBackground}
+                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
+              >
+                {interactiveBg ? "Stopp bakgrunn" : "Start bakgrunn"}
               </button>
             </nav>
           </div>
