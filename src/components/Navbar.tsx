@@ -1,3 +1,4 @@
+// src/components/Navbar.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
@@ -24,22 +25,21 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 w-full">
         <div
           className={[
-            // Layout
             "h-16 flex items-center px-4 sm:px-6 lg:px-8",
             "border-b border-(--card-border)",
-            // Make background solid (no transparency)
+            // Solid bakgrunn (ingen glass)
             "bg-(--bg-page)",
-            // Remove rounding & glass effects
-            "backdrop-blur-0 shadow-sm",
+            // Flat design uten runde kanter
+            "shadow-sm",
           ].join(" ")}
         >
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
-            {/* Brand / logo */}
+            {/* Logo / brand */}
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
-              aria-label="Go to home"
+              aria-label="Til forsiden"
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -51,37 +51,37 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop nav */}
+            {/* Desktop navigasjon */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button
                 onClick={() => scrollToId("services")}
                 className="hover:opacity-80 transition"
               >
-                Services
+                Tjenester
               </button>
 
               <button
                 onClick={() => scrollToId("pricing")}
                 className="hover:opacity-80 transition"
               >
-                Pricing
+                Priser
               </button>
 
               <button
                 onClick={() => scrollToId("about")}
                 className="hover:opacity-80 transition"
               >
-                About
+                Om oss
               </button>
 
               <button
                 onClick={() => scrollToId("contact")}
                 className="hover:opacity-80 transition"
               >
-                Contact
+                Kontakt
               </button>
 
-              {/* CTA chip (original look preserved) */}
+              {/* CTA – behold chip-stil */}
               <button
                 onClick={() => scrollToId("contact")}
                 className={[
@@ -89,10 +89,10 @@ export default function Navbar() {
                   "px-3 py-1.5 text-heading",
                 ].join(" ")}
               >
-                Let’s talk
+                La oss prate
               </button>
 
-              {/* Theme chip (original look preserved) */}
+              {/* Tema-knapp */}
               <button
                 onClick={toggleTheme}
                 className={[
@@ -100,7 +100,7 @@ export default function Navbar() {
                   "px-3 py-1.5 text-heading",
                 ].join(" ")}
               >
-                {isDark ? "Light" : "Dark"}
+                {isDark ? "Lyst tema" : "Mørkt tema"}
               </button>
             </nav>
           </div>
