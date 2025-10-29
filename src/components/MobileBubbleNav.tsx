@@ -38,7 +38,17 @@ export default function MobileBubbleNav({
       <button
         className={[
           "fixed bottom-4 right-4 z-50 md:hidden",
+          // base chip style (samme som før)
           "surface-chip px-4 py-2 text-heading text-xs font-semibold shadow-lg",
+
+          // EXTRA for mørk modus: gjør den tydeligere
+          // litt lysere bakgrunn + klarere kant + litt glow
+          "dark:bg-[rgba(0,160,160,0.18)]", // teal-ish wash
+          "dark:border dark:border-[rgba(0,160,160,0.6)]",
+          "dark:shadow-[0_20px_40px_rgba(0,0,0,0.9),0_0_16px_rgba(0,160,160,0.4)]",
+
+          // liten press-feedback
+          "active:scale-95 transition-transform",
         ].join(" ")}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
@@ -104,8 +114,7 @@ export default function MobileBubbleNav({
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => {
                   toggleBackgroundMode();
-                  // beholder menyen åpen på mobil,
-                  // så du kan trykke igjen uten å åpne menyen hver gang
+                  // beholder menyen åpen
                 }}
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
@@ -119,7 +128,7 @@ export default function MobileBubbleNav({
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => {
                   toggleTheme();
-                  // samme her: vi lar menyen forbli åpen
+                  // menyen forblir åpen
                 }}
               >
                 {isDark ? (
