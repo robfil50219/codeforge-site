@@ -194,6 +194,7 @@ export default function Pricing() {
                   ))}
                 </ul>
 
+                {/* CTA button (Starter) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
                     "CodeForge Studio – Starter"
@@ -201,11 +202,10 @@ export default function Pricing() {
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
 
-                    // light button
+                    // LIGHT MODE: black bg, white text
                     "bg-slate-900 text-white hover:bg-slate-800",
 
-                    // dark button: use brand teal bg if you want pop,
-                    // or keep slate but lighten text contrast. Let's pop.
+                    // DARK MODE: teal bg, black text
                     "dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
                 >
@@ -265,7 +265,7 @@ export default function Pricing() {
                       "h-6 w-6",
                       // light
                       "text-indigo-600",
-                      // dark: keep it slightly purple to differentiate from teal
+                      // dark keep purple-ish so Pro stands out from teal
                       "dark:text-indigo-400"
                     )}
                   />
@@ -314,6 +314,7 @@ export default function Pricing() {
                   ))}
                 </ul>
 
+                {/* CTA button (Pro) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
                     "CodeForge Studio – Pro"
@@ -321,10 +322,10 @@ export default function Pricing() {
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
 
-                    // light CTA
+                    // LIGHT MODE: sky bg, white text
                     "bg-sky-600 text-white hover:bg-sky-700",
 
-                    // dark CTA
+                    // DARK MODE: teal bg, black text
                     "dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
                 >
@@ -411,6 +412,7 @@ export default function Pricing() {
                   ))}
                 </ul>
 
+                {/* CTA button (Custom) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
                     "CodeForge Studio – Skreddersydd løsning"
@@ -418,11 +420,11 @@ export default function Pricing() {
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
 
-                    // light button (bordered)
+                    // LIGHT MODE: outlined gray button
                     "border border-slate-300 text-slate-700 hover:bg-slate-100",
 
-                    // dark button (bordered, but with your tokens)
-                    "dark:border-(--card-border):text-[var(--text-page)] dark:hover:bg-[rgba(255,255,255,0.05)]"
+                    // DARK MODE: filled teal button
+                    "dark:border-0 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
                 >
                   {t("pricing.requestQuote") as string}
