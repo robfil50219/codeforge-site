@@ -7,7 +7,14 @@ declare global {
   }
 }
 
-type Ball = { x: number; y: number; vx: number; vy: number; r: number; c: string };
+type Ball = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+  c: string;
+};
 type Sprite = { cvs: HTMLCanvasElement; hw: number; hh: number };
 
 export default function BallpitBackground() {
@@ -22,23 +29,29 @@ export default function BallpitBackground() {
     const canvas = el;
     const ctx = ctxRaw;
 
-    // we keep DPR cap small so phones don't die
     const nativeDpr = window.devicePixelRatio || 1;
-
-    // 👇 we used to change physics for mobile here — not anymore
     const isCoarse = matchMedia("(pointer: coarse)").matches;
     const isSmall = matchMedia("(max-width: 768px)").matches;
     const isMobile = isCoarse || isSmall;
 
-    // === unified config (desktop-like) ===
-    const CONFIG = {
-      BALLS: 26,           // same amount
-      R_MIN: 14,
-      R_MAX: 28,
-      DPR_CAP: isMobile ? 1.25 : 1.5, // phones: a bit lower
-      MOUSE_R: 90,
-      MOUSE_FORCE: 0.9,
-    };
+    // 👇 difference: mobile = stronger / desktop = softer
+    const CONFIG = isMobile
+      ? {
+          BALLS: 26,
+          R_MIN: 14,
+          R_MAX: 28,
+          DPR_CAP: 1.25,
+          MOUSE_R: 110,     // bigger touch area
+          MOUSE_FORCE: 1.1, // stronger so tap-to-pop still feels alive
+        }
+      : {
+          BALLS: 26,
+          R_MIN: 14,
+          R_MAX: 28,
+          DPR_CAP: 1.5,
+          MOUSE_R: 70,      // smaller scare radius
+          MOUSE_FORCE: 0.55 // gentler push
+        };
 
     let dpr = Math.min(nativeDpr, CONFIG.DPR_CAP);
     let W = 0;
@@ -68,6 +81,7 @@ export default function BallpitBackground() {
     const rand = (min: number, max: number) => Math.random() * (max - min) + min;
     const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
+    // ── sprite cache ─────────────────────
     const spriteCache = new Map<string, Sprite>();
     function getSprite(r: number, color: string): Sprite {
       const R = Math.max(6, Math.round(r));
@@ -125,6 +139,7 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
+      // rim
       const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
       rim.addColorStop(0, "rgba(0,0,0,0)");
       rim.addColorStop(1, "rgba(0,0,0,0.10)");
@@ -133,6 +148,7 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
+      // spec
       octx.beginPath();
       octx.fillStyle = "rgba(255,255,255,0.10)";
       octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
@@ -143,6 +159,7 @@ export default function BallpitBackground() {
       return sprite;
     }
 
+    // ── balls ─────────────────────
     const balls: Ball[] = [];
     function initBalls() {
       balls.length = 0;
@@ -159,15 +176,16 @@ export default function BallpitBackground() {
       }
     }
 
+    // ── main loop ─────────────────────
     function update() {
       ctx.clearRect(0, 0, W, H);
 
       if (!frozen) {
-        // integrate motion
+        // move
         for (let i = 0; i < balls.length; i++) {
           const a = balls[i];
 
-          // mouse push
+          // pointer push (now softer on desktop)
           const dx = a.x - mouse.x;
           const dy = a.y - mouse.y;
           const rr = (a.r + mouse.r) * (a.r + mouse.r);
@@ -184,7 +202,6 @@ export default function BallpitBackground() {
           a.x += a.vx;
           a.y += a.vy;
 
-          // friction (same as desktop)
           a.vx *= 0.996;
           a.vy *= 0.996;
 
@@ -195,7 +212,7 @@ export default function BallpitBackground() {
           if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
         }
 
-        // collisions (same)
+        // collisions (just to keep spacing nice)
         for (let i = 0; i < balls.length; i++) {
           for (let j = i + 1; j < balls.length; j++) {
             const a = balls[i];
@@ -209,8 +226,10 @@ export default function BallpitBackground() {
               const nx = dx / dist;
               const ny = dy / dist;
               const overlap = (minDist - dist) / 2;
-              a.x -= nx * overlap; a.y -= ny * overlap;
-              b.x += nx * overlap; b.y += ny * overlap;
+              a.x -= nx * overlap;
+              a.y -= ny * overlap;
+              b.x += nx * overlap;
+              b.y += ny * overlap;
 
               const avn = a.vx * nx + a.vy * ny;
               const atn = -a.vx * ny + a.vy * nx;
@@ -218,9 +237,9 @@ export default function BallpitBackground() {
               const btn = -b.vx * ny + b.vy * nx;
 
               a.vx = bvn * nx + atn * -ny;
-              a.vy = bvn * ny + atn *  nx;
+              a.vy = bvn * ny + atn * nx;
               b.vx = avn * nx + btn * -ny;
-              b.vy = avn * ny + btn *  nx;
+              b.vy = avn * ny + btn * nx;
             }
           }
         }
@@ -236,20 +255,61 @@ export default function BallpitBackground() {
       if (running) raf = requestAnimationFrame(update);
     }
 
-    // input
-    const moveTo = (x: number, y: number) => { mouse.x = x; mouse.y = y; };
+    // ── pop on click/tap ─────────────────────
+    function tryPopAt(x: number, y: number) {
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        const dx = x - b.x;
+        const dy = y - b.y;
+        if (dx * dx + dy * dy <= b.r * b.r) {
+          balls.splice(i, 1);
+          if (balls.length === 0) {
+            initBalls();
+          }
+          return;
+        }
+      }
+    }
+
+    // ── input ─────────────────────
+    const moveTo = (x: number, y: number) => {
+      mouse.x = x;
+      mouse.y = y;
+    };
+
     const onPointerMove = (e: PointerEvent) => moveTo(e.clientX, e.clientY);
     const onMouseMove = (e: MouseEvent) => moveTo(e.clientX, e.clientY);
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0] || e.changedTouches?.[0];
       if (t) moveTo(t.clientX, t.clientY);
     };
-    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+    const onLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
 
     const baseR = CONFIG.MOUSE_R;
     const baseF = CONFIG.MOUSE_FORCE;
-    const onPointerDown = () => { mouse.r = baseR * 1.15; mouse.force = baseF * 1.4; };
-    const onPointerUp = () => { mouse.r = baseR; mouse.force = baseF; };
+
+    const onPointerDown = (e: PointerEvent) => {
+      // little "active" effect
+      mouse.r = baseR * 1.15;
+      mouse.force = baseF * 1.4;
+      tryPopAt(e.clientX, e.clientY);
+    };
+    const onPointerUp = () => {
+      mouse.r = baseR;
+      mouse.force = baseF;
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      const t = e.touches[0] || e.changedTouches?.[0];
+      if (t) {
+        mouse.r = baseR * 1.15;
+        mouse.force = baseF * 1.4;
+        tryPopAt(t.clientX, t.clientY);
+      }
+    };
 
     const onResize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, CONFIG.DPR_CAP);
@@ -264,7 +324,6 @@ export default function BallpitBackground() {
       const ce = e as CustomEvent<{ disabled: boolean }>;
       frozen = ce.detail.disabled;
       if (!frozen) {
-        // nudge
         for (const b of balls) {
           if (Math.abs(b.vx) < 0.05 && Math.abs(b.vy) < 0.05) {
             b.vx += (Math.random() - 0.5) * 0.4;
@@ -282,12 +341,13 @@ export default function BallpitBackground() {
       raf = requestAnimationFrame(update);
     });
 
+    // listeners
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     window.addEventListener("mouseleave", onLeave);
-    window.addEventListener("touchstart", onTouchMove, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("touchend", onPointerUp, { passive: true });
     window.addEventListener("touchcancel", onLeave);
@@ -301,7 +361,7 @@ export default function BallpitBackground() {
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("touchstart", onTouchMove);
+      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onPointerUp);
       window.removeEventListener("touchcancel", onLeave);
