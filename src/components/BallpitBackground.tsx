@@ -34,24 +34,9 @@ export default function BallpitBackground() {
     const isSmall = matchMedia("(max-width: 768px)").matches;
     const isMobile = isCoarse || isSmall;
 
-    // 👇 difference: mobile = stronger / desktop = softer
     const CONFIG = isMobile
-      ? {
-          BALLS: 26,
-          R_MIN: 14,
-          R_MAX: 28,
-          DPR_CAP: 1.25,
-          MOUSE_R: 110,     // bigger touch area
-          MOUSE_FORCE: 1.1, // stronger so tap-to-pop still feels alive
-        }
-      : {
-          BALLS: 26,
-          R_MIN: 14,
-          R_MAX: 28,
-          DPR_CAP: 1.5,
-          MOUSE_R: 70,      // smaller scare radius
-          MOUSE_FORCE: 0.55 // gentler push
-        };
+      ? { BALLS: 26, R_MIN: 14, R_MAX: 28, DPR_CAP: 1.25, MOUSE_R: 110, MOUSE_FORCE: 1.1 }
+      : { BALLS: 26, R_MIN: 14, R_MAX: 28, DPR_CAP: 1.5, MOUSE_R: 70, MOUSE_FORCE: 0.55 };
 
     let dpr = Math.min(nativeDpr, CONFIG.DPR_CAP);
     let W = 0;
@@ -60,7 +45,6 @@ export default function BallpitBackground() {
     let running = true;
     let frozen = window.__BALLPIT_DISABLED === true;
 
-    // colors
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
@@ -81,7 +65,6 @@ export default function BallpitBackground() {
     const rand = (min: number, max: number) => Math.random() * (max - min) + min;
     const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
-    // ── sprite cache ─────────────────────
     const spriteCache = new Map<string, Sprite>();
     function getSprite(r: number, color: string): Sprite {
       const R = Math.max(6, Math.round(r));
@@ -148,7 +131,7 @@ export default function BallpitBackground() {
       octx.arc(cx, cy, R, 0, Math.PI * 2);
       octx.fill();
 
-      // spec
+      // highlight
       octx.beginPath();
       octx.fillStyle = "rgba(255,255,255,0.10)";
       octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
@@ -159,7 +142,6 @@ export default function BallpitBackground() {
       return sprite;
     }
 
-    // ── balls ─────────────────────
     const balls: Ball[] = [];
     function initBalls() {
       balls.length = 0;
@@ -176,16 +158,15 @@ export default function BallpitBackground() {
       }
     }
 
-    // ── main loop ─────────────────────
     function update() {
       ctx.clearRect(0, 0, W, H);
 
       if (!frozen) {
-        // move
+        // integrate
         for (let i = 0; i < balls.length; i++) {
           const a = balls[i];
 
-          // pointer push (now softer on desktop)
+          // pointer push
           const dx = a.x - mouse.x;
           const dy = a.y - mouse.y;
           const rr = (a.r + mouse.r) * (a.r + mouse.r);
@@ -205,14 +186,13 @@ export default function BallpitBackground() {
           a.vx *= 0.996;
           a.vy *= 0.996;
 
-          // walls
           if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
           if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
           if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
           if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
         }
 
-        // collisions (just to keep spacing nice)
+        // keep spacing
         for (let i = 0; i < balls.length; i++) {
           for (let j = i + 1; j < balls.length; j++) {
             const a = balls[i];
@@ -255,13 +235,19 @@ export default function BallpitBackground() {
       if (running) raf = requestAnimationFrame(update);
     }
 
-    // ── pop on click/tap ─────────────────────
+    // 👇 more forgiving pop
     function tryPopAt(x: number, y: number) {
+      // check from top → down so you pop the one "on top"
       for (let i = balls.length - 1; i >= 0; i--) {
         const b = balls[i];
         const dx = x - b.x;
         const dy = y - b.y;
-        if (dx * dx + dy * dy <= b.r * b.r) {
+
+        // make hitbox bigger than circle
+        const extra = isMobile ? 14 : 9; // mobile gets more help
+        const hitR = b.r + extra;
+
+        if (dx * dx + dy * dy <= hitR * hitR) {
           balls.splice(i, 1);
           if (balls.length === 0) {
             initBalls();
@@ -271,7 +257,6 @@ export default function BallpitBackground() {
       }
     }
 
-    // ── input ─────────────────────
     const moveTo = (x: number, y: number) => {
       mouse.x = x;
       mouse.y = y;
@@ -292,7 +277,6 @@ export default function BallpitBackground() {
     const baseF = CONFIG.MOUSE_FORCE;
 
     const onPointerDown = (e: PointerEvent) => {
-      // little "active" effect
       mouse.r = baseR * 1.15;
       mouse.force = baseF * 1.4;
       tryPopAt(e.clientX, e.clientY);
@@ -341,7 +325,6 @@ export default function BallpitBackground() {
       raf = requestAnimationFrame(update);
     });
 
-    // listeners
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
@@ -370,11 +353,5 @@ export default function BallpitBackground() {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 -z-10 pointer-events-none"
-      aria-hidden="true"
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true" />;
 }
