@@ -13,13 +13,11 @@ export default function Contact() {
       id="contact"
       className={cn(
         "scroll-mt-24",
-        // make it respect theme immediately
         "bg-(--bg-page) text-(--text-page) transition-colors duration-500"
       )}
       aria-labelledby="contact-heading"
     >
       <Container className="py-20">
-        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="contact-heading"
@@ -27,11 +25,8 @@ export default function Contact() {
           >
             {t("contact.heading") as string}
           </h2>
-          <p className="mt-3 text-(--text-dim)">
-            {t("contact.copy") as string}
-          </p>
+          <p className="mt-3 text-(--text-dim)">{t("contact.copy") as string}</p>
 
-          {/* trust row */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
             <span
               className={cn(
@@ -57,15 +52,17 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Contact cards */}
+        {/* cards */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Email */}
+          {/* E-post */}
           <a
             href={MAILTO}
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
+              // light
               "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              // dark → USE token card bg so text is readable
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             <div
@@ -73,7 +70,7 @@ export default function Contact() {
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-sky-100",
-                "dark:bg-[rgba(0,160,160,0.12)] group-hover:dark:bg-[rgba(0,160,160,0.18)]"
+                "dark:bg-[rgba(0,160,160,0.15)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -90,7 +87,7 @@ export default function Contact() {
                 <h3 className="text-base font-semibold text-(--text-heading)">
                   {t("contact.email") as string}
                 </h3>
-                <p className="mt-1 text-sm text-(--text-dim)">{CONTACT_EMAIL}</p>
+                <p className="mt-1 text-sm text-(--text-page)">{CONTACT_EMAIL}</p>
               </div>
             </div>
           </a>
@@ -103,7 +100,7 @@ export default function Contact() {
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
               "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             <div
@@ -111,7 +108,7 @@ export default function Contact() {
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-slate-100",
-                "dark:bg-[rgba(255,255,255,0.05)] group-hover:dark:bg-[rgba(255,255,255,0.08)]"
+                "dark:bg-[rgba(255,255,255,0.04)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -141,7 +138,7 @@ export default function Contact() {
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
               "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             <div
@@ -149,7 +146,7 @@ export default function Contact() {
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-[#eef5fc]",
-                "dark:bg-[rgba(10,102,194,0.12)] group-hover:dark:bg-[rgba(10,102,194,0.2)]"
+                "dark:bg-[rgba(10,102,194,0.12)]"
               )}
             />
             <div className="relative flex items-start gap-4">
