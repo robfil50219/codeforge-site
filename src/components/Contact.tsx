@@ -12,26 +12,43 @@ export default function Contact() {
     <section
       id="contact"
       className={cn(
-        "scroll-mt-24",
-        "bg-(--bg-page) text-(--text-page) transition-colors duration-500"
+        "scroll-mt-24 bg-transparent",
+        // default text color uses tokens
+        "text-body dark:text-(--text-page)"
       )}
       aria-labelledby="contact-heading"
     >
       <Container className="py-20">
+        {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="contact-heading"
-            className="text-3xl font-extrabold tracking-tight sm:text-4xl text-(--text-heading)"
+            className={cn(
+              "text-3xl font-extrabold tracking-tight sm:text-4xl",
+              "text-slate-900 dark:text-(--text-heading)"
+            )}
           >
             {t("contact.heading") as string}
           </h2>
-          <p className="mt-3 text-(--text-dim)">{t("contact.copy") as string}</p>
 
+          <p
+            className={cn(
+              "mt-3",
+              "text-slate-600 dark:text-(--text-dim)"
+            )}
+          >
+            {t("contact.copy") as string}
+          </p>
+
+          {/* trust row */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+            {/* reply speed */}
             <span
               className={cn(
                 "inline-flex items-center gap-1 rounded-full px-3 py-1 ring-1",
+                // light
                 "bg-slate-100 text-slate-600 ring-slate-200",
+                // dark
                 "dark:bg-[rgba(255,255,255,0.05)] dark:text-(--text-dim) dark:ring-(--card-border)"
               )}
             >
@@ -39,10 +56,13 @@ export default function Contact() {
               <span>{t("contact.trust.reply") as string}</span>
             </span>
 
+            {/* location */}
             <span
               className={cn(
                 "inline-flex items-center gap-1 rounded-full px-3 py-1 ring-1",
+                // light
                 "bg-slate-100 text-slate-600 ring-slate-200",
+                // dark
                 "dark:bg-[rgba(255,255,255,0.05)] dark:text-(--text-dim) dark:ring-(--card-border)"
               )}
             >
@@ -52,42 +72,61 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* cards */}
+        {/* Contact cards */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* E-post */}
+          {/* Email */}
           <a
             href={MAILTO}
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
-              // light
+              // light card
               "border-slate-200 bg-white",
-              // dark → USE token card bg so text is readable
-              "dark:bg-(--card-bg) dark:border-(--card-border)"
+              // dark card
+              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
             )}
           >
+            {/* corner blob */}
             <div
-              aria-hidden
+              aria-hidden="true"
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
+                // light blob
                 "bg-sky-100",
-                "dark:bg-[rgba(0,160,160,0.15)]"
+                // dark blob (teal-ish tint)
+                "dark:bg-[rgba(0,160,160,0.12)] group-hover:dark:bg-[rgba(0,160,160,0.18)]"
               )}
             />
             <div className="relative flex items-start gap-4">
+              {/* icon chip */}
               <span
                 className={cn(
                   "flex h-12 w-12 items-center justify-center rounded-xl ring-1",
+                  // light chip
                   "bg-sky-50 ring-sky-100",
+                  // dark chip: translucent teal glass on dark
                   "dark:bg-[rgba(0,160,160,0.08)] dark:ring-(--card-border)"
                 )}
               >
-                <Mail className="h-5 w-5 text-sky-600 dark:text-(--color-brand-sea)" />
+                <Mail className={cn("h-5 w-5", "text-sky-600 dark:text-(--color-brand-sea)")} />
               </span>
+
               <div>
-                <h3 className="text-base font-semibold text-(--text-heading)">
+                <h3
+                  className={cn(
+                    "text-base font-semibold",
+                    "text-slate-900 dark:text-(--text-heading)"
+                  )}
+                >
                   {t("contact.email") as string}
                 </h3>
-                <p className="mt-1 text-sm text-(--text-page)">{CONTACT_EMAIL}</p>
+                <p
+                  className={cn(
+                    "mt-1 text-sm",
+                    "text-slate-600 dark:text-(--text-dim)"
+                  )}
+                >
+                  {CONTACT_EMAIL}
+                </p>
               </div>
             </div>
           </a>
@@ -100,15 +139,15 @@ export default function Contact() {
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
               "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border)"
+              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
             )}
           >
             <div
-              aria-hidden
+              aria-hidden="true"
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-slate-100",
-                "dark:bg-[rgba(255,255,255,0.04)]"
+                "dark:bg-[rgba(255,255,255,0.05)] group-hover:dark:bg-[rgba(255,255,255,0.08)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -119,13 +158,26 @@ export default function Contact() {
                   "dark:bg-[rgba(255,255,255,0.05)] dark:ring-(--card-border)"
                 )}
               >
-                <Github className="h-5 w-5 text-slate-700 dark:text-(--text-heading)" />
+                <Github className={cn("h-5 w-5", "text-slate-700 dark:text-(--text-heading)")} />
               </span>
+
               <div>
-                <h3 className="text-base font-semibold text-(--text-heading)">
+                <h3
+                  className={cn(
+                    "text-base font-semibold",
+                    "text-slate-900 dark:text-(--text-heading)"
+                  )}
+                >
                   {t("contact.github") as string}
                 </h3>
-                <p className="mt-1 text-sm text-(--text-dim)">@robfil50219</p>
+                <p
+                  className={cn(
+                    "mt-1 text-sm",
+                    "text-slate-600 dark:text-(--text-dim)"
+                  )}
+                >
+                  @robfil50219
+                </p>
               </div>
             </div>
           </a>
@@ -138,15 +190,15 @@ export default function Contact() {
             className={cn(
               "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
               "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border)"
+              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
             )}
           >
             <div
-              aria-hidden
+              aria-hidden="true"
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-[#eef5fc]",
-                "dark:bg-[rgba(10,102,194,0.12)]"
+                "dark:bg-[rgba(10,102,194,0.12)] group-hover:dark:bg-[rgba(10,102,194,0.2)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -157,13 +209,24 @@ export default function Contact() {
                   "dark:bg-[rgba(10,102,194,0.12)] dark:ring-(--card-border)"
                 )}
               >
-                <Linkedin className="h-5 w-5 text-[#0a66c2] dark:text-[#4da6ff]" />
+                <Linkedin className={cn("h-5 w-5", "text-[#0a66c2] dark:text-[#4da6ff]")} />
               </span>
+
               <div>
-                <h3 className="text-base font-semibold text-(--text-heading)">
+                <h3
+                  className={cn(
+                    "text-base font-semibold",
+                    "text-slate-900 dark:text-(--text-heading)"
+                  )}
+                >
                   {t("contact.linkedin") as string}
                 </h3>
-                <p className="mt-1 text-sm break-all text-(--text-dim)">
+                <p
+                  className={cn(
+                    "mt-1 text-sm break-all", // wrap URL nicely on small screens
+                    "text-slate-600 dark:text-(--text-dim)"
+                  )}
+                >
                   linkedin.com/in/robert-filep-417146264
                 </p>
               </div>
