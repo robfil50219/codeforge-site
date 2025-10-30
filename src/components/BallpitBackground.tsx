@@ -22,53 +22,63 @@ export default function BallpitBackground() {
     const canvas = el;
     const ctx = ctxRaw;
 
+    // we keep DPR cap small so phones don't die
     const nativeDpr = window.devicePixelRatio || 1;
-    const isMobile =
-      matchMedia("(pointer: coarse)").matches || matchMedia("(max-width: 768px)").matches;
 
-    // eslint wanted const here
-    const CONFIG = isMobile
-      ? { BALLS: 14, R_MIN: 12, R_MAX: 22, DPR_CAP: 1.25, MOUSE_R: 120, MOUSE_FORCE: 1.25 }
-      : { BALLS: 26, R_MIN: 14, R_MAX: 28, DPR_CAP: 1.5, MOUSE_R: 90, MOUSE_FORCE: 0.9 };
+    // 👇 we used to change physics for mobile here — not anymore
+    const isCoarse = matchMedia("(pointer: coarse)").matches;
+    const isSmall = matchMedia("(max-width: 768px)").matches;
+    const isMobile = isCoarse || isSmall;
 
-    // this one also never changed → const
-    const dpr = Math.min(nativeDpr, CONFIG.DPR_CAP);
+    // === unified config (desktop-like) ===
+    const CONFIG = {
+      BALLS: 26,           // same amount
+      R_MIN: 14,
+      R_MAX: 28,
+      DPR_CAP: isMobile ? 1.25 : 1.5, // phones: a bit lower
+      MOUSE_R: 90,
+      MOUSE_FORCE: 0.9,
+    };
 
+    let dpr = Math.min(nativeDpr, CONFIG.DPR_CAP);
     let W = 0;
     let H = 0;
     let raf = 0;
     let running = true;
     let frozen = window.__BALLPIT_DISABLED === true;
 
+    // colors
     const rs = getComputedStyle(document.documentElement);
     const SEA = (rs.getPropertyValue("--color-brand-sea") || "#00A0A0").trim();
     const MIDNIGHT = (rs.getPropertyValue("--color-brand-midnight") || "#0F4452").trim();
-    const colors = [SEA, MIDNIGHT, "#0BB3B3", "#067A7A", "#06B6D4", "#22D3EE"];
+    const colors = [SEA, MIDNIGHT, "#0BB3B3", "#067A7A", "#06B6D4", "#22D3EE", "#0891B2", "#38BDF8"];
 
     const mouse = { x: -9999, y: -9999, r: CONFIG.MOUSE_R, force: CONFIG.MOUSE_FORCE };
 
     function resize() {
       W = window.innerWidth;
       H = window.innerHeight;
-      canvas.style.width = W + "px";
-      canvas.style.height = H + "px";
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
       canvas.width = Math.floor(W * dpr);
       canvas.height = Math.floor(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    const rand = (a: number, b: number) => Math.random() * (b - a) + a;
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+    const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
     const spriteCache = new Map<string, Sprite>();
     function getSprite(r: number, color: string): Sprite {
       const R = Math.max(6, Math.round(r));
-      const key = color + "-" + R;
+      const key = `${color}-${R}`;
       const hit = spriteCache.get(key);
       if (hit) return hit;
 
       const pad = Math.round(R * 1.05);
       const w = R * 2 + pad * 2;
       const h = R * 2 + pad * 2;
+
       const off = document.createElement("canvas");
       off.width = Math.ceil(w * dpr);
       off.height = Math.ceil(h * dpr);
@@ -78,9 +88,54 @@ export default function BallpitBackground() {
       const cx = pad + R;
       const cy = pad + R;
 
+      // shadow
+      const rx = R * 1.05;
+      const ry = Math.max(6, R * 0.45);
+      const sx = cx + R * 0.3;
+      const sy = cy + R * 0.66;
+
+      octx.save();
+      octx.filter = "blur(3px)";
+      octx.translate(sx, sy);
+      octx.scale(1, ry / rx);
+      const sg = octx.createRadialGradient(0, 0, R * 0.12, 0, 0, rx);
+      sg.addColorStop(0, "rgba(15,23,42,0.22)");
+      sg.addColorStop(0.6, "rgba(15,23,42,0.14)");
+      sg.addColorStop(1, "rgba(15,23,42,0)");
+      octx.beginPath();
+      octx.arc(0, 0, rx, 0, Math.PI * 2);
+      octx.fillStyle = sg;
+      octx.fill();
+      octx.restore();
+      octx.filter = "none";
+
+      // halo
+      const haloR = R * 1.1;
+      const halo = octx.createRadialGradient(cx, cy, R * 0.8, cx, cy, haloR);
+      halo.addColorStop(0, "rgba(0,0,0,0)");
+      halo.addColorStop(1, "rgba(0,0,0,0.06)");
+      octx.beginPath();
+      octx.fillStyle = halo;
+      octx.arc(cx, cy, haloR, 0, Math.PI * 2);
+      octx.fill();
+
+      // body
       octx.beginPath();
       octx.fillStyle = color;
       octx.arc(cx, cy, R, 0, Math.PI * 2);
+      octx.fill();
+
+      const rim = octx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
+      rim.addColorStop(0, "rgba(0,0,0,0)");
+      rim.addColorStop(1, "rgba(0,0,0,0.10)");
+      octx.beginPath();
+      octx.fillStyle = rim;
+      octx.arc(cx, cy, R, 0, Math.PI * 2);
+      octx.fill();
+
+      octx.beginPath();
+      octx.fillStyle = "rgba(255,255,255,0.10)";
+      octx.arc(cx - R * 0.33, cy - R * 0.33, R * 0.32, 0, Math.PI * 2);
       octx.fill();
 
       const sprite: Sprite = { cvs: off, hw: w / 2, hh: h / 2 };
@@ -89,7 +144,6 @@ export default function BallpitBackground() {
     }
 
     const balls: Ball[] = [];
-
     function initBalls() {
       balls.length = 0;
       for (let i = 0; i < CONFIG.BALLS; i++) {
@@ -97,8 +151,8 @@ export default function BallpitBackground() {
         balls.push({
           x: rand(r, W - r),
           y: rand(r, H - r),
-          vx: rand(-0.5, 0.5),
-          vy: rand(-0.5, 0.5),
+          vx: rand(-0.55, 0.55),
+          vy: rand(-0.55, 0.55),
           r,
           c: colors[(Math.random() * colors.length) | 0],
         });
@@ -109,61 +163,158 @@ export default function BallpitBackground() {
       ctx.clearRect(0, 0, W, H);
 
       if (!frozen) {
-        for (const b of balls) {
-          const dx = b.x - mouse.x;
-          const dy = b.y - mouse.y;
+        // integrate motion
+        for (let i = 0; i < balls.length; i++) {
+          const a = balls[i];
+
+          // mouse push
+          const dx = a.x - mouse.x;
+          const dy = a.y - mouse.y;
+          const rr = (a.r + mouse.r) * (a.r + mouse.r);
           const d2 = dx * dx + dy * dy;
-          const rr = (b.r + mouse.r) * (b.r + mouse.r);
           if (d2 < rr) {
-            const dist = Math.max(6, Math.sqrt(d2));
+            const dist = Math.max(10, Math.sqrt(d2));
             const ux = dx / dist;
             const uy = dy / dist;
-            const push = 1 - dist / Math.sqrt(rr);
-            b.vx += ux * push * mouse.force;
-            b.vy += uy * push * mouse.force;
+            const push = (1 - dist / Math.sqrt(rr)) * mouse.force;
+            a.vx += ux * push;
+            a.vy += uy * push;
           }
 
-          b.x += b.vx;
-          b.y += b.vy;
+          a.x += a.vx;
+          a.y += a.vy;
 
-          if (b.x - b.r < 0 || b.x + b.r > W) b.vx *= -1;
-          if (b.y - b.r < 0 || b.y + b.r > H) b.vy *= -1;
+          // friction (same as desktop)
+          a.vx *= 0.996;
+          a.vy *= 0.996;
+
+          // walls
+          if (a.x - a.r < 0) { a.x = a.r; a.vx *= -1; }
+          if (a.x + a.r > W) { a.x = W - a.r; a.vx *= -1; }
+          if (a.y - a.r < 0) { a.y = a.r; a.vy *= -1; }
+          if (a.y + a.r > H) { a.y = H - a.r; a.vy *= -1; }
+        }
+
+        // collisions (same)
+        for (let i = 0; i < balls.length; i++) {
+          for (let j = i + 1; j < balls.length; j++) {
+            const a = balls[i];
+            const b = balls[j];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const minDist = a.r + b.r;
+            const d2 = dx * dx + dy * dy;
+            if (d2 > 0 && d2 < minDist * minDist) {
+              const dist = Math.sqrt(d2);
+              const nx = dx / dist;
+              const ny = dy / dist;
+              const overlap = (minDist - dist) / 2;
+              a.x -= nx * overlap; a.y -= ny * overlap;
+              b.x += nx * overlap; b.y += ny * overlap;
+
+              const avn = a.vx * nx + a.vy * ny;
+              const atn = -a.vx * ny + a.vy * nx;
+              const bvn = b.vx * nx + b.vy * ny;
+              const btn = -b.vx * ny + b.vy * nx;
+
+              a.vx = bvn * nx + atn * -ny;
+              a.vy = bvn * ny + atn *  nx;
+              b.vx = avn * nx + btn * -ny;
+              b.vy = avn * ny + btn *  nx;
+            }
+          }
         }
       }
 
-      for (const b of balls) {
-        const s = getSprite(b.r, b.c);
-        ctx.drawImage(s.cvs, Math.round(b.x - s.hw), Math.round(b.y - s.hh));
+      // draw
+      for (let i = 0; i < balls.length; i++) {
+        const b = balls[i];
+        const sprite = getSprite(b.r, b.c);
+        ctx.drawImage(sprite.cvs, Math.round(b.x - sprite.hw), Math.round(b.y - sprite.hh));
       }
 
       if (running) raf = requestAnimationFrame(update);
     }
 
+    // input
+    const moveTo = (x: number, y: number) => { mouse.x = x; mouse.y = y; };
+    const onPointerMove = (e: PointerEvent) => moveTo(e.clientX, e.clientY);
+    const onMouseMove = (e: MouseEvent) => moveTo(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0] || e.changedTouches?.[0];
+      if (t) moveTo(t.clientX, t.clientY);
+    };
+    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    const baseR = CONFIG.MOUSE_R;
+    const baseF = CONFIG.MOUSE_FORCE;
+    const onPointerDown = () => { mouse.r = baseR * 1.15; mouse.force = baseF * 1.4; };
+    const onPointerUp = () => { mouse.r = baseR; mouse.force = baseF; };
+
+    const onResize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, CONFIG.DPR_CAP);
+      resize();
+      for (const b of balls) {
+        b.x = clamp(b.x, b.r, W - b.r);
+        b.y = clamp(b.y, b.r, H - b.r);
+      }
+    };
+
     const onToggle = (e: Event) => {
       const ce = e as CustomEvent<{ disabled: boolean }>;
       frozen = ce.detail.disabled;
+      if (!frozen) {
+        // nudge
+        for (const b of balls) {
+          if (Math.abs(b.vx) < 0.05 && Math.abs(b.vy) < 0.05) {
+            b.vx += (Math.random() - 0.5) * 0.4;
+            b.vy += (Math.random() - 0.5) * 0.4;
+          }
+        }
+      }
     };
     window.addEventListener("ballpit-toggle", onToggle);
 
+    // init
     resize();
     requestAnimationFrame(() => {
       initBalls();
       raf = requestAnimationFrame(update);
     });
 
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
+    window.addEventListener("touchstart", onTouchMove, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onPointerUp, { passive: true });
+    window.addEventListener("touchcancel", onLeave);
+    window.addEventListener("resize", onResize);
 
     return () => {
       running = false;
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("touchstart", onTouchMove);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onPointerUp);
+      window.removeEventListener("touchcancel", onLeave);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("ballpit-toggle", onToggle);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 -z-10 pointer-events-none" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+    />
+  );
 }
