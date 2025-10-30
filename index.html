@@ -1,15 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="no">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CodeForge Studio</title>
 
-    <!-- Inter font (optional) -->
+    <!-- run BEFORE paint -->
+    <script>
+      (function () {
+        try {
+          // theme
+          var saved = localStorage.getItem("cf-theme");
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var dark = saved ? saved === "dark" : prefersDark;
+          if (dark) {
+            document.documentElement.classList.add("dark");
+          }
+
+          // ballpit
+          var pit = localStorage.getItem("cf-ballpit");
+          if (pit === "off") {
+            window.__BALLPIT_DISABLED = true;
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+
+    <!-- Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="root"></div>
