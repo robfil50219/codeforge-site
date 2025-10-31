@@ -1,4 +1,18 @@
-// src/components/Footer.tsx
+
+// src/components/Footer.tsx 
+/**
+ * -------------------------------------------------------
+ *  CodeForge Studio — Proprietary Source Code
+ *  © 2025 CodeForge Studio Filep. All rights reserved.
+ *
+ *  This file is part of the CodeForge Studio website.
+ *  Unauthorized copying, modification, or distribution
+ *  of this file, via any medium, is strictly prohibited.
+ *
+ *  For licensing or collaboration inquiries:
+ *  robert@codeforgestudio.no | https://codeforgestudio.no
+ * -------------------------------------------------------
+ */
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { MAILTO, CONTACT_EMAIL } from "../config/contact";
