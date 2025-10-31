@@ -261,6 +261,35 @@ input[type="reset"] {
   color: var(--text-link-hover);
 } 
 
+/* === Hero-like sections (Hero, About, maybe Services) === */
+/* They give the background / mist / glow, but NOT global color */
+
+.surface-hero {
+  /* let the section itself follow the theme */
+  color: var(--text-page);
+}
+
+/* text elements inside */
+.surface-hero :where(h1, h2, h3, h4, h5, h6, p, span, a, li, strong, em, small) {
+  color: inherit;
+}
+
+/* Dark mode: flip only the text elements, not SVGs */
+:root.dark .surface-hero {
+  color: #ffffff;
+}
+:root.dark .surface-hero :where(h1, h2, h3, h4, h5, h6, p, span, a, li, strong, em, small) {
+  color: #ffffff;
+} 
+:root {
+  /* ...existing... */
+  --color-brand-accent-soft: #008e8e; /* light mode accent (muted teal) */
+}
+
+:root.dark {
+  --color-brand-accent-soft: #6fe7e5; /* bright aqua for dark bg */
+}
+
 /* === Logo + Text animations (Tailwind utilities) === */
 @layer utilities {
   /* ---------------------------------

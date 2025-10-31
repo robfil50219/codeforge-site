@@ -2,13 +2,6 @@
  * -------------------------------------------------------
  *  CodeForge Studio — Proprietary Source Code
  *  © 2025 CodeForge Studio Filep. All rights reserved.
- *
- *  This file is part of the CodeForge Studio website.
- *  Unauthorized copying, modification, or distribution
- *  of this file, via any medium, is strictly prohibited.
- *
- *  For licensing or collaboration inquiries:
- *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
 // src/components/About.tsx
@@ -16,7 +9,6 @@ import { type JSX } from "react";
 import { useTranslation } from "../lib/t";
 import profileImg from "../assets/profileimage.png";
 
-// Icons
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
 import {
   SiTypescript,
@@ -34,20 +26,19 @@ export default function About() {
   const highlights = t("about.highlights", { returnObjects: true }) as string[];
   const tech = t("about.tech", { returnObjects: true }) as string[];
 
-  // Icon mapping (keys must match your i18n labels)
   const techIcons: Record<string, JSX.Element> = {
-    React: <FaReact className="h-5 w-5 text-sky-600" />,
-    TypeScript: <SiTypescript className="h-5 w-5 text-blue-600" />,
-    "Next.js": <SiNextdotjs className="h-5 w-5 text-slate-800" />,
-    "Node.js": <FaNodeJs className="h-5 w-5 text-emerald-600" />,
-    TailwindCSS: <SiTailwindcss className="h-5 w-5 text-sky-600" />,
-    Vite: <SiVite className="h-5 w-5 text-purple-500" />,
-    WordPress: <FaWordpress className="h-5 w-5 text-slate-700" />,
-    Firebase: <SiFirebase className="h-5 w-5 text-amber-500" />,
+    React: <FaReact className="h-5 w-5 text-sky-600 dark:text-sky-200" />,
+    TypeScript: <SiTypescript className="h-5 w-5 text-blue-600 dark:text-sky-100" />,
+    "Next.js": <SiNextdotjs className="h-5 w-5 text-slate-800 dark:text-white" />,
+    "Node.js": <FaNodeJs className="h-5 w-5 text-emerald-600 dark:text-emerald-200" />,
+    TailwindCSS: <SiTailwindcss className="h-5 w-5 text-sky-600 dark:text-cyan-200" />,
+    Vite: <SiVite className="h-5 w-5 text-purple-500 dark:text-violet-200" />,
+    WordPress: <FaWordpress className="h-5 w-5 text-slate-700 dark:text-slate-50" />,
+    Firebase: <SiFirebase className="h-5 w-5 text-amber-500 dark:text-amber-200" />,
     "REST & GraphQL APIs": (
       <span className="flex -space-x-1.5 items-center">
-        <TbApi className="h-5 w-5 text-indigo-500" />
-        <SiGraphql className="h-4 w-4 translate-y-px text-pink-500" />
+        <TbApi className="h-5 w-5 text-indigo-500 dark:text-indigo-200" />
+        <SiGraphql className="h-4 w-4 translate-y-px text-pink-500 dark:text-pink-200" />
       </span>
     ),
   };
@@ -55,17 +46,33 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative scroll-mt-24 text-slate-900"
+      className="relative scroll-mt-24 transition-colors duration-500 surface-hero"
     >
-      {/* Transparent gradient similar to Hero */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-r from-white/80 via-white/60 to-white/40 backdrop-blur-[2px]" />
+      {/* hero-like light mist */}
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 60%)",
+        }}
+      />
+      {/* hero-like dark glow */}
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none"
+        style={{
+          mixBlendMode: "screen",
+          opacity: 0.12,
+          background:
+            "radial-gradient(circle at 60% 30%, rgba(0,160,160,0.6) 0%, rgba(0,0,0,0) 70%)",
+        }}
+      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="grid items-center gap-12 md:grid-cols-2">
-          {/* Photo + Name */}
+          {/* Profile */}
           <div className="flex flex-col items-center text-center">
             <div className="relative">
-              <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 backdrop-blur-sm">
+              <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 dark:ring-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 dark:bg-white/10 backdrop-blur-sm">
                 <img
                   src={profileImg}
                   alt={t("about.alt") as string}
@@ -75,26 +82,32 @@ export default function About() {
               </div>
             </div>
 
-            {/* Name + Title */}
             <div className="mt-6">
-              <h3 className="text-2xl font-bold text-slate-900">Robert Filep</h3>
-<p className="mt-1 text-sky-700 font-medium">
-  Frontend-utvikler&nbsp;•&nbsp;Grunnlegger av CodeForge Studio
-</p>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Robert Filep
+              </h3>
+              <p
+                className="mt-1 font-medium"
+                style={{
+                  color: "var(--color-brand-accent-soft)",
+                }}
+              >
+                Frontend-utvikler • Grunnlegger av CodeForge Studio
+              </p>
             </div>
           </div>
 
           {/* Text */}
           <div>
-            <p className="text-sm font-semibold tracking-widest text-sky-700 uppercase">
+            <p className="text-sm font-semibold tracking-widest text-sky-700 dark:text-cyan-200 uppercase">
               {t("about.sectionLabel") as string}
             </p>
 
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
               {t("about.heading") as string}
             </h2>
 
-            <p className="mt-4 text-lg text-slate-700">
+            <p className="mt-4 text-lg text-slate-700 dark:text-white/80">
               {t("about.copy") as string}
             </p>
 
@@ -103,24 +116,26 @@ export default function About() {
               {highlights.map((item) => (
                 <li
                   key={item}
-                  className="flex items-center gap-2 rounded-lg border border-slate-200/70 bg-white/50 px-3 py-2 text-sm text-slate-800 backdrop-blur-sm"
+                  className="flex items-center gap-2 rounded-lg border border-slate-200/70 bg-white/50 px-3 py-2 text-sm text-slate-800 backdrop-blur-sm
+                             dark:border-white/10 dark:bg-white/5 dark:text-white/90"
                 >
-                  <span className="inline-block h-2 w-2 rounded-full bg-sky-500" />
+                  <span className="inline-block h-2 w-2 rounded-full bg-sky-500 dark:bg-cyan-300" />
                   {item}
                 </li>
               ))}
             </ul>
 
-            {/* Tech chips with logos */}
+            {/* Tech chips */}
             <div className="mt-6 flex flex-wrap gap-2">
               {tech.map((label) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/60 px-3 py-1 text-sm text-slate-900 ring-1 ring-slate-200/60 backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/60 px-3 py-1 text-sm text-slate-900 ring-1 ring-slate-200/60 backdrop-blur-sm
+                             dark:bg-white/5 dark:text-white dark:ring-white/10"
                   title={label}
                 >
                   {techIcons[label] ?? (
-                    <span className="inline-block h-2 w-2 rounded-full bg-slate-400" />
+                    <span className="inline-block h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-200/70" />
                   )}
                   <span>{label}</span>
                 </span>

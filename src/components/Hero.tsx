@@ -3,13 +3,6 @@
  * -------------------------------------------------------
  *  CodeForge Studio — Proprietary Source Code
  *  © 2025 CodeForge Studio Filep. All rights reserved.
- *
- *  This file is part of the CodeForge Studio website.
- *  Unauthorized copying, modification, or distribution
- *  of this file, via any medium, is strictly prohibited.
- *
- *  For licensing or collaboration inquiries:
- *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
 import Container from "./ui/Container";
@@ -23,13 +16,10 @@ export default function Hero() {
       id="hero"
       className={[
         "relative scroll-mt-24 transition-colors duration-500",
-        "surface-hero", // now behaves differently light vs dark
+        "surface-hero",
       ].join(" ")}
     >
-      {/* LIGHT MODE glow layer:
-         a subtle soft white radial to keep that premium 'mist' in the top-left.
-         This already looks like your original.
-      */}
+      {/* light mist */}
       <div
         className="absolute inset-0 -z-10 pointer-events-none"
         style={{
@@ -37,12 +27,7 @@ export default function Hero() {
             "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 60%)",
         }}
       />
-
-      {/* DARK MODE accent glow:
-         low opacity, only really visible once background gets inky.
-         We keep this layer always mounted but it's faint in light mode,
-         and it "wakes up" in dark because the surface-hero turns translucent.
-      */}
+      {/* dark glow */}
       <div
         className="absolute inset-0 -z-10 pointer-events-none"
         style={{
@@ -55,13 +40,16 @@ export default function Hero() {
 
       <Container className="py-20 sm:py-24 relative">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Left: text */}
           <div className="max-w-xl">
             <h1 className="text-heading text-4xl font-extrabold tracking-tight leading-tight sm:text-5xl lg:text-6xl">
               {t("hero.title") as string}
             </h1>
 
-            <p className="mt-3 text-link text-lg font-medium">
+            {/* 👇 this is the important part */}
+            <p
+              className="mt-3 text-lg font-medium"
+              style={{ color: "var(--color-brand-accent-soft)" }}
+            >
               {t("hero.tagline") as string}
             </p>
 
@@ -70,7 +58,6 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Right: image card */}
           <div className="relative">
             <div className="surface-card overflow-hidden rounded-3xl">
               <img
