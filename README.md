@@ -3,7 +3,7 @@
 The official website for **CodeForge Studio** — a creative digital studio founded by **Robert Filep** in Norway.  
 The site presents the studio’s services, philosophy, portfolio examples, pricing, and contact options.
 
-Built with **React**, **TypeScript**, **Tailwind CSS**, and **Vite**.
+Built with **React**, **TypeScript**, **Tailwind CSS**, **Vite**, and a **headless WordPress CMS** backend.
 
 ---
 
@@ -22,6 +22,7 @@ Built with **React**, **TypeScript**, **Tailwind CSS**, and **Vite**.
 - 🧩 **Reusable components** with clean structure  
 - 🎨 **Tailwind CSS** for utility-first styling  
 - 💬 **Contact form integration** (EmailJS ready)  
+- 📰 **Headless CMS (WordPress)** for dynamic content and service management  
 - 🌙 Optional **Dark Mode**  
 - 🔒 **SEO-friendly** and accessibility-optimized  
 - 🎮 **Interactive background** with dynamic, animated balls that respond to mouse movement and user interaction — adding a playful and modern layer to the experience  
@@ -98,10 +99,19 @@ The website was built to reflect **CodeForge Studio’s** identity:
 
 ---
 
+## 🧠 Technical Details
+
+- Frontend: **React + TypeScript + Vite**  
+- Styling: **Tailwind CSS**  
+- CMS: **Headless WordPress REST API** (for content, services, and pricing)  
+- Animation: **Custom Canvas Background + Smooth Scroll Logic**  
+- Deployment: **Netlify Continuous Integration**  
+
+---
+
 ## 📈 Future Enhancements
 
 - [ ] Add Framer Motion animations for page transitions  
-- [ ] Integrate CMS (WordPress / Sanity) for dynamic content  
 - [ ] Add multilingual support (Norwegian / English)  
 - [ ] Implement full dark mode  
 - [ ] Blog / Insights section  
@@ -112,7 +122,7 @@ The website was built to reflect **CodeForge Studio’s** identity:
 
 **Robert Filep**  
 Founder & Frontend Developer — [CodeForge Studio](https://codeforgestudio.no)  
-📧 robert@codeforgestudio.no 
+📧 robertfilep@gmail.com  
 📍 Trondheim, Norway  
 
 ---
