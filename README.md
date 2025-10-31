@@ -1,27 +1,42 @@
-# CodeForge Studio
+# ⚡ CodeForge Studio Website
 
-A modern portfolio website for **CodeForge Studio** — built with React, TypeScript, Tailwind CSS, and Vite.  
-The site showcases services, project work, pricing packages, and a contact section.
+The official website for **CodeForge Studio** — a creative digital studio founded by **Robert Filep** in Norway.  
+The site presents the studio’s services, philosophy, portfolio examples, pricing, and contact options.
+
+Built with **React**, **TypeScript**, **Tailwind CSS**, and **Vite**.
+
+---
+
+## 💡 About CodeForge Studio
+
+> **CodeForge Studio** blends design, animation, and modern web technologies to craft sleek, interactive websites and digital experiences.  
+> The goal: to help brands and creators stand out with fast, visually stunning, and responsive web solutions.
 
 ---
 
 ## 🚀 Features
-- **Responsive design** – mobile-first, looks great on all devices  
-- **Smooth scroll & active navbar highlighting**  
-- **Hero, Services, Work, About, Pricing, and Contact sections**  
-- **Reusable components** with clean structure  
-- **Tailwind CSS** for utility-first styling  
-- **TypeScript** for safety and maintainability  
+
+- 📱 **Responsive design** — optimized for all devices  
+- 🧭 **Smooth scrolling** with active navigation highlights  
+- ⚡ **Fast performance** powered by **Vite**  
+- 🧩 **Reusable components** with clean structure  
+- 🎨 **Tailwind CSS** for utility-first styling  
+- 💬 **Contact form integration** (EmailJS ready)  
+- 🌙 Optional **Dark Mode**  
+- 🔒 **SEO-friendly** and accessibility-optimized  
+- 🎮 **Interactive background** with dynamic, animated balls that respond to mouse movement and user interaction — adding a playful and modern layer to the experience  
 
 ---
 
 ## 📂 Project Structure
-src/
-├── components/      # Reusable UI components (Navbar, Hero, Services, Work, About, Pricing, Contact, Footer)
-├── assets/          # Images, icons, and static assets
-├── App.tsx          # Root component with routing/sections
-├── main.tsx         # React entry point
-└── index.css        # Tailwind base styles
+
+src/  
+├── assets/     # Images, icons, and static media  
+├── components/   # Reusable UI sections (Navbar, Hero, Services, Work, About, Pricing, Contact, Footer, BallpitBackground)  
+├── lib/      # Utility hooks and helpers  
+├── App.tsx     # Root component with layout and sections  
+├── main.tsx    # React entry point  
+└── index.css    # Tailwind base styles and custom utilities  
 
 ---
 
@@ -32,6 +47,7 @@ src/
 - npm or yarn
 
 ### Installation
+```
 # Clone the repo
 git clone https://github.com/your-username/codeforge-studio.git
 
@@ -40,26 +56,73 @@ cd codeforge-studio
 
 # Install dependencies
 npm install
+```
 
 ### Development
+```
 npm run dev
+```
 
 ### Build
+```
 npm run build
+```
 
 ### Preview Production Build
+```
 npm run preview
+```
 
 ---
 
 ## 🌐 Deployment
+
 You can easily deploy this site on:
-- Netlify → https://www.netlify.com/
-- Vercel → https://vercel.com/
-- Any static hosting provider
+
+- [Netlify](https://www.netlify.com/) – recommended  
+- [Vercel](https://vercel.com/)  
+- [GitHub Pages](https://pages.github.com/)  
+- [Firebase Hosting](https://firebase.google.com/docs/hosting)
+
+After building, deploy the contents of the `/dist` folder or connect your GitHub repo for continuous deployment.
+
+---
+
+## 🎨 Design Philosophy
+
+The website was built to reflect **CodeForge Studio’s** identity:  
+- Clean, modern, and creative visual design  
+- Focus on interactivity and animation  
+- Minimalist layout that highlights both **technology and creativity**  
+- A sense of playfulness balanced with professional polish  
+
+---
+
+## 📈 Future Enhancements
+
+- [ ] Add Framer Motion animations for page transitions  
+- [ ] Integrate CMS (WordPress / Sanity) for dynamic content  
+- [ ] Add multilingual support (Norwegian / English)  
+- [ ] Implement full dark mode  
+- [ ] Blog / Insights section  
+
+---
+
+## 🧑‍💻 Author
+
+**Robert Filep**  
+Founder & Frontend Developer — [CodeForge Studio](https://codeforgestudio.no)  
+📧 robert@codeforgestudio.no 
+📍 Trondheim, Norway  
 
 ---
 
 ## 📜 License
 
-This project is licensed under the [MIT License](./LICENSE) © 2025 CodeForge Studio Filep.
+Licensed under the **[MIT License](./LICENSE)** © 2025 **CodeForge Studio Filep**.
+
+---
+
+## 🪄 Tagline
+
+> “Where creativity meets clean code.”
