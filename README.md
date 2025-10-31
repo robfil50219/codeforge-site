@@ -127,9 +127,12 @@ Founder & Frontend Developer — [CodeForge Studio](https://codeforgestudio.no)
 
 ---
 
-## 📜 License
+## 🛡️ License
 
-Licensed under the **[MIT License](./LICENSE)** © 2025 **CodeForge Studio Filep**.
+This project and its source code are **proprietary and confidential**.  
+Unauthorized copying, distribution, modification, or use of any part of this project is strictly prohibited without written permission from **CodeForge Studio**.
+
+© 2025 CodeForge Studio Filep. All rights reserved.
 
 ---
 
