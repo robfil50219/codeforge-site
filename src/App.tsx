@@ -34,23 +34,25 @@ import BallpitBackground from "./components/BallpitBackground";
 
 function Home() {
   const site = "CodeForge Studio";
-  const title = `Design & build modern web apps • ${site}`;
+  const title = `CodeForge Studio – Moderne frontend, design og webutvikling`;
   const desc =
-    "We craft fast, accessible, and beautiful front-ends with modern web technologies.";
+    "CodeForge Studio bygger raske, moderne og visuelt skarpe nettsider med fokus på ytelse, tilgjengelighet og brukervennlighet.";
 
   return (
     <>
-      {/* SEO / social meta */}
+      {/* SEO / social meta (runtime) */}
       <title>{title}</title>
       <meta name="description" content={desc} />
       <meta name="robots" content="index,follow" />
-      <link rel="canonical" href="https://www.codeforgestudio.no/" />
+      <link rel="canonical" href="https://codeforgestudio.no/" />
 
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={site} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />
-      <meta property="og:url" content="https://www.codeforgestudio.no/" />
+      <meta property="og:url" content="https://codeforgestudio.no/" />
+      {/* hvis du vil: <meta property="og:image" content="https://codeforgestudio.no/image.png" /> */}
+
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={desc} />
@@ -83,12 +85,6 @@ export default function App() {
           {/* Cookie / consent */}
           <ConsentBanner />
 
-          {/* Main content.
-             pt-16 = space for sticky header (h-16).
-             pb-24 = space above floating bubble nav on mobile.
-             md:pb-0 = remove extra bottom padding on desktop,
-                       because bubble nav is hidden there.
-          */}
           <main className="flex-1 pt-16 pb-24 md:pb-0">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -98,7 +94,6 @@ export default function App() {
             </Routes>
           </main>
 
-          {/* Footer */}
           <Footer />
         </div>
       </ErrorBoundary>
