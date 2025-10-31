@@ -4,9 +4,41 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CodeForge Studio</title>
 
-    <!-- run BEFORE paint -->
+    <title>CodeForge Studio – Moderne frontend, design og webutvikling i Norge</title>
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="CodeForge Studio bygger raske, moderne og visuelt skarpe nettsider med fokus på ytelse, tilgjengelighet og brukervennlighet. Basert i Norge."
+    />
+    <meta name="author" content="CodeForge Studio" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="CodeForge Studio" />
+    <meta
+      property="og:description"
+      content="Moderne frontend, design og webutvikling i Norge – raske, brukervennlige og visuelt skarpe løsninger."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://codeforgestudio.no/" />
+    <meta property="og:image" content="https://codeforgestudio.no/og-image.png" />
+    <meta property="og:site_name" content="CodeForge Studio" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CodeForge Studio" />
+    <meta
+      name="twitter:description"
+      content="Raske, moderne og visuelt skarpe nettsider – bygget i Norge med fokus på ytelse og brukervennlighet."
+    />
+    <meta name="twitter:image" content="https://codeforgestudio.no/og-image.png" />
+
+    <!-- Browser color -->
+    <meta name="theme-color" content="#001920" />
+
+    <!-- Run BEFORE paint: dark mode + ballpit -->
     <script>
       (function () {
         try {
@@ -26,12 +58,12 @@
             window.__BALLPIT_DISABLED = true;
           }
         } catch (e) {
-          /* ignore */
+          /* ignore errors */
         }
       })();
     </script>
 
-    <!-- Inter -->
+    <!-- Inter font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,6 +71,7 @@
       rel="stylesheet"
     />
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
