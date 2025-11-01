@@ -7,7 +7,6 @@
 // src/components/About.tsx
 import { type JSX } from "react";
 import { useTranslation } from "../lib/t";
-import profileImg from "../assets/profileimage.png";
 
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
 import {
@@ -72,13 +71,18 @@ export default function About() {
           {/* Profile */}
           <div className="flex flex-col items-center text-center">
             <div className="relative">
-              <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 dark:ring-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 dark:bg-white/10 backdrop-blur-sm">
-                <img
-                  src={profileImg}
-                  alt={t("about.alt") as string}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
+              <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 dark:ring-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 dark:bg-white/10 backdrop-blur-sm transition-transform duration-500 hover:scale-105">
+                <picture>
+                  {/* modern browsers */}
+                  <source srcSet="/robert-profile-800.webp" type="image/webp" />
+                  {/* fallback */}
+                  <img
+                    src="/robert-profile-800.jpg"
+                    alt={t("about.alt") as string}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </picture>
               </div>
             </div>
 
