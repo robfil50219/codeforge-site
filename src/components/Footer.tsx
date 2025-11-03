@@ -92,14 +92,14 @@ export default function Footer() {
         {/* Divider & bottom section */}
         <div className="mt-6 border-t border-(--card-border) pt-4 flex flex-col gap-2 text-xs text-(--text-dim) md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-1 flex-wrap">
-            © {year} CodeForge Studio. Alle rettigheter forbeholdt. Designet og utviklet av{" "}
+            © {year} CodeForgeStudio. Alle rettigheter forbeholdt. Designet og utviklet av{" "}
             <a
               href="https://codeforgestudio.no"
               target="_blank"
               rel="noreferrer"
               className="text-(--color-brand-sea) hover:underline"
             >
-              CodeForge Studio
+              CodeForgeStudio
             </a>
             . Driftet av{" "}
             <a
