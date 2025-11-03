@@ -1,1 +1,7 @@
-/sitemap.xml   https://www.codeforgestudio.no/wp-sitemap.xml   301
+# React routes
+/              /index.html 200
+/privacy       /index.html 200
+/terms         /index.html 200
+
+# Catch-all 404
+/*             /404.html 404
