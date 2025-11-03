@@ -1,21 +1,37 @@
 # --------------------------------------------------------
 # CodeForge Studio - Robots.txt
+# Updated: 2025-11-03
+# Purpose: Guide search engine crawlers, block legacy WP URLs,
+#          and point to the correct sitemap.
 # --------------------------------------------------------
+
 User-agent: *
 Allow: /
 
-# Block internal dev folders
-Disallow: /src/
-Disallow: /scripts/
-Disallow: /node_modules/
-Disallow: /dist/
-Disallow: /components/
-Disallow: /pages/
-Disallow: /main
+# 🚫 Block old WordPress directories & system paths
+Disallow: /wp-login
+Disallow: /wp-login.php
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /wp-json
+Disallow: /category/
+Disallow: /tag/
 
-# Point to combined sitemap
+# 🧭 Allow React app routes
+Allow: /
+Allow: /privacy
+Allow: /terms
+
+# 🗺️ Sitemap
 Sitemap: https://codeforgestudio.no/sitemap.xml
 
+# 👤 Custom notes
+# The WordPress site is now deprecated.
+# This site is fully powered by a modern React + Netlify setup.
+# All old URLs are redirected or marked as gone for SEO cleanup.
+
+# 🤖 Specific bot settings
 User-agent: Googlebot
 Allow: /
 
@@ -25,4 +41,6 @@ Allow: /
 User-agent: Yandex
 Disallow: /
 
-# © 2025 CodeForge Studio | https://codeforgestudio.no | robert@codeforgestudio.no
+# Contact
+# © 2025 CodeForge Studio | https://codeforgestudio.no
+# For inquiries: robert@codeforgestudio.no
