@@ -1,30 +1,35 @@
 # --------------------------------------------------------
 # CodeForge Studio - Robots.txt
 # Created: 2025-10-31
-# Purpose: Control crawler access and point to sitemap
+# Updated: 2025-11-03
+# Purpose: Control crawler access and optimize indexing
 # --------------------------------------------------------
 
 User-agent: *
 Allow: /
 
-# Block unnecessary folders (no need for crawlers)
+# Block internal or build-related folders that don't exist publicly
 Disallow: /src/
 Disallow: /scripts/
 Disallow: /node_modules/
 Disallow: /dist/
+Disallow: /components/
+Disallow: /pages/
+Disallow: /main
 
-# Sitemap location (ensure it matches your domain)
+# Point to sitemap for indexable URLs
 Sitemap: https://codeforgestudio.no/sitemap.xml
 
-# Additional suggestions for better SEO performance
+# Specific crawler rules
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
+# Yandex often causes unnecessary crawl load
 User-agent: Yandex
 Disallow: /
 
 # Contact and copyright info
-# © 2025 CodeForge Studio | codeforgestudio.no
+# © 2025 CodeForge Studio | https://codeforgestudio.no | robert@codeforgestudio.no
