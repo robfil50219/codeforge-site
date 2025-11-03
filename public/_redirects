@@ -2,30 +2,30 @@
 # CodeForge Studio Redirect Rules
 # Updated: 2025-11-03
 # Purpose: Ensure React routes, SEO-friendly redirects,
-#          and removal of old WordPress URLs.
+#          and complete removal of old WordPress URLs.
 # -------------------------------------------------------
 
 # ✅ React routes (for client-side navigation)
 /
-/index.html     200
-/privacy        /index.html 200
-/terms          /index.html 200
+/index.html       200
+/privacy          /index.html 200
+/terms            /index.html 200
 
 # 🚫 Old WordPress URLs (mark as permanently gone)
-# Returning 410 tells Google these will never return
-/wp-login         /404.html 410
-/wp-admin         /404.html 410
-/wp-json*         /404.html 410
-/wp-includes/*    /404.html 410
-/wp-content/*     /404.html 410
+# 410 = "Gone forever" → Google removes them from index
+/wp-login          /404.html 410
+/wp-admin          /404.html 410
+/wp-json*          /404.html 410
+/wp-includes/*     /404.html 410
+/wp-content/*      /404.html 410
 
-# 🔁 Old taxonomy pages (redirect to homepage to keep link equity)
-/category/*       /   301
-/tag/*            /   301
+# 🚫 Old taxonomy pages (also permanently gone)
+/category/*        /404.html 410
+/tag/*             /404.html 410
 
-# 🗺️ Old sitemap → new sitemap
-/wp-sitemap.xml       /sitemap.xml 301
-/sitemap_index.xml    /sitemap.xml 301
+# 🗺️ Old sitemaps → redirect to new sitemap
+/wp-sitemap.xml        /sitemap.xml 301
+/sitemap_index.xml     /sitemap.xml 301
 
 # ✅ Catch-all (React fallback + 404 page)
-/*              /404.html 404
+/*                /404.html 404
