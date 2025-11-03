@@ -35,7 +35,7 @@ import BallpitBackground from "./components/BallpitBackground";
 
 function Home() {
   const site = "CodeForge Studio";
-  const title = `CodeForge Studio – Moderne frontend, design og webutvikling`;
+  const title = "CodeForge Studio – Moderne frontend, design og webutvikling";
   const desc =
     "CodeForge Studio bygger raske, moderne og visuelt skarpe nettsider med fokus på ytelse, tilgjengelighet og brukervennlighet.";
   const url = "https://codeforgestudio.no/";
@@ -47,6 +47,10 @@ function Home() {
       <title>{title}</title>
       <meta name="description" content={desc} />
       <meta name="robots" content="index,follow" />
+      <meta
+        name="keywords"
+        content="CodeForge Studio, CodeForgeStudio, codeforgestudio.no, webutvikling, frontend, design, Ranheim, Trondheim"
+      />
       <link rel="canonical" href={url} />
 
       {/* Open Graph / Facebook */}
@@ -71,6 +75,8 @@ function Home() {
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": site,
+          // 👇 Teach Google the no-space brand variant and the domain
+          "alternateName": ["CodeForgeStudio", "codeforgestudio.no"],
           "url": url,
           "logo": "https://codeforgestudio.no/logo.png",
           "email": "robert@codeforgestudio.no",
@@ -98,11 +104,7 @@ export default function App() {
         {/* Foreground app content */}
         <div className="relative z-10 min-h-screen flex flex-col text-slate-900 dark:text-[#F6FAFA]">
           <ScrollToTop />
-
-          {/* Glass header + bubble nav */}
           <Navbar />
-
-          {/* Cookie / consent */}
           <ConsentBanner />
 
           <main className="flex-1 pt-16 pb-24 md:pb-0">
