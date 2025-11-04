@@ -21,10 +21,7 @@ import {
   CircleDot,
   Settings2,
   X,
-  Check,
 } from "lucide-react";
-import { useGoogleTranslate } from "../hooks/useGoogleTranslate";
-import type { GoogleLanguageCode } from "../hooks/useGoogleTranslate";
 
 type MobileBubbleNavProps = {
   scrollToId: (id: string) => void;
@@ -38,17 +35,12 @@ export default function MobileBubbleNav({
   toggleBackgroundMode,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
-  const { changeLanguage, currentLanguage, languages: availableLanguages } = useGoogleTranslate();
 
   function go(id: string) {
     scrollToId(id);
     setOpen(false);
   }
 
-  function selectLanguage(code: GoogleLanguageCode) {
-    changeLanguage(code);
-    setOpen(false);
-  }
 
   return (
     <>
@@ -133,30 +125,6 @@ export default function MobileBubbleNav({
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
               </button>
-            </li>
-
-            <li className="mt-2 border-t border-(--card-border) pt-2">
-              <p className="px-3 pb-1 text-[0.8rem] uppercase tracking-wide text-(--text-dim)">
-                Språk
-              </p>
-              <div className="px-1 space-y-1">
-                {availableLanguages.map((language) => {
-                  const isActive = currentLanguage === language.code;
-                  return (
-                    <button
-                      key={language.code}
-                      className={[
-                        "w-full text-left rounded-lg px-3 py-2 flex items-center justify-between transition",
-                        isActive ? "bg-white/10 text-(--color-brand-sea)" : "hover:bg-white/5",
-                      ].join(" ")}
-                      onClick={() => selectLanguage(language.code)}
-                    >
-                      <span>{language.label}</span>
-                      {isActive && <Check className="h-4 w-4" />}
-                    </button>
-                  );
-                })}
-              </div>
             </li>
 
           </ul>

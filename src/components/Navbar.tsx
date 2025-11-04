@@ -15,8 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
-import { Check, X } from "lucide-react";
-import { type GoogleLanguageCode, useGoogleTranslate } from "../hooks/useGoogleTranslate";
+import { X } from "lucide-react";
 
 declare global {
   interface Window {
@@ -71,8 +70,6 @@ export default function Navbar() {
 
   const languageButtonRef = useRef<HTMLButtonElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
-
-  const { currentLanguage, changeLanguage, languages: availableLanguages } = useGoogleTranslate();
 
   const setThemeInternal = useCallback(
     (mode: ThemeMode, persist: boolean) => {
@@ -176,8 +173,8 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isLangMenuOpen]);
 
-  function selectLanguage(code: GoogleLanguageCode) {
-    changeLanguage(code);
+  function selectLanguage(code: string) {
+    console.info("Selected language", code);
     closeLanguageMenu();
   }
 
@@ -290,27 +287,23 @@ export default function Navbar() {
                       </div>
 
                       <ul className="py-2 text-sm text-(--text-page)">
-                        {availableLanguages.map((language) => {
-                          const isActive = currentLanguage === language.code;
-                          return (
-                            <li key={language.code}>
-                              <button
-                                onClick={() => selectLanguage(language.code)}
-                                className={[
-                                  "w-full text-left px-3 py-2 transition flex items-center justify-between rounded-lg",
-                                  isActive
-                                    ? "bg-white/10 text-(--color-brand-sea)"
-                                    : "hover:bg-white/10",
-                                ].join(" ")}
-                                role="menuitemradio"
-                                aria-checked={isActive}
-                              >
-                                <span>{language.label}</span>
-                                {isActive && <Check className="h-4 w-4" />}
-                              </button>
-                            </li>
-                          );
-                        })}
+                        {[
+                          { code: "no", label: "Norsk" },
+                          { code: "sv", label: "Svensk" },
+                          { code: "da", label: "Dansk" },
+                          { code: "fi", label: "Finsk" },
+                          { code: "en", label: "Engelsk" },
+                        ].map((language) => (
+                          <li key={language.code}>
+                            <button
+                              onClick={() => selectLanguage(language.code)}
+                              className="w-full text-left px-3 py-2 transition flex items-center justify-between rounded-lg hover:bg-white/10"
+                              role="menuitem"
+                            >
+                              <span>{language.label}</span>
+                            </button>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   )}
