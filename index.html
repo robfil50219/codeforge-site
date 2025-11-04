@@ -7,43 +7,6 @@
 
     <title>CodeForge Studio – Moderne frontend, design og webutvikling</title>
 
-    <!-- SEO basics -->
-    <meta
-      name="description"
-      content="CodeForge Studio bygger raske, moderne og visuelt skarpe nettsider med fokus på ytelse, tilgjengelighet og brukervennlighet."
-    />
-    <meta name="author" content="CodeForge Studio" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://codeforgestudio.no/" />
-
-    <!-- Browser / address bar color -->
-    <meta name="theme-color" content="#001920" />
-
-    <!-- Run BEFORE paint: dark mode + ballpit preferences -->
-    <script>
-      (function () {
-        try {
-          // theme
-          var saved = localStorage.getItem("cf-theme");
-          var prefersDark =
-            window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches;
-          var dark = saved ? saved === "dark" : prefersDark;
-          if (dark) {
-            document.documentElement.classList.add("dark");
-          }
-
-          // ballpit
-          var pit = localStorage.getItem("cf-ballpit");
-          if (pit === "off") {
-            window.__BALLPIT_DISABLED = true;
-          }
-        } catch (e) {
-          /* ignore errors */
-        }
-      })();
-    </script>
-
     <!-- Inter font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,10 +14,50 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
+
+    <!-- (Optional) Your dark-mode prepaint script can go here again later -->
   </head>
 
   <body>
+    <!-- App root -->
     <div id="root"></div>
+
+    <!-- Hidden mount: we only want Google's top banner, not the inline widget -->
+    <div id="google_translate_element" style="display:none"></div>
+
+    <!-- Your app -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Google Website Translator: FORCE the top banner every load -->
+    <script>
+      // Clear Google's remembered language so the banner appears on every page load
+      (function () {
+        try {
+          var host = location.hostname;
+          var past = "Thu, 01 Jan 1970 00:00:00 GMT";
+          // clear for both apex and subdomain cookies
+          document.cookie = "googtrans=; expires=" + past + "; path=/; domain=" + host;
+          document.cookie = "googtrans=; expires=" + past + "; path=/; domain=." + host;
+          // also clear on current path just in case
+          document.cookie = "googtrans=; expires=" + past + "; path=/";
+        } catch {}
+      })();
+
+      // Google callback to mount the translator
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "no",
+            includedLanguages: "en,sv,da,de,fr,es,fi,is,pl,pt,ru,tr,it,nl",
+            autoDisplay: true, // shows the top banner
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+      defer
+    ></script>
   </body>
 </html>

@@ -15,6 +15,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
+import GoogleTranslateBanner from "./GoogleTranslateBanner";
 
 declare global {
   interface Window {
@@ -152,22 +153,29 @@ export default function Navbar() {
                 Kontakt
               </button>
 
-              {/* background toggle */}
-              <button
-                onClick={toggleBackgroundMode}
-                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
-                aria-pressed={isStaticBg}
-              >
-                {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
-              </button>
+              <div className="flex items-center gap-3 text-xs font-medium">
+                {/* background toggle */}
+                <button
+                  onClick={toggleBackgroundMode}
+                  className="surface-chip px-3 py-1.5 text-heading"
+                  aria-pressed={isStaticBg}
+                >
+                  {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
+                </button>
 
-              {/* desktop theme toggle */}
-              <button
-                onClick={toggleTheme}
-                className="surface-chip text-xs font-medium px-3 py-1.5 text-heading"
-              >
-                {isDark ? "Lys" : "Mørk"}
-              </button>
+                {/* desktop theme toggle */}
+                <button
+                  onClick={toggleTheme}
+                  className="surface-chip px-3 py-1.5 text-heading"
+                >
+                  {isDark ? "Lys" : "Mørk"}
+                </button>
+
+                <GoogleTranslateBanner
+                  className="surface-chip px-3 py-1.5 text-heading"
+                  aria-label="Oversett nettstedet"
+                />
+              </div>
             </nav>
           </div>
         </div>
