@@ -13,7 +13,6 @@
  * -------------------------------------------------------
  */
 import { useState } from "react";
-import GoogleTranslateBanner from "./GoogleTranslateBanner";
 import {
   PhoneCall,
   Palette,
@@ -129,14 +128,6 @@ export default function MobileBubbleNav({
               </button>
             </li>
 
-            <li className="mt-2">
-              <GoogleTranslateBanner
-                wrapperClassName="google-translate-chip--fluid w-full"
-                className="surface-chip w-full justify-center px-3 py-2 text-xs font-semibold text-heading"
-                placement="up"
-                aria-label="Oversett nettstedet"
-              />
-            </li>
           </ul>
         </div>
       )}

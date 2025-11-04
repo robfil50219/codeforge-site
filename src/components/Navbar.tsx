@@ -15,7 +15,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
-import GoogleTranslateBanner from "./GoogleTranslateBanner";
 
 declare global {
   interface Window {
@@ -198,11 +197,6 @@ export default function Navbar() {
                 >
                   {isDark ? "Lys" : "Mørk"}
                 </button>
-
-                <GoogleTranslateBanner
-                  className="surface-chip px-3 py-1.5 text-heading"
-                  aria-label="Oversett nettstedet"
-                />
               </div>
             </nav>
           </div>
