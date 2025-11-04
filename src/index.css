@@ -17,7 +17,6 @@
 :root {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  --google-banner-offset: 0px;
 
   /* Brand palette */
   --color-brand-sea: #00a0a0;        /* accent / highlight teal */
@@ -365,40 +364,4 @@ input[type="reset"] {
   .animate-text-glide {
     animation: none !important;
   }
-}
-
-/* ---------------------------------
-   Google Translate base overrides
-   --------------------------------- */
-#google_translate_container {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-  z-index: -1;
-}
-
-iframe.goog-te-banner-frame,
-iframe.goog-te-banner-frame.skiptranslate {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  border: 0 !important;
-  z-index: 9999 !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
-}
-
-.goog-te-banner,
-.goog-te-balloon-frame {
-  z-index: 9999 !important;
-}
-
-body.google-banner-visible header.sticky {
-  top: var(--google-banner-offset) !important;
 }
