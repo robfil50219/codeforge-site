@@ -348,11 +348,3 @@ input[type="reset"] {
     animation: none !important;
   }
 }
-
-body.skiptranslate {
-  top: 0 !important;
-}
-
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
