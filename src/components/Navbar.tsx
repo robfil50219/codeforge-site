@@ -59,12 +59,24 @@ const applyThemeClass = (mode: ThemeMode) => {
   }
 };
 
+const LANGUAGES = [
+  { code: "no", label: "Norsk" },
+  { code: "sv", label: "Svensk" },
+  { code: "da", label: "Dansk" },
+  { code: "fi", label: "Finsk" },
+  { code: "en", label: "Engelsk" },
+] as const;
+
 export default function Navbar() {
   const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
 
   const [isStaticBg, setIsStaticBg] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const isDark = theme === "dark";
+
+  const languageButtonRef = useRef<HTMLButtonElement>(null);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
 
   const setThemeInternal = useCallback(
     (mode: ThemeMode, persist: boolean) => {
@@ -127,6 +139,48 @@ export default function Navbar() {
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
     setThemeInternal(next, true);
+  }
+
+  function toggleLanguageMenu() {
+    setIsLangMenuOpen((open) => !open);
+  }
+
+  function closeLanguageMenu() {
+    setIsLangMenuOpen(false);
+  }
+
+  useEffect(() => {
+    if (!isLangMenuOpen) return;
+    const handleClickAway = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        languageMenuRef.current?.contains(target) ||
+        languageButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
+      closeLanguageMenu();
+    };
+    document.addEventListener("pointerdown", handleClickAway);
+    return () => document.removeEventListener("pointerdown", handleClickAway);
+  }, [isLangMenuOpen]);
+
+  useEffect(() => {
+    if (!isLangMenuOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        closeLanguageMenu();
+        languageButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isLangMenuOpen]);
+
+  function selectLanguage(code: string) {
+    console.info("Selected language:", code);
+    closeLanguageMenu();
   }
 
   function toggleBackgroundMode() {
@@ -196,6 +250,49 @@ export default function Navbar() {
                 >
                   {isDark ? "Lys" : "Mørk"}
                 </button>
+
+                <div className="relative">
+                  <button
+                    ref={languageButtonRef}
+                    className="surface-chip px-3 py-1.5 text-heading flex items-center gap-2"
+                    onClick={toggleLanguageMenu}
+                    aria-haspopup="menu"
+                    aria-expanded={isLangMenuOpen}
+                  >
+                    Velg språk
+                    <span
+                      className={[
+                        "transition-transform duration-200",
+                        isLangMenuOpen ? "rotate-180" : "",
+                      ].join(" ")}
+                      aria-hidden="true"
+                    >
+                      ▾
+                    </span>
+                  </button>
+
+                  {isLangMenuOpen && (
+                    <div
+                      ref={languageMenuRef}
+                      className="absolute right-0 mt-2 w-48 rounded-lg border border-(--card-border) bg-(--bg-page) shadow-xl z-50 overflow-hidden"
+                      role="menu"
+                    >
+                      <ul className="py-2 text-sm text-(--text-page)">
+                        {LANGUAGES.map((language) => (
+                          <li key={language.code}>
+                            <button
+                              onClick={() => selectLanguage(language.code)}
+                              className="w-full text-left px-3 py-2 hover:bg-white/10 transition"
+                              role="menuitem"
+                            >
+                              {language.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </nav>
           </div>

@@ -12,7 +12,7 @@
  *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PhoneCall,
   Palette,
@@ -35,11 +35,34 @@ export default function MobileBubbleNav({
   toggleBackgroundMode,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+
+  const languages = [
+    { code: "no", label: "Norsk" },
+    { code: "sv", label: "Svensk" },
+    { code: "da", label: "Dansk" },
+    { code: "fi", label: "Finsk" },
+    { code: "en", label: "Engelsk" },
+  ];
 
   function go(id: string) {
     scrollToId(id);
     setOpen(false);
   }
+
+  function toggleLanguageMenu() {
+    setLanguageOpen((prev) => !prev);
+  }
+
+  function selectLanguage(code: string) {
+    console.info("Selected mobile language:", code);
+    setLanguageOpen(false);
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    if (!open) setLanguageOpen(false);
+  }, [open]);
 
 
   return (
@@ -125,6 +148,47 @@ export default function MobileBubbleNav({
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
               </button>
+            </li>
+
+            <li className="mt-2 border-t border-(--card-border) pt-2 relative">
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
+                onClick={toggleLanguageMenu}
+                aria-expanded={languageOpen}
+                aria-haspopup="menu"
+              >
+                <span>Velg språk</span>
+                <span
+                  className={[
+                    "transition-transform duration-200",
+                    languageOpen ? "rotate-180" : "",
+                  ].join(" ")}
+                  aria-hidden="true"
+                >
+                  ▴
+                </span>
+              </button>
+
+              {languageOpen && (
+                <div
+                  className="absolute bottom-[calc(100%+0.5rem)] right-0 w-full rounded-xl border border-(--card-border) bg-(--bg-page) shadow-xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 z-50"
+                  role="menu"
+                >
+                  <ul className="py-2 text-sm text-(--text-page)">
+                    {languages.map((language) => (
+                      <li key={language.code}>
+                        <button
+                          onClick={() => selectLanguage(language.code)}
+                          className="w-full text-left px-3 py-2 hover:bg-white/10 transition"
+                          role="menuitem"
+                        >
+                          {language.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </li>
 
           </ul>
