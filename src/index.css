@@ -380,10 +380,19 @@ input[type="reset"] {
   z-index: -1;
 }
 
-iframe.goog-te-banner-frame {
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner,
+.goog-te-balloon-frame {
   display: none !important;
 }
 
 body {
   top: 0 !important;
+  position: static !important;
+}
+
+html {
+  top: 0 !important;
+  position: static !important;
 }
