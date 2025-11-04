@@ -15,6 +15,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
+import { Check, X } from "lucide-react";
+import { type GoogleLanguageCode, useGoogleTranslate } from "../hooks/useGoogleTranslate";
 
 declare global {
   interface Window {
@@ -64,7 +66,13 @@ export default function Navbar() {
   const manualThemeRef = useRef(readStoredTheme() !== null);
 
   const [isStaticBg, setIsStaticBg] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const isDark = theme === "dark";
+
+  const languageButtonRef = useRef<HTMLButtonElement>(null);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
+
+  const { currentLanguage, changeLanguage, languages: availableLanguages } = useGoogleTranslate();
 
   const setThemeInternal = useCallback(
     (mode: ThemeMode, persist: boolean) => {
@@ -129,6 +137,50 @@ export default function Navbar() {
     setThemeInternal(next, true);
   }
 
+  function toggleLanguageMenu() {
+    setIsLangMenuOpen((open) => !open);
+  }
+
+  function closeLanguageMenu() {
+    setIsLangMenuOpen(false);
+  }
+
+  useEffect(() => {
+    if (!isLangMenuOpen) return;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        languageMenuRef.current?.contains(target) ||
+        languageButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
+      closeLanguageMenu();
+    };
+
+    document.addEventListener("pointerdown", handleClick);
+    return () => document.removeEventListener("pointerdown", handleClick);
+  }, [isLangMenuOpen]);
+
+  useEffect(() => {
+    if (!isLangMenuOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        closeLanguageMenu();
+        languageButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isLangMenuOpen]);
+
+  function selectLanguage(code: GoogleLanguageCode) {
+    changeLanguage(code);
+    closeLanguageMenu();
+  }
+
   function toggleBackgroundMode() {
     const next = !isStaticBg;
     setIsStaticBg(next);
@@ -179,7 +231,6 @@ export default function Navbar() {
               <button onClick={() => scrollToId("contact")} className="hover:opacity-80 transition">
                 Kontakt
               </button>
-
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
                 <button
@@ -197,6 +248,73 @@ export default function Navbar() {
                 >
                   {isDark ? "Lys" : "Mørk"}
                 </button>
+
+                <div className="relative">
+                  <button
+                    ref={languageButtonRef}
+                    className="surface-chip px-3 py-1.5 text-heading flex items-center gap-2"
+                    aria-haspopup="menu"
+                    aria-expanded={isLangMenuOpen}
+                    onClick={toggleLanguageMenu}
+                  >
+                    Velg språk
+                    <span
+                      className={[
+                        "transition-transform duration-200",
+                        isLangMenuOpen ? "rotate-180" : "",
+                      ].join(" ")}
+                      aria-hidden="true"
+                    >
+                      ▾
+                    </span>
+                  </button>
+
+                  {isLangMenuOpen && (
+                    <div
+                      ref={languageMenuRef}
+                      className="absolute right-0 mt-2 w-48 rounded-xl border border-(--card-border) bg-(--bg-page) shadow-xl z-50 overflow-hidden backdrop-blur-md"
+                      role="menu"
+                    >
+                      <div className="flex items-center justify-between border-b border-(--card-border) px-3 py-2 bg-(--bg-page)/80">
+                        <span className="text-[0.75rem] uppercase tracking-[0.12em] text-(--text-dim)">
+                          Språk
+                        </span>
+                        <button
+                          onClick={closeLanguageMenu}
+                          aria-label="Lukk språkmeny"
+                          className="relative group p-1 rounded-md transition-transform duration-300 hover:scale-110 active:scale-95"
+                        >
+                          <span className="absolute inset-0 rounded-md bg-[rgba(255,255,255,0.08)] opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
+                          <X className="relative z-10 h-4 w-4 text-(--text-heading) transition-transform duration-500 group-hover:rotate-90 group-hover:text-(--color-brand-sea)" />
+                        </button>
+                      </div>
+
+                      <ul className="py-2 text-sm text-(--text-page)">
+                        {availableLanguages.map((language) => {
+                          const isActive = currentLanguage === language.code;
+                          return (
+                            <li key={language.code}>
+                              <button
+                                onClick={() => selectLanguage(language.code)}
+                                className={[
+                                  "w-full text-left px-3 py-2 transition flex items-center justify-between rounded-lg",
+                                  isActive
+                                    ? "bg-white/10 text-(--color-brand-sea)"
+                                    : "hover:bg-white/10",
+                                ].join(" ")}
+                                role="menuitemradio"
+                                aria-checked={isActive}
+                              >
+                                <span>{language.label}</span>
+                                {isActive && <Check className="h-4 w-4" />}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </nav>
           </div>

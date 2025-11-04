@@ -364,3 +364,26 @@ input[type="reset"] {
     animation: none !important;
   }
 }
+
+/* ---------------------------------
+   Google Translate base overrides
+   --------------------------------- */
+#google_translate_container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: -1;
+}
+
+iframe.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
