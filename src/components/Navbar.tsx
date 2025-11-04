@@ -12,7 +12,7 @@
  *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
 import GoogleTranslateBanner from "./GoogleTranslateBanner";
@@ -23,83 +23,111 @@ declare global {
   }
 }
 
+const THEME_STORAGE_KEY = "cfs-theme";
+type ThemeMode = "light" | "dark";
+
+const readStoredTheme = (): ThemeMode | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    return stored === "dark" || stored === "light" ? stored : null;
+  } catch {
+    return null;
+  }
+};
+
+const getSystemTheme = (): ThemeMode => {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
+const getInitialTheme = (): ThemeMode => {
+  const stored = readStoredTheme();
+  if (stored) return stored;
+  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
+    return "dark";
+  }
+  return getSystemTheme();
+};
+
+const applyThemeClass = (mode: ThemeMode) => {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (mode === "dark") {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
+};
+
 export default function Navbar() {
-  const [isDark, setIsDark] = useState(false);
+  const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
+  const manualThemeRef = useRef(readStoredTheme() !== null);
+
   const [isStaticBg, setIsStaticBg] = useState(false);
+  const isDark = theme === "dark";
 
-  // 👇 init theme + background
+  const setThemeInternal = useCallback(
+    (mode: ThemeMode, persist: boolean) => {
+      applyThemeClass(mode);
+      setThemeState((current) => (current === mode ? current : mode));
+      if (typeof window !== "undefined") {
+        try {
+          if (persist) {
+            localStorage.setItem(THEME_STORAGE_KEY, mode);
+          } else {
+            localStorage.removeItem(THEME_STORAGE_KEY);
+          }
+        } catch {
+          // ignore storage errors (e.g. private mode)
+        }
+      }
+      manualThemeRef.current = persist;
+    },
+    [],
+  );
+
   useEffect(() => {
-    const root = document.documentElement;
-    const savedTheme = localStorage.getItem("cfs-theme"); // "light" | "dark" | null
-    const savedBg = localStorage.getItem("cfs-ballpit");  // "static" | "interactive" | null
-    const isMobile = window.innerWidth < 768;
+    if (typeof window === "undefined") return;
+    const storedTheme = readStoredTheme();
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
+    setThemeInternal(initialTheme, storedTheme !== null);
 
-    // background
+    const handleSystem = (event: MediaQueryListEvent) => {
+      if (manualThemeRef.current) return;
+      const next = event.matches ? "dark" : "light";
+      setThemeInternal(next, false);
+    };
+
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", handleSystem);
+      return () => media.removeEventListener("change", handleSystem);
+    }
+    media.addListener(handleSystem);
+    return () => media.removeListener(handleSystem);
+  }, [setThemeInternal]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedBg = (() => {
+      try {
+        return localStorage.getItem("cfs-ballpit");
+      } catch {
+        return null;
+      }
+    })();
     const startStatic = savedBg === "static";
     setIsStaticBg(startStatic);
     window.__BALLPIT_DISABLED = startStatic;
     window.dispatchEvent(
       new CustomEvent("ballpit-toggle", { detail: { disabled: startStatic } })
     );
-
-    // THEME
-    if (isMobile) {
-      // mobile: always light
-      root.classList.remove("dark");
-      setIsDark(false);
-    } else {
-      // desktop: use saved or system
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const shouldDark = savedTheme === "dark" || (!savedTheme && prefersDark);
-      if (shouldDark) {
-        root.classList.add("dark");
-        setIsDark(true);
-      } else {
-        root.classList.remove("dark");
-        setIsDark(false);
-      }
-    }
-
-    // listen to resize → if user goes from desktop → mobile, force light
-    const onResize = () => {
-      const isNowMobile = window.innerWidth < 768;
-      if (isNowMobile) {
-        root.classList.remove("dark");
-        setIsDark(false);
-      } else {
-        // when going back up we can reapply saved theme
-        const saved = localStorage.getItem("cfs-theme");
-        const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const wantDark = saved === "dark" || (!saved && prefers);
-        if (wantDark) {
-          root.classList.add("dark");
-          setIsDark(true);
-        } else {
-          root.classList.remove("dark");
-          setIsDark(false);
-        }
-      }
-    };
-
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   function toggleTheme() {
-    const root = document.documentElement;
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      // ignore on mobile for now
-      root.classList.remove("dark");
-      setIsDark(false);
-      localStorage.setItem("cfs-theme", "light");
-      return;
-    }
-
-    root.classList.toggle("dark");
-    const next = root.classList.contains("dark");
-    setIsDark(next);
-    localStorage.setItem("cfs-theme", next ? "dark" : "light");
+    const next: ThemeMode = isDark ? "light" : "dark";
+    setThemeInternal(next, true);
   }
 
   function toggleBackgroundMode() {

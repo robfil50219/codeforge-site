@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
 
     <title>CodeForge Studio – Moderne frontend, design og webutvikling</title>
 
@@ -15,7 +16,21 @@
       rel="stylesheet"
     />
 
-    <!-- (Optional) Your dark-mode prepaint script can go here again later -->
+    <script>
+      (function () {
+        const STORAGE_KEY = "cfs-theme";
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const shouldDark = stored === "dark" || (!stored && systemPrefersDark);
+          if (shouldDark) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (error) {
+          console.warn("Theme preflight failed", error);
+        }
+      })();
+    </script>
   </head>
 
   <body>
