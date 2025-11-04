@@ -183,6 +183,22 @@ input[type="reset"] {
     box-shadow 0.4s,
     border-color 0.4s;
 }
+
+.mobile-bubble-trigger {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow:
+    0 22px 38px rgba(0, 0, 0, 0.24),
+    0 12px 24px rgba(79, 219, 214, 0.12);
+}
+
+:root.dark .mobile-bubble-trigger {
+  background: rgba(15, 68, 82, 0.52) !important;
+  box-shadow:
+    0 26px 52px rgba(0, 0, 0, 0.85),
+    0 0 20px rgba(79, 219, 214, 0.35);
+}
 /* animated glowing bar between first step and active step */
 .process-progress-bar {
   position: absolute;

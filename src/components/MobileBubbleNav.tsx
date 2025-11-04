@@ -46,9 +46,7 @@ export default function MobileBubbleNav({
       <button
         className={[
           "fixed bottom-4 right-4 z-50 md:hidden",
-          "surface-chip px-4 py-2 text-heading text-xs font-semibold shadow-lg",
-          "dark:bg-[rgba(0,160,160,0.18)] dark:border dark:border-[rgba(0,160,160,0.6)]",
-          "dark:shadow-[0_20px_40px_rgba(0,0,0,0.9),0_0_16px_rgba(0,160,160,0.4)]",
+          "surface-chip mobile-bubble-trigger px-4 py-2 text-heading text-xs font-semibold shadow-lg border-0",
           "active:scale-95 transition-transform",
         ].join(" ")}
         onClick={() => setOpen((v) => !v)}
