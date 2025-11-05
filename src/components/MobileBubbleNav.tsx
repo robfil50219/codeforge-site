@@ -19,8 +19,6 @@ import {
   Rocket,
   User,
   CircleDot,
-  MoonStar,
-  Sun,
   Settings2,
   Globe,
   ChevronUp,
@@ -42,9 +40,7 @@ type MobileBubbleNavProps = {
 export default function MobileBubbleNav({
   scrollToId,
   isStaticBg,
-  isDarkMode,
   toggleBackgroundMode,
-  toggleTheme,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<LanguageCode>("no");
@@ -176,21 +172,6 @@ export default function MobileBubbleNav({
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
-              </button>
-            </li>
-            <li>
-              <button
-                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
-                onClick={toggleTheme}
-              >
-                <span>
-                  {isDarkMode ? (
-                    <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
-                  ) : (
-                    <MoonStar className="inline-block h-4 w-4 mr-2 align-middle" />
-                  )}
-                  {isDarkMode ? "Lys modus" : "Mørk modus"}
-                </span>
               </button>
             </li>
             <li className="mt-2 border-t border-(--card-border) pt-2 relative">
