@@ -147,7 +147,7 @@ img.auto-h {
 .ballpit-canvas {
   position: fixed;
   inset: 0;
-  z-index: -10;
+  z-index: -9999;
   width: 100%;
   height: var(--app-height);
   min-height: var(--app-height);
