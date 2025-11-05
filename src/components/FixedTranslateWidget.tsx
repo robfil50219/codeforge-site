@@ -18,16 +18,31 @@ const BASE_LANGUAGE: LanguageCode = "no";
 
 function clearGoogleTranslateState(baseLang: string) {
   try {
-    const hosts = [window.location.hostname, `.${window.location.hostname}`];
-    hosts.forEach((domain) => {
-      document.cookie = `googtrans=/auto/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
-      document.cookie = `googtrans=/${baseLang}/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
-      document.cookie = `googtrans=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
+    const domains = ["", window.location.hostname, `.${window.location.hostname}`];
+    const paths = ["/", window.location.pathname || "/"];
+    domains.forEach((domain) => {
+      paths.forEach((path) => {
+        const domainPart = domain ? `;domain=${domain}` : "";
+        document.cookie = `googtrans=/auto/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=${path}${domainPart}`;
+        document.cookie = `googtrans=/${baseLang}/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=${path}${domainPart}`;
+        document.cookie = `googtrans=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=${path}${domainPart}`;
+      });
     });
-    localStorage.removeItem("googtrans");
-    sessionStorage.removeItem("googtrans");
+    try {
+      localStorage.removeItem("googtrans");
+    } catch {
+      /* ignore */
+    }
+    try {
+      sessionStorage.removeItem("googtrans");
+    } catch {
+      /* ignore */
+    }
+    if (window.location.hash.startsWith("#googtrans")) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   } catch {
-    // ignore storage errors
+    // ignore errors cleaning translation state
   }
 }
 
@@ -86,14 +101,17 @@ export default function FixedTranslateWidget({
       const select = selectRef.current;
       if (!select) return;
       const isBase = code === BASE_LANGUAGE;
-      select.value = isBase ? "" : code;
+      select.value = isBase ? BASE_LANGUAGE : code;
+      if (isBase) {
+        select.selectedIndex = 0;
+      }
       select.dispatchEvent(new Event("change", { bubbles: true }));
       if (isBase) {
         clearGoogleTranslateState(BASE_LANGUAGE);
         notifyLanguageChange(BASE_LANGUAGE);
-        window.requestAnimationFrame(() => {
+        window.setTimeout(() => {
           window.location.reload();
-        });
+        }, 100);
         return;
       }
       if (opts?.closeMenu !== false) closeMenu();
