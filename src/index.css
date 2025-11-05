@@ -60,6 +60,10 @@
   }
 }
 
+:root {
+  color-scheme: light;
+}
+
 /* DARK THEME
    This is activated when <html class="dark">.
    Your Dark/Light button already toggles that.
@@ -86,6 +90,8 @@
   /* pill / chip bg in dark */
   --chip-bg: rgba(255, 255, 255, 0.05);
   --chip-border: rgba(255, 255, 255, 0.2);
+
+  color-scheme: dark;
 }
 
 /* ---------------------------------

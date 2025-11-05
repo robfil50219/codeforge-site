@@ -148,11 +148,14 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full border-b border-(--card-border) bg-(--bg-page)/95 backdrop-blur-md shadow-sm"
+        className="sticky top-0 z-50 w-full border-b border-(--card-border) bg-(--bg-page) shadow-sm"
         style={{
           paddingTop: "var(--app-safe-top)",
           paddingLeft: "var(--app-safe-left)",
           paddingRight: "var(--app-safe-right)",
+          backgroundColor: "color-mix(in srgb, var(--bg-page) 92%, transparent)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
         }}
       >
         <div className="flex min-h-[4rem] items-center px-4 sm:px-6 lg:px-8">

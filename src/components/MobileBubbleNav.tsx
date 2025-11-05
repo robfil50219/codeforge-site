@@ -109,10 +109,14 @@ export default function MobileBubbleNav({
       {open && (
         <div
           className={[
-            "fixed bottom-20 right-4 z-50 md:hidden w-56 rounded-xl border shadow-xl",
+            "fixed z-[60] md:hidden w-56 rounded-xl border shadow-xl",
             "bg-(--bg-page) border-(--card-border) text-(--text-page)",
             "animate-in fade-in slide-in-from-bottom-4 duration-300",
           ].join(" ")}
+          style={{
+            bottom: `calc(4.5rem + var(--app-safe-bottom))`,
+            right: `calc(1rem + var(--app-safe-right))`,
+          }}
         >
           {/* top bar with close */}
           <div className="flex justify-end border-b border-(--card-border) px-3 py-2">
