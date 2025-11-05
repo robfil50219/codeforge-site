@@ -11,7 +11,7 @@ import { cn } from "../utils/cn";
 const SCRIPT_ID = "cfs-google-translate-script";
 const CONTAINER_ID = "cfs-google-translate";
 
-const LANGUAGE_OPTIONS = [
+export const LANGUAGE_OPTIONS = [
   { code: "no", label: "Norsk" },
   { code: "en", label: "English" },
   { code: "sv", label: "Svenska" },
@@ -22,7 +22,7 @@ const LANGUAGE_OPTIONS = [
   { code: "es", label: "Español" },
 ] as const;
 
-type LanguageCode = (typeof LANGUAGE_OPTIONS)[number]["code"];
+export type LanguageCode = (typeof LANGUAGE_OPTIONS)[number]["code"];
 
 declare global {
   interface Window {
@@ -41,6 +41,8 @@ declare global {
         };
       };
     };
+    __cfsTranslateSetLanguage?: (code: string) => void;
+    __cfsGetCurrentLanguage?: () => string | null;
   }
 }
 
@@ -63,17 +65,23 @@ export default function FixedTranslateWidget({
   const [isOpen, setIsOpen] = useState(false);
   const [currentCode, setCurrentCode] = useState<LanguageCode>("no");
 
+  const notifyLanguageChange = useCallback((code: LanguageCode) => {
+    setCurrentCode(code);
+    window.dispatchEvent(
+      new CustomEvent("cfs-language-change", { detail: { code } }),
+    );
+  }, []);
+
   const closeMenu = useCallback(() => setIsOpen(false), []);
 
   const selectLanguage = useCallback(
-    (code: LanguageCode) => {
+    (code: LanguageCode, opts?: { focusTrigger?: boolean; closeMenu?: boolean }) => {
       const select = selectRef.current;
       if (!select) return;
-      setCurrentCode(code);
       select.value = code;
       select.dispatchEvent(new Event("change", { bubbles: true }));
-      closeMenu();
-      triggerRef.current?.focus();
+      if (opts?.closeMenu !== false) closeMenu();
+      if (opts?.focusTrigger !== false) triggerRef.current?.focus();
     },
     [closeMenu],
   );
@@ -116,7 +124,7 @@ export default function FixedTranslateWidget({
         const handleChange = () => {
           const next = (select.value || "no") as LanguageCode;
           const allowed = LANGUAGE_OPTIONS.some((option) => option.code === next);
-          setCurrentCode(allowed ? next : "no");
+          notifyLanguageChange(allowed ? next : "no");
         };
 
         select.setAttribute("aria-hidden", "true");
@@ -125,6 +133,15 @@ export default function FixedTranslateWidget({
 
         selectCleanupRef.current = () =>
           select.removeEventListener("change", handleChange);
+
+        window.__cfsTranslateSetLanguage = (code: string) => {
+          const allowed = LANGUAGE_OPTIONS.some((option) => option.code === code);
+          if (!allowed) return;
+          select.value = code;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        };
+
+        window.__cfsGetCurrentLanguage = () => select.value || "no";
       };
 
       decorate();
@@ -149,8 +166,14 @@ export default function FixedTranslateWidget({
         delete window.googleTranslateElementInit;
       }
       selectCleanupRef.current?.();
+      if (window.__cfsTranslateSetLanguage) {
+        delete window.__cfsTranslateSetLanguage;
+      }
+      if (window.__cfsGetCurrentLanguage) {
+        delete window.__cfsGetCurrentLanguage;
+      }
     };
-  }, []);
+  }, [notifyLanguageChange]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -240,7 +263,10 @@ export default function FixedTranslateWidget({
           }
         }}
       >
-        <span className="translate-button__label">Velg språk</span>
+        <span className="translate-button__label notranslate" translate="no">
+          {LANGUAGE_OPTIONS.find((option) => option.code === currentCode)?.label ??
+            "Velg språk"}
+        </span>
         <ChevronDown
           className="translate-button__arrow"
           data-open={isOpen}
@@ -270,7 +296,9 @@ export default function FixedTranslateWidget({
               onClick={() => selectLanguage(option.code)}
               onKeyDown={(event) => handleItemKeyDown(event, index)}
             >
-              <span>{option.label}</span>
+              <span className="notranslate" translate="no">
+                {option.label}
+              </span>
             </button>
           ))}
         </div>

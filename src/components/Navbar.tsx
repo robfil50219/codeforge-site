@@ -210,7 +210,9 @@ export default function Navbar() {
       <MobileBubbleNav
         scrollToId={scrollToId}
         isStaticBg={isStaticBg}
+        isDarkMode={isDark}
         toggleBackgroundMode={toggleBackgroundMode}
+        toggleTheme={toggleTheme}
       />
     </>
   );

@@ -12,33 +12,75 @@
  *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PhoneCall,
   Palette,
   Rocket,
   User,
   CircleDot,
+  MoonStar,
+  Sun,
   Settings2,
+  Globe,
+  ChevronUp,
   X,
 } from "lucide-react";
+import { LANGUAGE_OPTIONS, type LanguageCode } from "./FixedTranslateWidget";
 
 type MobileBubbleNavProps = {
   scrollToId: (id: string) => void;
   isStaticBg: boolean;
+  isDarkMode: boolean;
   toggleBackgroundMode: () => void;
+  toggleTheme: () => void;
 };
 
 export default function MobileBubbleNav({
   scrollToId,
   isStaticBg,
+  isDarkMode,
   toggleBackgroundMode,
+  toggleTheme,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
+  const [language, setLanguage] = useState<LanguageCode>("no");
+  const [languageOpen, setLanguageOpen] = useState(false);
+
+  useEffect(() => {
+    const initial =
+      (typeof window !== "undefined" &&
+        window.__cfsGetCurrentLanguage?.()) || "no";
+    if (
+      initial &&
+      LANGUAGE_OPTIONS.some((option) => option.code === initial)
+    ) {
+      setLanguage(initial as LanguageCode);
+    }
+
+    const handle = (event: Event) => {
+      const custom = event as CustomEvent<{ code?: string }>;
+      const code = custom.detail?.code as LanguageCode | undefined;
+      if (!code) return;
+      if (LANGUAGE_OPTIONS.some((option) => option.code === code)) {
+        setLanguage(code);
+      }
+    };
+
+    window.addEventListener("cfs-language-change", handle);
+    return () => {
+      window.removeEventListener("cfs-language-change", handle);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open) setLanguageOpen(false);
+  }, [open]);
 
   function go(id: string) {
     scrollToId(id);
     setOpen(false);
+    setLanguageOpen(false);
   }
 
   return (
@@ -124,6 +166,65 @@ export default function MobileBubbleNav({
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
               </button>
+            </li>
+            <li>
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
+                onClick={toggleTheme}
+              >
+                <span>
+                  {isDarkMode ? (
+                    <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
+                  ) : (
+                    <MoonStar className="inline-block h-4 w-4 mr-2 align-middle" />
+                  )}
+                  {isDarkMode ? "Lys modus" : "Mørk modus"}
+                </span>
+              </button>
+            </li>
+            <li className="mt-2 border-t border-(--card-border) pt-2 relative">
+              <button
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
+                onClick={() => setLanguageOpen((value) => !value)}
+                aria-haspopup="listbox"
+                aria-expanded={languageOpen}
+              >
+                <span className="notranslate" translate="no">
+                  <Globe className="inline-block h-4 w-4 mr-2 align-middle" />
+                  {LANGUAGE_OPTIONS.find((option) => option.code === language)?.label ??
+                    "Velg språk"}
+                </span>
+                <ChevronUp
+                  className={[
+                    "h-4 w-4 transition-transform duration-200",
+                    languageOpen ? "" : "rotate-180",
+                  ].join(" ")}
+                />
+              </button>
+
+              {languageOpen && (
+                <div className="translate-menu translate-menu--up translate-menu--full animate-in fade-in duration-200">
+                  {LANGUAGE_OPTIONS.map((option) => (
+                    <button
+                      key={option.code}
+                      className={[
+                        "translate-menu__item",
+                        option.code === language ? "translate-menu__item--active" : "",
+                      ].join(" ")}
+                      type="button"
+                      onClick={() => {
+                        window.__cfsTranslateSetLanguage?.(option.code);
+                        setLanguage(option.code);
+                        setLanguageOpen(false);
+                      }}
+                    >
+                      <span className="notranslate" translate="no">
+                        {option.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </li>
           </ul>
         </div>
