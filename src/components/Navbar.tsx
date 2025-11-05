@@ -172,7 +172,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full border-b border-(--card-border) bg-(--bg-page) shadow-sm"
+        className="fixed top-0 left-0 right-0 z-50 w-full border-b border-(--card-border) bg-(--bg-page) shadow-sm"
         style={{
           paddingTop: "var(--app-safe-top)",
           paddingLeft: "var(--app-safe-left)",
