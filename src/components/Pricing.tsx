@@ -29,11 +29,12 @@ export default function Pricing() {
   const { t } = useTranslation();
   const { page, loading } = useWpPage<PricingAcf>("pricing");
 
-  // Safe fallbacks: use i18n if WP/ACF not present yet
-  const starterPrice =
-    page?.acf?.starter_price ?? (t("pricing.starter.price") as string);
-  const proPrice =
-    page?.acf?.pro_price ?? (t("pricing.pro.price") as string);
+  const FALLBACK_STARTER_PRICE = "8,500 NOK";
+  const FALLBACK_PRO_PRICE = "25,000 NOK";
+
+  // Temporarily lock prices to the fallback values while API access is blocked
+  const starterPrice = FALLBACK_STARTER_PRICE;
+  const proPrice = FALLBACK_PRO_PRICE;
   const customPrice =
     page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
 
