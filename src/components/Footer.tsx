@@ -19,9 +19,11 @@ import { MAILTO, CONTACT_EMAIL } from "../config/contact";
 import { resetConsent } from "../utils/consent";
 import Container from "./ui/Container";
 import { useTranslation } from "../lib/t";
+import { renderBrandSafe } from "../utils/notranslate";
 
 export default function Footer() {
   const { t } = useTranslation();
+  const brandLabel = t("brand") as string;
   const year = new Date().getFullYear();
 
   return (
@@ -42,12 +44,12 @@ export default function Footer() {
                 alt="CodeForge Studio logo"
                 className="h-12 w-12"
               />
-              <span className="text-xl sm:text-2xl">
-                {(t("brand") as string).toUpperCase()}
+              <span className="text-xl sm:text-2xl notranslate" translate="no">
+                {brandLabel.toUpperCase()}
               </span>
             </Link>
             <p className="mt-2 max-w-md text-sm text-(--text-dim)">
-              {t("hero.tagline") as string}
+              {renderBrandSafe(t("hero.tagline") as string)}
             </p>
           </div>
 
@@ -92,14 +94,20 @@ export default function Footer() {
         {/* Divider & bottom section */}
         <div className="mt-6 border-t border-(--card-border) pt-4 flex flex-col gap-2 text-xs text-(--text-dim) md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-1 flex-wrap">
-            © {year} CodeForgeStudio. Alle rettigheter forbeholdt. Designet og utviklet av{" "}
+            © {year}{" "}
+            <span className="notranslate" translate="no">
+              CodeForgeStudio
+            </span>
+            . Alle rettigheter forbeholdt. Designet og utviklet av{" "}
             <a
               href="https://codeforgestudio.no"
               target="_blank"
               rel="noreferrer"
               className="text-(--color-brand-sea) hover:underline"
             >
-              CodeForgeStudio
+              <span className="notranslate" translate="no">
+                CodeForgeStudio
+              </span>
             </a>
             . Driftet av{" "}
             <a
@@ -114,7 +122,9 @@ export default function Footer() {
                 className="h-6 w-auto"
                 loading="lazy"
               />
-              <span className="sr-only">Netlify</span>
+              <span className="sr-only notranslate" translate="no">
+                Netlify
+              </span>
             </a>
             .
           </p>

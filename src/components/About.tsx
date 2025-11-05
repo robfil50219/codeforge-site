@@ -7,6 +7,7 @@
 // src/components/About.tsx
 import { type JSX } from "react";
 import { useTranslation } from "../lib/t";
+import { renderBrandSafe } from "../utils/notranslate";
 
 import { FaReact, FaNodeJs, FaWordpress } from "react-icons/fa";
 import {
@@ -24,6 +25,23 @@ export default function About() {
 
   const highlights = t("about.highlights", { returnObjects: true }) as string[];
   const tech = t("about.tech", { returnObjects: true }) as string[];
+  const rawCopy = t("about.copy") as string;
+  const nameToken = "Robert Filep";
+  const copySegments = rawCopy.split(nameToken);
+  const renderCopy = () =>
+    copySegments.flatMap((segment, index) => {
+      const content = [
+        <span key={`segment-${index}`}>{segment}</span>,
+      ];
+      if (index < copySegments.length - 1) {
+        content.push(
+          <span key={`name-${index}`} className="notranslate" translate="no">
+            {nameToken}
+          </span>,
+        );
+      }
+      return content;
+    });
 
   const techIcons: Record<string, JSX.Element> = {
     React: <FaReact className="h-5 w-5 text-sky-600 dark:text-sky-200" />,
@@ -87,8 +105,11 @@ export default function About() {
             </div>
 
             <div className="mt-6">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Robert Filep
+              <h3
+                className="text-2xl font-bold text-slate-900 dark:text-white notranslate"
+                translate="no"
+              >
+                {nameToken}
               </h3>
               <p
                 className="mt-1 font-medium"
@@ -96,7 +117,7 @@ export default function About() {
                   color: "var(--color-brand-accent-soft)",
                 }}
               >
-                Frontend-utvikler • Grunnlegger av CodeForge Studio
+                {renderBrandSafe("Frontend-utvikler • Grunnlegger av CodeForge Studio")}
               </p>
             </div>
           </div>
@@ -104,15 +125,15 @@ export default function About() {
           {/* Text */}
           <div>
             <p className="text-sm font-semibold tracking-widest text-sky-700 dark:text-cyan-200 uppercase">
-              {t("about.sectionLabel") as string}
+              {renderBrandSafe(t("about.sectionLabel") as string)}
             </p>
 
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-              {t("about.heading") as string}
+              {renderBrandSafe(t("about.heading") as string)}
             </h2>
 
             <p className="mt-4 text-lg text-slate-700 dark:text-white/80">
-              {t("about.copy") as string}
+              {renderCopy()}
             </p>
 
             {/* Highlights */}
@@ -124,7 +145,7 @@ export default function About() {
                              dark:border-white/10 dark:bg-white/5 dark:text-white/90"
                 >
                   <span className="inline-block h-2 w-2 rounded-full bg-sky-500 dark:bg-cyan-300" />
-                  {item}
+                  {renderBrandSafe(item)}
                 </li>
               ))}
             </ul>
@@ -141,7 +162,7 @@ export default function About() {
                   {techIcons[label] ?? (
                     <span className="inline-block h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-200/70" />
                   )}
-                  <span>{label}</span>
+                  <span>{renderBrandSafe(label)}</span>
                 </span>
               ))}
             </div>

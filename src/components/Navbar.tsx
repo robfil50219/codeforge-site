@@ -195,7 +195,10 @@ export default function Navbar() {
                 alt="CodeForge Studio logo"
                 className="h-10 w-10 sm:h-12 sm:w-12 animate-flame-breathe"
               />
-              <span className="text-xl sm:text-2xl tracking-[0.04em] animate-text-glide anim-delay-200">
+              <span
+                className="text-xl sm:text-2xl tracking-[0.04em] animate-text-glide anim-delay-200 notranslate"
+                translate="no"
+              >
                 CODEFORGE STUDIO
               </span>
             </Link>

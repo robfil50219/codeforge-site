@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import Container from "./ui/Container";
 import ProcessStrip from "./ProcessStrip";
+import { renderBrandSafe } from "../utils/notranslate";
 
 // Tone color system for icon chips
 type Tone = "sky" | "indigo" | "emerald" | "slate";
@@ -177,9 +178,9 @@ export default function Services() {
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 id="services-heading" className="text-heading text-3xl font-bold tracking-tight">
-            {t("services.heading")}
+            {renderBrandSafe(t("services.heading") as string)}
           </h2>
-          <p className="mt-3 text-body">{t("services.sub")}</p>
+          <p className="mt-3 text-body">{renderBrandSafe(t("services.sub") as string)}</p>
         </div>
 
         {/* Primary services */}
@@ -199,14 +200,21 @@ export default function Services() {
                   <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                <h3 className="text-heading text-lg font-semibold mt-4">{title}</h3>
-                <p className="text-body text-sm leading-relaxed mt-2">{blurb}</p>
+                <h3 className="text-heading text-lg font-semibold mt-4">
+                  {renderBrandSafe(title)}
+                </h3>
+                <p className="text-body text-sm leading-relaxed mt-2">
+                  {renderBrandSafe(blurb)}
+                </p>
 
                 <ul className="mt-4 space-y-2 text-sm">
-                  {points.map((p) => (
-                    <li key={p} className="flex items-start gap-2 text-body leading-relaxed">
+                  {points.map((p, idx) => (
+                    <li
+                      key={`${title}-primary-${idx}`}
+                      className="flex items-start gap-2 text-body leading-relaxed"
+                    >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
-                      <span>{p}</span>
+                      <span>{renderBrandSafe(p)}</span>
                     </li>
                   ))}
                 </ul>
@@ -238,14 +246,21 @@ export default function Services() {
                   <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                <h3 className="text-heading text-lg font-semibold mt-4">{title}</h3>
-                <p className="text-body text-sm leading-relaxed mt-2">{blurb}</p>
+                <h3 className="text-heading text-lg font-semibold mt-4">
+                  {renderBrandSafe(title)}
+                </h3>
+                <p className="text-body text-sm leading-relaxed mt-2">
+                  {renderBrandSafe(blurb)}
+                </p>
 
                 <ul className="mt-4 space-y-2 text-sm">
-                  {points.map((p) => (
-                    <li key={p} className="flex items-start gap-2 text-body leading-relaxed">
+                  {points.map((p, idx) => (
+                    <li
+                      key={`${title}-extra-${idx}`}
+                      className="flex items-start gap-2 text-body leading-relaxed"
+                    >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
-                      <span>{p}</span>
+                      <span>{renderBrandSafe(p)}</span>
                     </li>
                   ))}
                 </ul>

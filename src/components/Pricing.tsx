@@ -16,6 +16,7 @@ import { Rocket, Sparkles, Settings } from "lucide-react";
 import Container from "./ui/Container";
 import { cn } from "../utils/cn";
 import { useWpPage } from "../hooks/useWpPage";
+import { renderBrandSafe } from "../utils/notranslate";
 
 /** ACF structure you made in WP (field names must match) */
 type PricingAcf = {
@@ -69,8 +70,9 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
+      translate="no"
       className={cn(
-        "scroll-mt-24 bg-transparent",
+        "scroll-mt-24 bg-transparent notranslate",
         // text defaults to tokens
         "text-body dark:text-(--text-page)"
       )}
@@ -87,7 +89,7 @@ export default function Pricing() {
               "dark:text-(--text-heading)"
             )}
           >
-            {t("pricing.heading") as string}
+            {renderBrandSafe(t("pricing.heading") as string)}
           </h2>
 
           <p
@@ -99,7 +101,7 @@ export default function Pricing() {
               "dark:text-(--text-dim)"
             )}
           >
-            {t("pricing.sub") as string}
+            {renderBrandSafe(t("pricing.sub") as string)}
           </p>
         </div>
 
@@ -173,7 +175,7 @@ export default function Pricing() {
                     "dark:text-(--text-dim)"
                   )}
                 >
-                  {t("pricing.starter.blurb") as string}
+                  {renderBrandSafe(t("pricing.starter.blurb") as string)}
                 </p>
 
                 <div className="mt-4">
@@ -199,10 +201,10 @@ export default function Pricing() {
                     "dark:text-(--text-page)"
                   )}
                 >
-                  {starterFeatures.map((f) => (
-                    <li key={f} className="flex items-start gap-2">
+                  {starterFeatures.map((f, idx) => (
+                    <li key={`starter-${idx}`} className="flex items-start gap-2">
                       <span className={bullet} />
-                      <span>{f}</span>
+                      <span>{renderBrandSafe(f)}</span>
                     </li>
                   ))}
                 </ul>
@@ -290,7 +292,7 @@ export default function Pricing() {
                     "text-slate-900 dark:text-(--text-heading)"
                   )}
                 >
-                  {t("pricing.pro.name") as string}
+                  {renderBrandSafe(t("pricing.pro.name") as string)}
                 </h3>
 
                 <p
@@ -299,7 +301,7 @@ export default function Pricing() {
                     "text-slate-600 dark:text-(--text-dim)"
                   )}
                 >
-                  {t("pricing.pro.blurb") as string}
+                  {renderBrandSafe(t("pricing.pro.blurb") as string)}
                 </p>
 
                 <div className="mt-4">
@@ -319,10 +321,10 @@ export default function Pricing() {
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
-                  {proFeatures.map((f) => (
-                    <li key={f} className="flex items-start gap-2">
+                  {proFeatures.map((f, idx) => (
+                    <li key={`pro-${idx}`} className="flex items-start gap-2">
                       <span className={bullet} />
-                      <span>{f}</span>
+                      <span>{renderBrandSafe(f)}</span>
                     </li>
                   ))}
                 </ul>
@@ -388,7 +390,7 @@ export default function Pricing() {
                     "text-slate-900 dark:text-(--text-heading)"
                   )}
                 >
-                  {t("pricing.custom.name") as string}
+                  {renderBrandSafe(t("pricing.custom.name") as string)}
                 </h3>
 
                 <p
@@ -397,7 +399,7 @@ export default function Pricing() {
                     "text-slate-600 dark:text-(--text-dim)"
                   )}
                 >
-                  {t("pricing.custom.blurb") as string}
+                  {renderBrandSafe(t("pricing.custom.blurb") as string)}
                 </p>
 
                 <div className="mt-4">
@@ -417,10 +419,10 @@ export default function Pricing() {
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
-                  {customFeatures.map((f) => (
-                    <li key={f} className="flex items-start gap-2">
+                  {customFeatures.map((f, idx) => (
+                    <li key={`custom-${idx}`} className="flex items-start gap-2">
                       <span className={bullet} />
-                      <span>{f}</span>
+                      <span>{renderBrandSafe(f)}</span>
                     </li>
                   ))}
                 </ul>

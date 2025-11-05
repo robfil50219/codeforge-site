@@ -14,6 +14,22 @@ import {
 
 const SCRIPT_ID = "cfs-google-translate-script";
 const CONTAINER_ID = "cfs-google-translate";
+const BASE_LANGUAGE: LanguageCode = "no";
+
+function clearGoogleTranslateState(baseLang: string) {
+  try {
+    const hosts = [window.location.hostname, `.${window.location.hostname}`];
+    hosts.forEach((domain) => {
+      document.cookie = `googtrans=/auto/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
+      document.cookie = `googtrans=/${baseLang}/${baseLang};expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
+      document.cookie = `googtrans=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${domain}`;
+    });
+    localStorage.removeItem("googtrans");
+    sessionStorage.removeItem("googtrans");
+  } catch {
+    // ignore storage errors
+  }
+}
 
 declare global {
   interface Window {
@@ -69,12 +85,21 @@ export default function FixedTranslateWidget({
     (code: LanguageCode, opts?: { focusTrigger?: boolean; closeMenu?: boolean }) => {
       const select = selectRef.current;
       if (!select) return;
-      select.value = code;
+      const isBase = code === BASE_LANGUAGE;
+      select.value = isBase ? "" : code;
       select.dispatchEvent(new Event("change", { bubbles: true }));
+      if (isBase) {
+        clearGoogleTranslateState(BASE_LANGUAGE);
+        notifyLanguageChange(BASE_LANGUAGE);
+        window.requestAnimationFrame(() => {
+          window.location.reload();
+        });
+        return;
+      }
       if (opts?.closeMenu !== false) closeMenu();
       if (opts?.focusTrigger !== false) triggerRef.current?.focus();
     },
-    [closeMenu],
+    [closeMenu, notifyLanguageChange],
   );
 
   useEffect(() => {
@@ -113,7 +138,7 @@ export default function FixedTranslateWidget({
         select.style.height = "0";
 
         const handleChange = () => {
-          const next = (select.value || "no") as LanguageCode;
+          const next = (select.value || BASE_LANGUAGE) as LanguageCode;
           const allowed = LANGUAGE_OPTIONS.some((option) => option.code === next);
           notifyLanguageChange(allowed ? next : "no");
         };
