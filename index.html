@@ -89,13 +89,18 @@
 
         try {
           const mobile = isMobileDevice();
-          const stored = mobile ? null : localStorage.getItem(STORAGE_KEY);
+          let stored = null;
+          try {
+            stored = localStorage.getItem(STORAGE_KEY);
+          } catch (error) {
+            console.warn("Unable to read stored theme", error);
+          }
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           let initialMode;
-          if (mobile) {
-            initialMode = "light";
-          } else if (stored === "dark" || stored === "light") {
+          if (stored === "dark" || stored === "light") {
             initialMode = stored;
+          } else if (mobile) {
+            initialMode = "light";
           } else {
             initialMode = systemPrefersDark ? "dark" : "light";
           }

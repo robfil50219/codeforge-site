@@ -58,7 +58,6 @@ const isMobileDevice = (): boolean => {
 
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
-  if (isMobileDevice()) return null;
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     return stored === "dark" || stored === "light" ? stored : null;
