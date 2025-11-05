@@ -26,7 +26,10 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
-import { LANGUAGE_OPTIONS, type LanguageCode } from "./FixedTranslateWidget";
+import {
+  LANGUAGE_OPTIONS,
+  type LanguageCode,
+} from "./translate/language-data";
 
 type MobileBubbleNavProps = {
   scrollToId: (id: string) => void;
