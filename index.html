@@ -22,6 +22,31 @@
         const root = document.documentElement;
         const meta = document.querySelector('meta[name="color-scheme"]');
 
+        const isMobileDevice = () => {
+          try {
+            if (navigator?.userAgentData && typeof navigator.userAgentData.mobile === "boolean") {
+              return navigator.userAgentData.mobile;
+            }
+          } catch (error) {
+            console.warn("Unable to inspect userAgentData", error);
+          }
+
+          const ua = (navigator && typeof navigator.userAgent === "string" && navigator.userAgent) || "";
+          const mobileRegex =
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
+          if (mobileRegex.test(ua)) {
+            return true;
+          }
+          if (typeof window.matchMedia === "function") {
+            try {
+              return window.matchMedia("(pointer: coarse)").matches;
+            } catch {
+              return false;
+            }
+          }
+          return false;
+        };
+
         const updateBodyScheme = (mode) => {
           if (document.body) {
             document.body.style.colorScheme = mode;
@@ -65,7 +90,14 @@
         try {
           const stored = localStorage.getItem(STORAGE_KEY);
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const initialMode = stored === "dark" || (stored === null && systemPrefersDark) ? "dark" : "light";
+          let initialMode;
+          if (stored === "dark" || stored === "light") {
+            initialMode = stored;
+          } else if (isMobileDevice()) {
+            initialMode = "light";
+          } else {
+            initialMode = systemPrefersDark ? "dark" : "light";
+          }
           apply(initialMode);
 
           window.__CFS_GET_THEME = () => (root.classList.contains("dark") ? "dark" : "light");

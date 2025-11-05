@@ -28,6 +28,34 @@ declare global {
 const THEME_STORAGE_KEY = "cfs-theme";
 type ThemeMode = "light" | "dark";
 
+const isMobileDevice = (): boolean => {
+  if (typeof navigator !== "undefined") {
+    const nav = navigator as Navigator & {
+      userAgentData?: {
+        mobile?: boolean;
+      };
+    };
+    if (typeof nav.userAgentData?.mobile === "boolean") {
+      return nav.userAgentData.mobile;
+    }
+    if (typeof nav.userAgent === "string") {
+      const mobileRegex =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
+      if (mobileRegex.test(nav.userAgent)) {
+        return true;
+      }
+    }
+  }
+  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+    try {
+      return window.matchMedia("(pointer: coarse)").matches;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
+
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
   try {
@@ -54,6 +82,9 @@ const getInitialTheme = (): ThemeMode => {
   if (stored) return stored;
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
     return "dark";
+  }
+  if (typeof window !== "undefined" && isMobileDevice()) {
+    return "light";
   }
   return getSystemTheme();
 };
