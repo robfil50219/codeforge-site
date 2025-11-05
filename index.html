@@ -88,13 +88,14 @@
         };
 
         try {
-          const stored = localStorage.getItem(STORAGE_KEY);
+          const mobile = isMobileDevice();
+          const stored = mobile ? null : localStorage.getItem(STORAGE_KEY);
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           let initialMode;
-          if (stored === "dark" || stored === "light") {
-            initialMode = stored;
-          } else if (isMobileDevice()) {
+          if (mobile) {
             initialMode = "light";
+          } else if (stored === "dark" || stored === "light") {
+            initialMode = stored;
           } else {
             initialMode = systemPrefersDark ? "dark" : "light";
           }

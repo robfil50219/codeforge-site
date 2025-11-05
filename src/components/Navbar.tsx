@@ -58,6 +58,7 @@ const isMobileDevice = (): boolean => {
 
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
+  if (isMobileDevice()) return null;
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     return stored === "dark" || stored === "light" ? stored : null;
@@ -80,11 +81,11 @@ const getInitialTheme = (): ThemeMode => {
   }
   const stored = readStoredTheme();
   if (stored) return stored;
-  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
-    return "dark";
-  }
   if (typeof window !== "undefined" && isMobileDevice()) {
     return "light";
+  }
+  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
+    return "dark";
   }
   return getSystemTheme();
 };
@@ -143,8 +144,10 @@ export default function Navbar() {
     if (typeof window === "undefined") return;
     const storedTheme = readStoredTheme();
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
-    setThemeInternal(initialTheme, storedTheme !== null);
+    const mobile = isMobileDevice();
+    const initialTheme: ThemeMode =
+      storedTheme ?? (mobile ? "light" : media.matches ? "dark" : "light");
+    setThemeInternal(initialTheme, !mobile && storedTheme !== null);
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
