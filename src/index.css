@@ -109,6 +109,9 @@ body,
 /* smooth anchor scroll for section jumps */
 html {
   scroll-behavior: smooth;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* the page background + default text */
@@ -120,10 +123,10 @@ body {
   min-height: var(--app-height);
   overflow-x: hidden;
   transition:
-    background-color 0.5s ease,
-    color 0.5s ease,
-    background 0.5s ease,
-    filter 0.5s ease;
+    background-color 0.3s ease,
+    color 0.3s ease,
+    background 0.3s ease,
+    filter 0.3s ease;
 }
 
 /* Media defaults so images/icons don’t overflow.

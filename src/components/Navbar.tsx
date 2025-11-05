@@ -20,6 +20,8 @@ import FixedTranslateWidget from "./FixedTranslateWidget";
 declare global {
   interface Window {
     __BALLPIT_DISABLED?: boolean;
+    __CFS_SET_THEME?: (mode: ThemeMode, persist?: boolean) => void;
+    __CFS_GET_THEME?: () => ThemeMode | undefined;
   }
 }
 
@@ -42,6 +44,12 @@ const getSystemTheme = (): ThemeMode => {
 };
 
 const getInitialTheme = (): ThemeMode => {
+  if (typeof window !== "undefined") {
+    const windowTheme = window.__CFS_GET_THEME?.();
+    if (windowTheme === "dark" || windowTheme === "light") {
+      return windowTheme;
+    }
+  }
   const stored = readStoredTheme();
   if (stored) return stored;
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
@@ -52,12 +60,19 @@ const getInitialTheme = (): ThemeMode => {
 
 const applyThemeClass = (mode: ThemeMode) => {
   if (typeof document === "undefined") return;
-  const root = document.documentElement;
-  if (mode === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
+  if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
+    window.__CFS_SET_THEME(mode, false);
+    return;
   }
+  const root = document.documentElement;
+  root.classList.toggle("dark", mode === "dark");
+  root.style.colorScheme = mode;
+  document.body?.style.setProperty("color-scheme", mode);
+  const meta = document.querySelector('meta[name="color-scheme"]');
+  if (meta) {
+    meta.setAttribute("content", mode === "dark" ? "dark light" : "light dark");
+  }
+  void root.offsetHeight;
 };
 
 export default function Navbar() {
@@ -69,19 +84,25 @@ export default function Navbar() {
 
   const setThemeInternal = useCallback(
     (mode: ThemeMode, persist: boolean) => {
-      applyThemeClass(mode);
-      setThemeState((current) => (current === mode ? current : mode));
-      if (typeof window !== "undefined") {
-        try {
-          if (persist) {
+      if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
+        window.__CFS_SET_THEME(mode, persist);
+      } else {
+        applyThemeClass(mode);
+        if (persist && typeof window !== "undefined") {
+          try {
             localStorage.setItem(THEME_STORAGE_KEY, mode);
-          } else {
-            localStorage.removeItem(THEME_STORAGE_KEY);
+          } catch {
+            // ignore storage errors (e.g. private mode)
           }
-        } catch {
-          // ignore storage errors (e.g. private mode)
+        } else if (!persist && typeof window !== "undefined") {
+          try {
+            localStorage.removeItem(THEME_STORAGE_KEY);
+          } catch {
+            // ignore storage errors
+          }
         }
       }
+      setThemeState((current) => (current === mode ? current : mode));
       manualThemeRef.current = persist;
     },
     [],

@@ -19,13 +19,57 @@
     <script>
       (function () {
         const STORAGE_KEY = "cfs-theme";
+        const root = document.documentElement;
+        const meta = document.querySelector('meta[name="color-scheme"]');
+
+        const updateBodyScheme = (mode) => {
+          if (document.body) {
+            document.body.style.colorScheme = mode;
+          } else {
+            document.addEventListener(
+              "DOMContentLoaded",
+              () => {
+                document.body && (document.body.style.colorScheme = mode);
+              },
+              { once: true },
+            );
+          }
+        };
+
+        const apply = (mode, persist) => {
+          const normalized = mode === "dark" ? "dark" : "light";
+          const isDark = normalized === "dark";
+          root.classList.toggle("dark", isDark);
+          root.style.colorScheme = normalized;
+          if (meta) {
+            meta.setAttribute("content", isDark ? "dark light" : "light dark");
+          }
+          updateBodyScheme(normalized);
+          void root.offsetHeight; // force reflow for Safari repaint
+          if (persist === true) {
+            try {
+              localStorage.setItem(STORAGE_KEY, normalized);
+            } catch (error) {
+              console.warn("Unable to persist theme", error);
+            }
+          } else if (persist === false) {
+            try {
+              localStorage.removeItem(STORAGE_KEY);
+            } catch (error) {
+              console.warn("Unable to clear stored theme", error);
+            }
+          }
+          return normalized;
+        };
+
         try {
           const stored = localStorage.getItem(STORAGE_KEY);
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const shouldDark = stored === "dark" || (!stored && systemPrefersDark);
-          if (shouldDark) {
-            document.documentElement.classList.add("dark");
-          }
+          const initialMode = stored === "dark" || (stored === null && systemPrefersDark) ? "dark" : "light";
+          apply(initialMode);
+
+          window.__CFS_GET_THEME = () => (root.classList.contains("dark") ? "dark" : "light");
+          window.__CFS_SET_THEME = (mode, persist = true) => apply(mode, persist);
         } catch (error) {
           console.warn("Theme preflight failed", error);
         }
