@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
+import FixedTranslateWidget from "./FixedTranslateWidget";
 
 declare global {
   interface Window {
@@ -196,6 +197,9 @@ export default function Navbar() {
                 >
                   {isDark ? "Lys" : "Mørk"}
                 </button>
+
+                {/* translate button (desktop) */}
+                <FixedTranslateWidget className="shrink-0" />
               </div>
             </nav>
           </div>
