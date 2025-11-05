@@ -90,10 +90,14 @@ export default function MobileBubbleNav({
     <>
       <button
         className={[
-          "fixed bottom-4 right-4 z-50 md:hidden",
+          "fixed z-50 md:hidden",
           "surface-chip mobile-bubble-trigger px-4 py-2 text-heading text-xs font-semibold shadow-lg border-0",
           "active:scale-95 transition-transform",
         ].join(" ")}
+        style={{
+          bottom: "calc(1rem + var(--app-safe-bottom))",
+          right: "calc(1rem + var(--app-safe-right))",
+        }}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="Meny"

@@ -147,8 +147,15 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full">
-        <div className="h-16 flex items-center px-4 sm:px-6 lg:px-8 border-b border-(--card-border) bg-(--bg-page) shadow-sm">
+      <header
+        className="sticky top-0 z-50 w-full border-b border-(--card-border) bg-(--bg-page)/95 backdrop-blur-md shadow-sm"
+        style={{
+          paddingTop: "var(--app-safe-top)",
+          paddingLeft: "var(--app-safe-left)",
+          paddingRight: "var(--app-safe-right)",
+        }}
+      >
+        <div className="flex min-h-[4rem] items-center px-4 sm:px-6 lg:px-8">
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
             <Link
               to="/"

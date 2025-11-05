@@ -14,6 +14,7 @@
  */
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -95,6 +96,23 @@ function Home() {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.CSS && window.CSS.supports && window.CSS.supports("height: 100svh")) {
+      return;
+    }
+    const setAppHeight = () => {
+      document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+    };
+    setAppHeight();
+    window.addEventListener("resize", setAppHeight);
+    window.addEventListener("orientationchange", setAppHeight);
+    return () => {
+      window.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("orientationchange", setAppHeight);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <ErrorBoundary>
@@ -102,12 +120,21 @@ export default function App() {
         <BallpitBackground />
 
         {/* Foreground app content */}
-        <div className="relative z-10 min-h-screen flex flex-col text-slate-900 dark:text-[#F6FAFA]">
+        <div
+          className="relative z-10 flex flex-col text-slate-900 dark:text-[#F6FAFA]"
+          style={{ minHeight: "var(--app-height)" }}
+        >
           <ScrollToTop />
           <Navbar />
           <ConsentBanner />
 
-          <main className="flex-1 pt-16 pb-24 md:pb-0">
+          <main
+            className="flex-1 pb-24 md:pb-0"
+            style={{
+              paddingTop: "calc(var(--app-safe-top) + 4rem)",
+              paddingBottom: "calc(var(--app-safe-bottom) + 6rem)",
+            }}
+          >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/privacy" element={<PrivacyPage />} />

@@ -318,7 +318,7 @@ export default function BallpitBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 -z-10 pointer-events-none"
+      className="ballpit-canvas"
       aria-hidden="true"
     />
   );
