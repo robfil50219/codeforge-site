@@ -149,6 +149,9 @@ export default function Navbar() {
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
     setThemeInternal(next, true);
+    window.requestAnimationFrame(() => {
+      window.location.reload();
+    });
   }
 
   function toggleBackgroundMode() {
@@ -214,7 +217,12 @@ export default function Navbar() {
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
                 <button
-                  onClick={toggleBackgroundMode}
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleBackgroundMode();
+                  }}
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
                   aria-pressed={isStaticBg}
                 >
@@ -223,7 +231,12 @@ export default function Navbar() {
 
                 {/* desktop theme toggle */}
                 <button
-                  onClick={toggleTheme}
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleTheme();
+                  }}
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
                 >
                   {isDark ? "Lys" : "Mørk"}
