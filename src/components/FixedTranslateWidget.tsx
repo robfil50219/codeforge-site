@@ -225,7 +225,7 @@ export default function FixedTranslateWidget({
       <button
         type="button"
         ref={triggerRef}
-        className="surface-chip translate-button px-3 py-1.5 text-heading"
+        className="surface-chip nav-chip translate-button px-3 py-1.5 text-heading"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}

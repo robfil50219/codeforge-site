@@ -184,7 +184,7 @@ export default function Navbar() {
                 {/* background toggle */}
                 <button
                   onClick={toggleBackgroundMode}
-                  className="surface-chip px-3 py-1.5 text-heading"
+                  className="surface-chip nav-chip px-3 py-1.5 text-heading"
                   aria-pressed={isStaticBg}
                 >
                   {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
@@ -193,7 +193,7 @@ export default function Navbar() {
                 {/* desktop theme toggle */}
                 <button
                   onClick={toggleTheme}
-                  className="surface-chip px-3 py-1.5 text-heading"
+                  className="surface-chip nav-chip px-3 py-1.5 text-heading"
                 >
                   {isDark ? "Lys" : "Mørk"}
                 </button>
