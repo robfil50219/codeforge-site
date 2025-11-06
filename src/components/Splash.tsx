@@ -8,13 +8,12 @@ export default function Splash() {
     const original = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
 
-    // ⏱ keep visible a bit longer
-    const startFade = setTimeout(() => setFade(true), 2400); // begin fade after 2.4 s
+    const startFade = setTimeout(() => setFade(true), 2400);
     const remove = setTimeout(() => {
       const el = document.getElementById("cfs-react-splash");
       if (el) el.style.display = "none";
       document.documentElement.style.overflow = original;
-    }, 3000); // fully gone at 3 s
+    }, 3000);
 
     return () => {
       clearTimeout(startFade);
@@ -33,12 +32,13 @@ export default function Splash() {
       }`}
     >
       <div className="flex flex-col items-center gap-6">
+        {/* 🔥 Bigger, responsive flame logo (96px mobile → 128px desktop) */}
         <img
           src={logoSrc}
           alt="CodeForge Studio flame logo"
-          width={96}
-          height={96}
-          className="select-none pointer-events-none animate-[cfs-pulse_1.1s_ease-in-out_infinite]"
+          width={128}
+          height={128}
+          className="select-none pointer-events-none h-auto w-24 sm:w-32 animate-[cfs-pulse_1.1s_ease-in-out_infinite]"
           draggable={false}
         />
 
@@ -46,6 +46,7 @@ export default function Splash() {
           CodeForge Studio
         </div>
 
+        {/* Shimmer loader bar */}
         <div className="relative h-1 w-56 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
           <span className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-slate-400/80 to-transparent animate-[cfs-slide_1.1s_ease-in-out_infinite]" />
         </div>
