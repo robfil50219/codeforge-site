@@ -1,16 +1,8 @@
-
-// src/components/Footer.tsx 
+// src/components/Footer.tsx
 /**
  * -------------------------------------------------------
  *  CodeForge Studio — Proprietary Source Code
  *  © 2025 CodeForge Studio Filep. All rights reserved.
- *
- *  This file is part of the CodeForge Studio website.
- *  Unauthorized copying, modification, or distribution
- *  of this file, via any medium, is strictly prohibited.
- *
- *  For licensing or collaboration inquiries:
- *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
 import { Link } from "react-router-dom";
@@ -23,38 +15,37 @@ import { renderBrandSafe } from "../utils/notranslate";
 
 export default function Footer() {
   const { t } = useTranslation();
-  const brandLabel = t("brand") as string;
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-(--bg-page) text-(--text-page) border-t border-(--card-border)">
+    <footer className="w-full bg-(--bg-page) text-(--text-page) border-t border-(--card-border) pt-4">
       <Container className="py-8">
-        {/* Top section */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto]">
-          {/* Brand */}
-          <div>
+        {/* Top: brand left, contact right */}
+        <div className="grid gap-8 md:grid-cols-2 md:items-start">
+          {/* Brand row (flame + tagline) */}
+          <div className="flex items-center gap-4">
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
               aria-label="Til forsiden"
+              className="shrink-0 inline-flex"
             >
               <img
-                src={`${import.meta.env.BASE_URL}favicon.png`}
-                alt="CodeForge Studio logo"
-                className="h-12 w-12"
+                src={`${import.meta.env.BASE_URL}favicon2.png`}
+                alt="CodeForge Studio flame logo"
+                className="h-16 w-16 select-none pointer-events-none animate-[cfs-pulse_2.5s_ease-in-out_infinite]"
+                loading="lazy"
+                draggable={false}
               />
-              <span className="text-xl sm:text-2xl notranslate" translate="no">
-                {brandLabel.toUpperCase()}
-              </span>
             </Link>
-            <p className="mt-2 max-w-md text-sm text-(--text-dim)">
+
+            <p className="text-sm text-(--text-dim) leading-snug max-w-xl">
               {renderBrandSafe(t("hero.tagline") as string)}
             </p>
           </div>
 
-          {/* Contact */}
-          <div className="max-w-xs lg:justify-self-end">
+          {/* Contact block */}
+          <div className="max-w-xs md:justify-self-end">
             <div className="text-sm font-semibold text-(--text-heading)">
               {t("footer.connect") as string}
             </div>
@@ -85,29 +76,21 @@ export default function Footer() {
                 <Mail className="h-5 w-5 text-(--color-brand-sea)" />
               </a>
             </div>
-            <p className="mt-2 break-all text-xs text-(--text-dim)">
-              {CONTACT_EMAIL}
-            </p>
+            <p className="mt-2 break-all text-xs text-(--text-dim)">{CONTACT_EMAIL}</p>
           </div>
         </div>
 
-        {/* Divider & bottom section */}
+        {/* Divider & bottom row */}
         <div className="mt-6 border-t border-(--card-border) pt-4 flex flex-col gap-2 text-xs text-(--text-dim) md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-1 flex-wrap">
-            © {year}{" "}
-            <span className="notranslate" translate="no">
-              CodeForgeStudio
-            </span>
-            . Alle rettigheter forbeholdt. Designet og utviklet av{" "}
+            © {year} <span className="notranslate" translate="no">CodeForgeStudio</span>. Alle rettigheter forbeholdt. Designet og utviklet av{" "}
             <a
               href="https://codeforgestudio.no"
               target="_blank"
               rel="noreferrer"
               className="text-(--color-brand-sea) hover:underline"
             >
-              <span className="notranslate" translate="no">
-                CodeForgeStudio
-              </span>
+              <span className="notranslate" translate="no">CodeForgeStudio</span>
             </a>
             . Driftet av{" "}
             <a
@@ -122,9 +105,7 @@ export default function Footer() {
                 className="h-6 w-auto"
                 loading="lazy"
               />
-              <span className="sr-only notranslate" translate="no">
-                Netlify
-              </span>
+              <span className="sr-only notranslate" translate="no">Netlify</span>
             </a>
             .
           </p>
@@ -146,6 +127,20 @@ export default function Footer() {
           </div>
         </div>
       </Container>
+
+      {/* Scoped keyframes for the subtle flame pulse */}
+      <style>{`
+        @keyframes cfs-pulse {
+          0%   { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(255,140,0,0)); }
+          50%  { transform: scale(1.04); filter: drop-shadow(0 0 10px rgba(255,140,0,0.45)); }
+          100% { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(255,140,0,0)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-[cfs-pulse_2.5s_ease-in-out_infinite] {
+            animation: none !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 }
