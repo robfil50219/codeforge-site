@@ -42,11 +42,12 @@ export default function Pricing() {
   // SHARED STYLES
   //
   const cardBase = cn(
-    "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
-    // light
-    "border-slate-200 bg-white",
-    // dark
-    "dark:bg-[var(--card-bg)] dark:border-[var(--card-border)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] dark:hover:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+    "group relative overflow-hidden rounded-2xl p-6 transition",
+    "surface-card",
+    // light styling keeps the same palette tokens as other cards
+    "bg-white border border-slate-200",
+    // dark styling relies on global tokens for consistency
+    "dark:bg-[var(--card-bg)] dark:border-[var(--card-border)]"
   );
 
   // bullet dot in feature lists

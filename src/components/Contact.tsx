@@ -91,11 +91,12 @@ export default function Contact() {
           <a
             href={MAILTO}
             className={cn(
-              "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
+              "group relative overflow-hidden rounded-2xl p-6 transition",
+              "surface-card",
               // light card
-              "border-slate-200 bg-white",
+              "bg-white border border-slate-200",
               // dark card
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             {/* corner blob */}
@@ -150,9 +151,10 @@ export default function Contact() {
             target="_blank"
             rel="noreferrer noopener"
             className={cn(
-              "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
-              "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              "group relative overflow-hidden rounded-2xl p-6 transition",
+              "surface-card",
+              "bg-white border border-slate-200",
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             <div
@@ -201,9 +203,10 @@ export default function Contact() {
             target="_blank"
             rel="noreferrer noopener"
             className={cn(
-              "group relative overflow-hidden rounded-2xl border p-6 shadow-sm transition hover:shadow-lg",
-              "border-slate-200 bg-white",
-              "dark:bg-(--card-bg) dark:border-(--card-border) dark:shadow-[0_24px_64px_rgba(0,0,0,0.9)] hover:dark:shadow-[0_32px_80px_rgba(0,0,0,1)]"
+              "group relative overflow-hidden rounded-2xl p-6 transition",
+              "surface-card",
+              "bg-white border border-slate-200",
+              "dark:bg-(--card-bg) dark:border-(--card-border)"
             )}
           >
             <div
