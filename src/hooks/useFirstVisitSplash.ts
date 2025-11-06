@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-const KEY = "cfs-saw-splash";
+// Bump when you want everyone to see the splash again after a deploy
+const SPLASH_VERSION = "v2";
+const KEY = `cfs-saw-splash:${SPLASH_VERSION}`;
 
 export default function useFirstVisitSplash() {
   const [show, setShow] = useState(false);
@@ -12,41 +14,51 @@ export default function useFirstVisitSplash() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // show only on first visit per tab
-    if (sessionStorage.getItem(KEY) === "1") return;
+    // Force via ?splash=1 for testing
+    const force = new URLSearchParams(window.location.search).get("splash") === "1";
+
+    // Show once per tab unless forced
+    if (!force && sessionStorage.getItem(KEY) === "1") return;
     sessionStorage.setItem(KEY, "1");
     setShow(true);
 
-    const minMs = 700;
-    const maxMs = 2200;
+    // Keep visible ~2.4s + fade (component) ≈ 3.0s total
+    const minMs = 2400;
+    const maxMs = 3400; // hard cutoff
 
     const done = () => {
       ready.current = true;
       if (minDone.current) setShow(false);
     };
 
-    // minimum display time
+    // Minimum display time
     minTimer.current = window.setTimeout(() => {
       minDone.current = true;
       if (ready.current) setShow(false);
     }, minMs);
 
-    // absolute cutoff
+    // Never stick
     maxTimer.current = window.setTimeout(done, maxMs);
 
-    // hide when page is ready
+    // Mark ready when page is usable (won't hide before minMs anyway)
     if (document.readyState === "complete" || document.readyState === "interactive") {
       queueMicrotask(done);
     } else {
-      window.addEventListener("load", done, { once: true });
-      document.addEventListener("DOMContentLoaded", done, { once: true });
+      const onLoad = () => done();
+      const onDom = () => done();
+      window.addEventListener("load", onLoad, { once: true });
+      document.addEventListener("DOMContentLoaded", onDom, { once: true });
+      return () => {
+        window.removeEventListener("load", onLoad);
+        document.removeEventListener("DOMContentLoaded", onDom);
+        if (minTimer.current) clearTimeout(minTimer.current);
+        if (maxTimer.current) clearTimeout(maxTimer.current);
+      };
     }
 
     return () => {
       if (minTimer.current) clearTimeout(minTimer.current);
       if (maxTimer.current) clearTimeout(maxTimer.current);
-      window.removeEventListener("load", done);
-      document.removeEventListener("DOMContentLoaded", done);
     };
   }, []);
 
