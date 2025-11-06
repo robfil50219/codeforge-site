@@ -107,7 +107,7 @@ export default function Contact() {
                 // light blob
                 "bg-sky-100",
                 // dark blob (teal-ish tint)
-                "dark:bg-[rgba(0,160,160,0.12)] group-hover:dark:bg-[rgba(0,160,160,0.18)]"
+                "dark:bg-[rgba(0,210,200,0.28)] dark:group-hover:bg-[rgba(0,235,220,0.36)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -162,7 +162,7 @@ export default function Contact() {
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-slate-100",
-                "dark:bg-[rgba(255,255,255,0.05)] group-hover:dark:bg-[rgba(255,255,255,0.08)]"
+                "dark:bg-[rgba(148,163,184,0.28)] dark:group-hover:bg-[rgba(165,180,195,0.36)]"
               )}
             />
             <div className="relative flex items-start gap-4">
@@ -214,7 +214,7 @@ export default function Contact() {
               className={cn(
                 "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition duration-300 group-hover:scale-125",
                 "bg-[#eef5fc]",
-                "dark:bg-[rgba(10,102,194,0.12)] group-hover:dark:bg-[rgba(10,102,194,0.2)]"
+                "dark:bg-[rgba(80,160,255,0.28)] dark:group-hover:bg-[rgba(120,190,255,0.36)]"
               )}
             />
             <div className="relative flex items-start gap-4">

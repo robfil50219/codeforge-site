@@ -130,8 +130,8 @@ export default function Pricing() {
                   "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition-transform duration-300 group-hover:scale-125",
                   // light blob
                   "bg-sky-100",
-                  // dark blob (subtle teal-ish glow, low opacity)
-                  "dark:bg-[rgba(0,160,160,0.1)] dark:group-hover:bg-[rgba(0,160,160,0.15)]"
+                  // dark blob (sky glow to match icon tone)
+                  "dark:bg-[rgba(56,189,248,0.28)] dark:group-hover:bg-[rgba(125,211,252,0.36)]"
                 )}
               />
               <div className="relative">
@@ -249,7 +249,7 @@ export default function Pricing() {
                   // light blob
                   "bg-indigo-100",
                   // dark blob
-                  "dark:bg-[rgba(99,102,241,0.12)] dark:group-hover:bg-[rgba(99,102,241,0.18)]"
+                  "dark:bg-[rgba(129,140,248,0.3)] dark:group-hover:bg-[rgba(165,180,252,0.38)]"
                 )}
               />
 
@@ -360,8 +360,8 @@ export default function Pricing() {
                   "pointer-events-none absolute -right-10 -top-10 h-28 w-28 rotate-12 rounded-3xl transition-transform duration-300 group-hover:scale-125",
                   // light
                   "bg-slate-100",
-                  // dark
-                  "dark:bg-[rgba(255,255,255,0.05)] dark:group-hover:bg-[rgba(255,255,255,0.08)]"
+                  // dark (lean into emerald so it stands apart from the Starter card)
+                  "dark:bg-[rgba(16,185,129,0.3)] dark:group-hover:bg-[rgba(45,212,191,0.38)]"
                 )}
               />
               <div className="relative">
