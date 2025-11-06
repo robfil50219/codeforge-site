@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 
 /**
- * Splash screen with pulsating flame mark + shimmer bar.
- * Logo is loaded from /public (no TS asset imports needed).
- * Put your flame SVG at:  public/flame.svg
- * If your navbar uses a different path, update `logoSrc` below.
+ * Splash screen with pulsating flame logo + shimmer bar.
+ * Uses the same flame mark as your navbar (favicon2.png).
  */
 export default function Splash() {
   const [fade, setFade] = useState(false);
 
-  // If your flame file is named differently, change this path.
-  // Tip: /public/flame.svg will be served at /flame.svg
-  const logoSrc = "/flame.svg";
+  // Use your actual logo in /public
+  const logoSrc = "/favicon2.png";
 
   useEffect(() => {
     const original = document.documentElement.style.overflow;
@@ -43,11 +40,11 @@ export default function Splash() {
       <div className="flex flex-col items-center gap-6">
         {/* 🔥 Pulsating flame logo */}
         <img
-          src="/favicon2.png"
-          alt="" /* decorative */
+          src={logoSrc}
+          alt="CodeForge Studio flame logo"
           width={96}
           height={96}
-          className="select-none pointer-events-none animate-[cfs-pulse_1.1s_ease-in-out_infinite] drop-shadow"
+          className="select-none pointer-events-none animate-[cfs-pulse_1.1s_ease-in-out_infinite]"
           draggable={false}
         />
 
@@ -63,7 +60,6 @@ export default function Splash() {
         <p className="sr-only">Laster inn innhold …</p>
       </div>
 
-      {/* Keyframes (kept here so you don't need Tailwind config changes) */}
       <style>{`
         @keyframes cfs-slide {
           0% { transform: translateX(-120%); opacity:.6; }
@@ -71,12 +67,11 @@ export default function Splash() {
           100%{ transform: translateX(220%); opacity:.6; }
         }
         @keyframes cfs-pulse {
-          0%   { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(2,132,199,.0)); }
-          50%  { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(2,132,199,.45)); }
-          100% { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(2,132,199,.0)); }
+          0%   { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(255,100,0,0)); }
+          50%  { transform: scale(1.08); filter: drop-shadow(0 0 12px rgba(255,140,0,0.6)); }
+          100% { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(255,100,0,0)); }
         }
 
-        /* Respect reduced motion */
         @media (prefers-reduced-motion: reduce) {
           .animate-[cfs-slide_1.1s_ease-in-out_infinite],
           .animate-[cfs-pulse_1.1s_ease-in-out_infinite] {
