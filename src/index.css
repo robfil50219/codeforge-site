@@ -1,4 +1,4 @@
-/* Tailwind v4 single import */ 
+/* Tailwind v4 single import */
 /* -------------------------------------------------------
    CodeForge Studio — Proprietary Stylesheet
    © 2025 CodeForge Studio Filep. All rights reserved.
@@ -11,9 +11,9 @@
 ------------------------------------------------------- */
 @import "tailwindcss";
 
-/* ---------------------------------
+/* =================================
    Design tokens
-   --------------------------------- */
+   ================================= */
 :root {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
@@ -23,6 +23,7 @@
   --color-brand-midnight: #0f4452;   /* deep teal / ink */
   --color-brand-salt: #f6fafa;       /* off-white for dark text */
   --color-brand-black: #001920;      /* near-black / page bg in dark */
+  --color-brand-accent-soft: #008e8e; /* muted teal (light mode) */
 
   /* LIGHT MODE surfaces */
   --bg-page: #ffffff;
@@ -52,52 +53,45 @@
   --app-safe-right: env(safe-area-inset-right, 0px);
   --app-safe-bottom: env(safe-area-inset-bottom, 0px);
   --app-safe-left: env(safe-area-inset-left, 0px);
-}
 
-@supports (height: 100svh) {
-  :root {
-    --app-height: 100svh;
-  }
-}
-
-:root {
   color-scheme: light;
 }
 
-/* DARK THEME
-   This is activated when <html class="dark">.
-   Your Dark/Light button already toggles that.
-*/
+@supports (height: 100svh) {
+  :root { --app-height: 100svh; }
+}
+
+/* DARK THEME (html.dark) */
 :root.dark {
-  /* global surfaces */
   --bg-page: var(--color-brand-black);      /* #001920 */
   --text-page: var(--color-brand-salt);     /* #F6FAFA */
-  --text-dim: rgba(246, 250, 250, 0.6);     /* 60% salt */
-  --text-heading: var(--color-brand-salt);  /* bright headings in dark */
-  --text-link: var(--color-brand-sea);      /* teal accent pops */
-  --text-link-hover: #4ddbd6;               /* brighter teal hover */
+  --text-dim: rgba(246, 250, 250, 0.6);
+  --text-heading: var(--color-brand-salt);
+  --text-link: var(--color-brand-sea);
+  --text-link-hover: #4ddbd6;
 
-  /* cards in dark — now solid instead of glass */
-  --card-bg: var(--color-brand-midnight);   /* solid deep teal (#0f4452) */
-  --card-border: rgba(255, 255, 255, 0.1);  /* subtle light edge */
-  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.8); /* soft deep shadow */
+  /* cards in dark — solid */
+  --card-bg: var(--color-brand-midnight);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
 
-  /* navbar / floating bubble glass in dark */
+  /* navbar / floating glass in dark */
   --glass-bg: rgba(15, 68, 82, 0.75);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 
-  /* pill / chip bg in dark */
+  /* pills in dark */
   --chip-bg: rgba(255, 255, 255, 0.05);
   --chip-border: rgba(255, 255, 255, 0.2);
+
+  --color-brand-accent-soft: #6fe7e5; /* bright aqua (dark mode) */
 
   color-scheme: dark;
 }
 
-/* ---------------------------------
-   Base layout / global elements
-   --------------------------------- */
-
+/* =================================
+   Base layout
+   ================================= */
 html,
 body,
 #root {
@@ -106,12 +100,14 @@ body,
   overflow-x: clip; /* avoid random horizontal scrollbars */
 }
 
+@supports (height: 100svh) {
+  html, body, #root { min-height: var(--app-height); }
+}
+
 /* smooth anchor scroll for section jumps */
 html {
   scroll-behavior: smooth;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* the page background + default text */
@@ -129,22 +125,13 @@ body {
     filter 0.3s ease;
 }
 
-/* Media defaults so images/icons don’t overflow.
-   NOTE: we do NOT force height:auto globally on img, or it would
-   break components that intentionally set a fixed h-* class. */
-img,
-svg,
-video,
-canvas {
+/* Media defaults */
+img, svg, video, canvas {
   max-width: 100%;
   display: block;
 }
-
-/* Opt-in helper:
-   <img class="auto-h" ... /> will auto-size height */
-img.auto-h {
-  height: auto;
-}
+/* Opt-in helper for auto height */
+img.auto-h { height: auto; }
 
 /* Canvas background positioning */
 .ballpit-canvas {
@@ -156,7 +143,6 @@ img.auto-h {
   min-height: var(--app-height);
   pointer-events: none;
 }
-
 @supports (top: env(safe-area-inset-top)) {
   .ballpit-canvas {
     top: calc(0px - var(--app-safe-top));
@@ -166,32 +152,16 @@ img.auto-h {
   }
 }
 
-/* Better focus outline */
-:focus-visible {
-  outline: 2px solid rgb(59 130 246); /* blue-500 */
-  outline-offset: 2px;
-}
-
-/* Text selection highlight */
-::selection {
-  background: rgb(224 242 254); /* sky-100 */
-}
-
-/* Cursor for anything that acts like a button */
-button,
-a,
-[role="button"],
-input[type="submit"],
-input[type="button"],
-input[type="reset"] {
+/* Accessibility + UX */
+:focus-visible { outline: 2px solid rgb(59 130 246); outline-offset: 2px; }
+::selection { background: rgb(224 242 254); }
+button, a, [role="button"], input[type="submit"], input[type="button"], input[type="reset"] {
   cursor: pointer;
 }
 
-/* ---------------------------------
-   Surface utility classes
-   --------------------------------- */
-
-/* Frosted glass panel (navbar bg, mobile bubble toggle, etc.) */
+/* =================================
+   Surfaces
+   ================================= */
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -199,46 +169,28 @@ input[type="reset"] {
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-radius: 0.75rem; /* rounded-lg */
   box-shadow: var(--glass-shadow);
-  transition:
-    background 0.4s,
-    box-shadow 0.4s,
-    border-color 0.4s;
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
 }
 
-/* Card surface (contact cards, pricing tiers, etc.) */
 .surface-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
   border-radius: 0.75rem;
-  transition:
-    background 0.4s,
-    box-shadow 0.4s,
-    border-color 0.4s;
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
 }
 
-/* Chip / pill surface (like "Let's talk", "Dark", "Svarer innen 24 t") */
 .surface-chip {
   background: var(--chip-bg);
   border: 1px solid var(--chip-border);
   border-radius: 9999px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  transition:
-    background 0.4s,
-    box-shadow 0.4s,
-    border-color 0.4s;
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.3s;
 }
-
 .nav-chip {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease,
-    background 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
-
-.nav-chip:hover,
-.nav-chip:focus-visible {
+.nav-chip:hover, .nav-chip:focus-visible {
   transform: translateY(-1px);
   box-shadow:
     0 12px 24px rgba(0, 0, 0, 0.18),
@@ -254,14 +206,14 @@ input[type="reset"] {
     0 22px 38px rgba(0, 0, 0, 0.24),
     0 12px 24px rgba(79, 219, 214, 0.12);
 }
-
 :root.dark .mobile-bubble-trigger {
   background: rgba(15, 68, 82, 0.52) !important;
   box-shadow:
     0 26px 52px rgba(0, 0, 0, 0.85),
     0 0 20px rgba(79, 219, 214, 0.35);
 }
-/* animated glowing bar between first step and active step */
+
+/* Animated glowing bar between steps */
 .process-progress-bar {
   position: absolute;
   top: 50%;
@@ -276,356 +228,163 @@ input[type="reset"] {
     rgba(0,200,200,0.8) 70%,
     rgba(0,160,160,0) 100%
   );
-  box-shadow:
-    0 0 12px rgba(0,255,255,0.8),
-    0 0 32px rgba(0,160,160,0.6);
+  box-shadow: 0 0 12px rgba(0,255,255,0.8), 0 0 32px rgba(0,160,160,0.6);
   filter: brightness(1.15) saturate(1.25);
-
-  transition:
-    left 260ms cubic-bezier(0.22,1,0.36,1),
-    width 260ms cubic-bezier(0.22,1,0.36,1);
-}
-/* Gentle idle float (apply to .glass or .surface-card to make it feel “alive”) */
-.glass-animated {
-  animation: liquidGlass 14s ease-in-out infinite;
+  transition: left 260ms cubic-bezier(0.22,1,0.36,1), width 260ms cubic-bezier(0.22,1,0.36,1);
 }
 
+/* Gentle idle float (apply to .glass / .surface-card) */
+.glass-animated { animation: liquidGlass 14s ease-in-out infinite; }
 @keyframes liquidGlass {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-2px) scale(1.01);
-  }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-2px) scale(1.01); }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .glass-animated {
-    animation: none !important;
-  }
+  .glass-animated { animation: none !important; }
 }
 
-/* ---------------------------------
-   Text utility classes
-   --------------------------------- */
+/* =================================
+   Typography helpers
+   ================================= */
+.text-body    { color: var(--text-page); transition: color 0.4s; }
+.text-dim     { color: var(--text-dim); transition: color 0.4s; }
+.text-heading { color: var(--text-heading); transition: color 0.4s; }
+.text-link    { color: var(--text-link); transition: color 0.15s; }
+.text-link:hover { color: var(--text-link-hover); }
 
-/* main paragraph / generic copy */
-.text-body {
-  color: var(--text-page);
-  transition: color 0.4s;
-}
+/* Hero-like sections (inherit theme) */
+.surface-hero { color: var(--text-page); }
+.surface-hero :where(h1,h2,h3,h4,h5,h6,p,span,a,li,strong,em,small) { color: inherit; }
+:root.dark .surface-hero { color: #fff; }
+:root.dark .surface-hero :where(h1,h2,h3,h4,h5,h6,p,span,a,li,strong,em,small) { color: #fff; }
 
-/* subdued / helper / meta text
-   ex: small descriptions, "Svarer innen 24 t", footer tiny text */
-.text-dim {
-  color: var(--text-dim);
-  transition: color 0.4s;
-}
-
-/* headings, hero titles, section titles */
-.text-heading {
-  color: var(--text-heading);
-  transition: color 0.4s;
-}
-
-/* inline link / CTA accent text */
-.text-link {
-  color: var(--text-link);
-  transition: color 0.15s;
-}
-
-.text-link:hover {
-  color: var(--text-link-hover);
-} 
-
-/* === Hero-like sections (Hero, About, maybe Services) === */
-/* They give the background / mist / glow, but NOT global color */
-
-.surface-hero {
-  /* let the section itself follow the theme */
-  color: var(--text-page);
-}
-
-/* text elements inside */
-.surface-hero :where(h1, h2, h3, h4, h5, h6, p, span, a, li, strong, em, small) {
-  color: inherit;
-}
-
-/* Dark mode: flip only the text elements, not SVGs */
-:root.dark .surface-hero {
-  color: #ffffff;
-}
-:root.dark .surface-hero :where(h1, h2, h3, h4, h5, h6, p, span, a, li, strong, em, small) {
-  color: #ffffff;
-} 
-
-/* ---------------------------------
-   Google Translate widget styling
-   --------------------------------- */
+/* =================================
+   Google Translate widget
+   ================================= */
 .translate-button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  min-width: 2.5rem;
-  border-radius: 9999px;
-  font-size: inherit;
-  font-weight: inherit;
-  letter-spacing: inherit;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease,
-    background 0.3s ease;
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.35rem; min-width: 2.5rem; border-radius: 9999px;
+  font-size: inherit; font-weight: inherit; letter-spacing: inherit;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
-
-.translate-button__label {
-  line-height: 1;
-}
-
+.translate-button__label { line-height: 1; }
 .translate-button__arrow {
-  width: 0.85rem;
-  height: 0.85rem;
-  stroke-width: 2;
+  width: 0.85rem; height: 0.85rem; stroke-width: 2;
   animation: translate-arrow-bounce 1.25s ease-in-out infinite alternate;
   transition: transform 0.2s ease;
 }
-
 .translate-button:hover .translate-button__arrow,
-.translate-button:focus-visible .translate-button__arrow {
-  animation-duration: 0.8s;
-}
+.translate-button:focus-visible .translate-button__arrow { animation-duration: 0.8s; }
+.translate-button__arrow[data-open="true"] { animation: none; transform: rotate(180deg); }
 
-.translate-button__arrow[data-open="true"] {
-  animation: none;
-  transform: rotate(180deg);
-}
-
-@keyframes translate-arrow-bounce {
-  from {
-    transform: translateY(-1px);
-  }
-  to {
-    transform: translateY(1px);
-  }
-}
-
-.translate-button:hover,
-.translate-button:focus-visible {
+@keyframes translate-arrow-bounce { from { transform: translateY(-1px); } to { transform: translateY(1px); } }
+.translate-button:hover, .translate-button:focus-visible {
   transform: translateY(-1px);
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.18),
-    0 10px 18px rgba(79, 219, 214, 0.12);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.18), 0 10px 18px rgba(79,219,214,0.12);
   outline: none;
 }
 
-.translate-select-wrapper {
-  position: absolute;
-  inset: 0;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
+.translate-select-wrapper { position: absolute; inset: 0; width: 0; height: 0; overflow: hidden; }
 .translate-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 0.6rem);
-  min-width: 11rem;
-  padding: 0.35rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  position: absolute; right: 0; top: calc(100% + 0.6rem);
+  min-width: 11rem; padding: 0.35rem; border-radius: 0.75rem;
+  border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
   background: color-mix(in srgb, var(--bg-page) 92%, transparent);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  display: grid;
-  gap: 0.2rem;
-  z-index: 60;
+  backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%);
+  display: grid; gap: 0.2rem; z-index: 60;
 }
-
 .translate-menu__item {
-  width: 100%;
-  text-align: left;
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-page);
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  width: 100%; text-align: left; border-radius: 0.6rem; padding: 0.45rem 0.65rem;
+  font-size: 0.82rem; font-weight: 500; color: var(--text-page);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
-
-.translate-menu__item:hover,
-.translate-menu__item:focus-visible {
-  background: rgba(79, 219, 214, 0.12);
-  transform: translateX(2px);
+.translate-menu__item:hover, .translate-menu__item:focus-visible {
+  background: rgba(79,219,214,0.12); transform: translateX(2px);
 }
-
 .translate-menu__item--active {
-  background: rgba(79, 219, 214, 0.22);
-  color: var(--text-heading);
-  text-shadow: 0 0 8px rgba(79, 219, 214, 0.35);
-  font-weight: 600;
+  background: rgba(79,219,214,0.22); color: var(--text-heading);
+  text-shadow: 0 0 8px rgba(79,219,214,0.35); font-weight: 600;
 }
-
 :root.dark .translate-menu {
   background: color-mix(in srgb, var(--glass-bg) 92%, transparent);
   border-color: rgba(255, 255, 255, 0.12);
 }
-
 :root.dark .translate-menu__item--active {
-  color: var(--text-heading);
-  text-shadow: 0 0 10px rgba(111, 231, 229, 0.4);
+  color: var(--text-heading); text-shadow: 0 0 10px rgba(111,231,229,0.4);
 }
-
-.translate-menu--up {
-  top: auto;
-  bottom: calc(100% + 0.6rem);
-  transform-origin: bottom right;
-}
-
+.translate-menu--up { top: auto; bottom: calc(100% + 0.6rem); transform-origin: bottom right; }
 .translate-menu--full {
-  left: 0;
-  right: 0;
-  min-width: unset;
-  max-height: 240px;
-  overflow-y: auto;
-  padding: 0.4rem;
-  z-index: 80;
+  left: 0; right: 0; min-width: unset; max-height: 240px; overflow-y: auto; padding: 0.4rem; z-index: 80;
 }
 
-iframe.goog-te-menu-frame {
-  border-radius: 0.75rem !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
-}
-
-#cfs-google-translate {
-  position: absolute;
-  inset: 0;
-}
-
-#cfs-google-translate .goog-te-gadget {
-  margin: 0 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0;
-}
-
-#cfs-google-translate .goog-te-gadget > span,
-#cfs-google-translate .goog-logo-link {
-  display: none !important;
-}
-
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-
-html body {
-  top: 0 !important;
-}
-
+iframe.goog-te-menu-frame { border-radius: 0.75rem !important; border: 1px solid transparent !important; box-shadow: none !important; overflow: hidden !important; pointer-events: none !important; }
+#cfs-google-translate { position: absolute; inset: 0; }
+#cfs-google-translate .goog-te-gadget { margin: 0 !important; display: flex; align-items: center; justify-content: center; font-size: 0; }
+#cfs-google-translate .goog-te-gadget > span, #cfs-google-translate .goog-logo-link { display: none !important; }
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+html body { top: 0 !important; }
 body > .skiptranslate:not(.goog-te-menu-frame),
 body > .skiptranslate:not(.goog-te-menu-frame):hover,
-body > .skiptranslate:not(.goog-te-menu-frame):active {
-  display: none !important;
+body > .skiptranslate:not(.goog-te-menu-frame):active { display: none !important; }
+html { margin-top: 0 !important; }
+
+/* =================================
+   Animations — logo/text/shimmer
+   ================================= */
+
+/* 🔥 Flame / logo — heartbeat (shared by splash/footer/navbar) */
+@keyframes flame-heartbeat {
+  0%, 100% { transform: scale(1);   filter: brightness(1); }
+  20%      { transform: scale(1.06); filter: brightness(1.1); }
+  40%      { transform: scale(1.12); filter: brightness(1.25); }
+  60%      { transform: scale(1.06); filter: brightness(1.1); }
+  80%      { transform: scale(1.02); filter: brightness(1.05); }
 }
 
-html {
-  margin-top: 0 !important;
+/* Utility class (if used elsewhere) */
+.animate-flame-breathe {
+  animation: flame-heartbeat 3.8s cubic-bezier(0.25, 1, 0.35, 1) infinite;
+  transform-origin: center;
+  will-change: transform, filter;
 }
 
-:root {
-  /* ...existing... */
-  --color-brand-accent-soft: #008e8e; /* light mode accent (muted teal) */
+/* ✨ Text — ultra-smooth right-to-left glide */
+@keyframes text-glide-right-smooth {
+  from { opacity: 0; transform: translate3d(90px,0,0); filter: blur(2px); }
+  to   { opacity: 1; transform: translate3d(0,0,0);   filter: blur(0); }
 }
-
-:root.dark {
-  --color-brand-accent-soft: #6fe7e5; /* bright aqua for dark bg */
+.animate-text-glide {
+  animation-name: text-glide-right-smooth;
+  animation-duration: 3.8s;
+  animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
+/* Optional delay helpers */
+.anim-delay-200 { animation-delay: 200ms; }
+.anim-delay-300 { animation-delay: 300ms; }
 
-/* === Logo + Text animations (Tailwind utilities) === */
-@layer utilities {
-  /* ---------------------------------
-     🔥 Flame / logo — soft heartbeat pulse
-     --------------------------------- */
-  @keyframes flame-heartbeat {
-    0%,
-    100% { transform: scale(1); filter: brightness(1); }
-    20%  { transform: scale(1.06); filter: brightness(1.1); }
-    40%  { transform: scale(1.12); filter: brightness(1.25); }
-    60%  { transform: scale(1.06); filter: brightness(1.1); }
-    80%  { transform: scale(1.02); filter: brightness(1.05); }
-  }
-
-  .animate-flame-breathe {
-    animation: flame-heartbeat 3.8s cubic-bezier(0.25, 1, 0.35, 1) infinite;
-    transform-origin: center;
-    will-change: transform, filter;
-  }
-
-  /* ---------------------------------
-     ✨ Text — ultra-smooth right-to-left glide
-     --------------------------------- */
-  @keyframes text-glide-right-smooth {
-    from {
-      opacity: 0;
-      transform: translate3d(90px, 0, 0);
-      filter: blur(2px);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-      filter: blur(0);
-    }
-  }
-
-  .animate-text-glide {
-    animation-name: text-glide-right-smooth;
-    animation-duration: 3.8s;                       /* slow, graceful */
-    animation-timing-function: cubic-bezier(.16, 1, .3, 1);
-    animation-fill-mode: both;                      /* stay visible after */
-    will-change: transform, opacity, filter;
-    backface-visibility: hidden;
-    transform: translateZ(0);
-  }
-
-  /* Optional delay helpers */
-  .anim-delay-200 { animation-delay: 200ms; }
-  .anim-delay-300 { animation-delay: 300ms; }
-}
-
-/* Accessibility – no motion for reduced-motion users */
-@media (prefers-reduced-motion: reduce) {
-  .animate-flame-breathe,
-  .animate-text-glide {
-    animation: none !important;
-  }
-}
-
-/* globals.css or index.css */
-
-/* Progress shimmer */
+/* Progress shimmer (loader bar) */
 .loader-bar {
   background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(2,132,199,.7) 50%, rgba(0,0,0,0) 100%);
   animation: cfs-slide 1.2s ease-in-out infinite;
 }
-
 @keyframes cfs-slide {
   0%   { transform: translateX(-120%); opacity: .6; }
   50%  { transform: translateX(60%);  opacity: 1; }
   100% { transform: translateX(220%); opacity: .6; }
 }
 
-/* Respect reduced motion */
+/* 🧠 Respect reduced motion globally */
 @media (prefers-reduced-motion: reduce) {
-  .loader-bar { animation: none; width: 50%; transform: none; opacity: .9; }
+  .animate-flame-breathe, .animate-text-glide, .loader-bar { animation: none !important; }
 }
+
+/* =================================
+   Navbar flame behavior (global)
+   ================================= */
+/* Stop all navbar logo animation everywhere */
+.nav-flame { animation: none !important; }
+.group:hover .nav-flame { animation: none !important; }

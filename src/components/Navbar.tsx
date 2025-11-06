@@ -30,20 +30,12 @@ type ThemeMode = "light" | "dark";
 
 const isMobileDevice = (): boolean => {
   if (typeof navigator !== "undefined") {
-    const nav = navigator as Navigator & {
-      userAgentData?: {
-        mobile?: boolean;
-      };
-    };
-    if (typeof nav.userAgentData?.mobile === "boolean") {
-      return nav.userAgentData.mobile;
-    }
+    const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
+    if (typeof nav.userAgentData?.mobile === "boolean") return nav.userAgentData.mobile;
     if (typeof nav.userAgent === "string") {
       const mobileRegex =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
-      if (mobileRegex.test(nav.userAgent)) {
-        return true;
-      }
+      if (mobileRegex.test(nav.userAgent)) return true;
     }
   }
   if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
@@ -74,18 +66,13 @@ const getSystemTheme = (): ThemeMode => {
 const getInitialTheme = (): ThemeMode => {
   if (typeof window !== "undefined") {
     const windowTheme = window.__CFS_GET_THEME?.();
-    if (windowTheme === "dark" || windowTheme === "light") {
-      return windowTheme;
-    }
+    if (windowTheme === "dark" || windowTheme === "light") return windowTheme;
   }
   const stored = readStoredTheme();
   if (stored) return stored;
-  if (typeof window !== "undefined" && isMobileDevice()) {
-    return "light";
-  }
-  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
+  if (typeof window !== "undefined" && isMobileDevice()) return "light";
+  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
-  }
   return getSystemTheme();
 };
 
@@ -100,44 +87,31 @@ const applyThemeClass = (mode: ThemeMode) => {
   root.style.colorScheme = mode;
   document.body?.style.setProperty("color-scheme", mode);
   const meta = document.querySelector('meta[name="color-scheme"]');
-  if (meta) {
-    meta.setAttribute("content", mode === "dark" ? "dark light" : "light dark");
-  }
+  if (meta) meta.setAttribute("content", mode === "dark" ? "dark light" : "light dark");
   void root.offsetHeight;
 };
 
 export default function Navbar() {
   const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
-
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
 
-  const setThemeInternal = useCallback(
-    (mode: ThemeMode, persist: boolean) => {
-      if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
-        window.__CFS_SET_THEME(mode, persist);
-      } else {
-        applyThemeClass(mode);
-        if (persist && typeof window !== "undefined") {
-          try {
-            localStorage.setItem(THEME_STORAGE_KEY, mode);
-          } catch {
-            // ignore storage errors (e.g. private mode)
-          }
-        } else if (!persist && typeof window !== "undefined") {
-          try {
-            localStorage.removeItem(THEME_STORAGE_KEY);
-          } catch {
-            // ignore storage errors
-          }
-        }
+  const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
+    if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
+      window.__CFS_SET_THEME(mode, persist);
+    } else {
+      applyThemeClass(mode);
+      try {
+        if (persist) localStorage.setItem(THEME_STORAGE_KEY, mode);
+        else localStorage.removeItem(THEME_STORAGE_KEY);
+      } catch {
+        // ignore
       }
-      setThemeState((current) => (current === mode ? current : mode));
-      manualThemeRef.current = persist;
-    },
-    [],
-  );
+    }
+    setThemeState((current) => (current === mode ? current : mode));
+    manualThemeRef.current = persist;
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -150,8 +124,7 @@ export default function Navbar() {
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
-      const next = event.matches ? "dark" : "light";
-      setThemeInternal(next, false);
+      setThemeInternal(event.matches ? "dark" : "light", false);
     };
 
     if (typeof media.addEventListener === "function") {
@@ -174,17 +147,13 @@ export default function Navbar() {
     const startStatic = savedBg === "static";
     setIsStaticBg(startStatic);
     window.__BALLPIT_DISABLED = startStatic;
-    window.dispatchEvent(
-      new CustomEvent("ballpit-toggle", { detail: { disabled: startStatic } })
-    );
+    window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: startStatic } }));
   }, []);
 
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
     setThemeInternal(next, true);
-    window.requestAnimationFrame(() => {
-      window.location.reload();
-    });
+    window.requestAnimationFrame(() => window.location.reload());
   }
 
   function toggleBackgroundMode() {
@@ -192,9 +161,7 @@ export default function Navbar() {
     setIsStaticBg(next);
     localStorage.setItem("cfs-ballpit", next ? "static" : "interactive");
     window.__BALLPIT_DISABLED = next;
-    window.dispatchEvent(
-      new CustomEvent("ballpit-toggle", { detail: { disabled: next } })
-    );
+    window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: next } }));
   }
 
   function scrollToId(id: string) {
@@ -215,21 +182,21 @@ export default function Navbar() {
           WebkitBackdropFilter: "blur(14px)",
         }}
       >
-        <div className="flex min-h-[4rem] items-center px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-4rem items-center px-4 sm:px-6 lg:px-8">
           <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
+              className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
               aria-label="Til forsiden"
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
                 alt="CodeForge Studio logo"
-                className="h-10 w-10 sm:h-12 sm:w-12 animate-flame-breathe"
+                className="nav-flame h-10 w-10 sm:h-14 sm:w-14 will-change-transform"
               />
               <span
-                className="text-xl sm:text-2xl tracking-[0.04em] animate-text-glide anim-delay-200 notranslate"
+                className="text-xl sm:text-2xl tracking-[0.04em] anim-delay-200 notranslate"
                 translate="no"
               >
                 CODEFORGE STUDIO
@@ -278,7 +245,7 @@ export default function Navbar() {
                   {isDark ? "Lys" : "Mørk"}
                 </button>
 
-                {/* translate button (desktop) */}
+                {/* translate button */}
                 <FixedTranslateWidget className="shrink-0" />
               </div>
             </nav>
@@ -286,7 +253,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* mobile menu (no theme btn) */}
+      {/* mobile menu */}
       <MobileBubbleNav
         scrollToId={scrollToId}
         isStaticBg={isStaticBg}
