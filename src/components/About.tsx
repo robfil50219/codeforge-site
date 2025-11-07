@@ -25,23 +25,47 @@ export default function About() {
 
   const highlights = t("about.highlights", { returnObjects: true }) as string[];
   const tech = t("about.tech", { returnObjects: true }) as string[];
+
   const rawCopy = t("about.copy") as string;
   const nameToken = "Robert Filep";
-  const copySegments = rawCopy.split(nameToken);
-  const renderCopy = () =>
-    copySegments.flatMap((segment, index) => {
-      const content = [
-        <span key={`segment-${index}`}>{segment}</span>,
-      ];
-      if (index < copySegments.length - 1) {
-        content.push(
-          <span key={`name-${index}`} className="notranslate" translate="no">
-            {nameToken}
-          </span>,
-        );
+  const brandToken = "CodeForge Studio";
+
+  // Safe token spans (non-breaking spaces + notranslate)
+  const NameToken = () => (
+    <span className="notranslate" translate="no">
+      {"\u00A0"}
+      {nameToken}
+      {"\u00A0"}
+    </span>
+  );
+  const BrandToken = () => (
+    <span className="notranslate" translate="no">
+      {"\u00A0"}
+      {brandToken}
+      {"\u00A0"}
+    </span>
+  );
+
+  // Render copy with BOTH tokens protected from translation spacing issues
+  const renderCopy = () => {
+    // First, split by brand to interleave <BrandToken/>
+    const byBrand = rawCopy.split(brandToken);
+    const brandInterleaved: (string | JSX.Element)[] = [];
+    byBrand.forEach((chunk, i) => {
+      // Within each chunk, split by name to interleave <NameToken/>
+      const byName = chunk.split(nameToken);
+      byName.forEach((sub, j) => {
+        brandInterleaved.push(<span key={`seg-${i}-${j}`}>{sub}</span>);
+        if (j < byName.length - 1) {
+          brandInterleaved.push(<NameToken key={`name-${i}-${j}`} />);
+        }
+      });
+      if (i < byBrand.length - 1) {
+        brandInterleaved.push(<BrandToken key={`brand-${i}`} />);
       }
-      return content;
     });
+    return brandInterleaved;
+  };
 
   const techIcons: Record<string, JSX.Element> = {
     React: <FaReact className="h-5 w-5 text-sky-600 dark:text-sky-200" />,
@@ -91,9 +115,7 @@ export default function About() {
             <div className="relative">
               <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 dark:ring-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 dark:bg-white/10 backdrop-blur-sm transition-transform duration-500 hover:scale-105">
                 <picture>
-                  {/* modern browsers */}
                   <source srcSet="/robert-profile-800.webp" type="image/webp" />
-                  {/* fallback */}
                   <img
                     src="/robert-profile-800.jpg"
                     alt={t("about.alt") as string}
@@ -113,11 +135,13 @@ export default function About() {
               </h3>
               <p
                 className="mt-1 font-medium"
-                style={{
-                  color: "var(--color-brand-accent-soft)",
-                }}
+                style={{ color: "var(--color-brand-accent-soft)" }}
               >
-                {renderBrandSafe("Frontend-utvikler • Grunnlegger av CodeForge Studio")}
+                {/* Frontend-utvikler • Grunnlegger av CodeForge Studio */}
+                <span className="notranslate" translate="no">
+                  Frontend-utvikler • Grunnlegger av
+                </span>
+                <BrandToken />
               </p>
             </div>
           </div>
