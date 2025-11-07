@@ -167,9 +167,22 @@ export default function MobileBubbleNav({
             {/* background toggle */}
             <li className="mt-2 border-t border-(--card-border) pt-2">
               <button
-                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                className={[
+                  "w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 transition",
+                  !isStaticBg && "ring-1 ring-(--color-brand-sea)",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 onClick={toggleBackgroundMode}
                 aria-pressed={isStaticBg}
+                style={
+                  isStaticBg
+                    ? undefined
+                    : {
+                        background:
+                          "color-mix(in srgb, var(--color-brand-sea, #0EA5E9) 18%, transparent)",
+                      }
+                }
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
                 {backgroundLabel}

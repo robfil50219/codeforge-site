@@ -232,7 +232,20 @@ export default function Navbar() {
                     event.stopPropagation();
                     toggleBackgroundMode();
                   }}
-                  className="surface-chip nav-chip px-3 py-1.5 text-heading"
+                  className={[
+                    "surface-chip nav-chip px-3 py-1.5 text-heading transition",
+                    !isStaticBg && "ring-1 ring-(--color-brand-sea)",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  style={
+                    isStaticBg
+                      ? undefined
+                      : {
+                          background:
+                            "color-mix(in srgb, var(--color-brand-sea, #0EA5E9) 18%, transparent)",
+                        }
+                  }
                   aria-pressed={isStaticBg}
                 >
                   {backgroundLabel}
