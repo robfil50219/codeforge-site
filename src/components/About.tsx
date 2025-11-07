@@ -19,6 +19,7 @@ import {
   SiGraphql,
 } from "react-icons/si";
 import { TbApi } from "react-icons/tb";
+import BallpitInfo from "./BallpitInfo";
 
 export default function About() {
   const { t } = useTranslation();
@@ -190,6 +191,9 @@ export default function About() {
                 </span>
               ))}
             </div>
+
+            {/* Ballpit info card */}
+            <BallpitInfo className="mt-8" />
           </div>
         </div>
       </div>
