@@ -69,6 +69,10 @@ export default function Pricing() {
     returnObjects: true,
   }) as string[];
 
+  const protectStarterPrice = /\d/.test(starterPrice);
+  const protectProPrice = /\d/.test(proPrice);
+  const protectCustomPrice = /\d/.test(customPrice);
+
   return (
     <section
       id="pricing"
@@ -182,13 +186,14 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold notranslate",
+                      "text-3xl font-extrabold",
                       // light
                       "text-slate-900",
                       // dark
-                      "dark:text-(--text-heading)"
+                      "dark:text-(--text-heading)",
+                      protectStarterPrice && "notranslate"
                     )}
-                    translate="no"
+                    {...(protectStarterPrice ? { translate: "no" as const } : {})}
                   >
                     {starterPrice}
                   </span>
@@ -309,10 +314,11 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold notranslate",
-                      "text-slate-900 dark:text-(--text-heading)"
+                      "text-3xl font-extrabold",
+                      "text-slate-900 dark:text-(--text-heading)",
+                      protectProPrice && "notranslate"
                     )}
-                    translate="no"
+                    {...(protectProPrice ? { translate: "no" as const } : {})}
                   >
                     {proPrice}
                   </span>
@@ -408,10 +414,11 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold notranslate",
-                      "text-slate-900 dark:text-(--text-heading)"
+                      "text-3xl font-extrabold",
+                      "text-slate-900 dark:text-(--text-heading)",
+                      protectCustomPrice && "notranslate"
                     )}
-                    translate="no"
+                    {...(protectCustomPrice ? { translate: "no" as const } : {})}
                   >
                     {customPrice}
                   </span>
