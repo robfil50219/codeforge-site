@@ -87,7 +87,11 @@ export default function FixedTranslateWidget({
   const selectCleanupRef = useRef<(() => void) | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [currentCode, setCurrentCode] = useState<LanguageCode>(detectPersistedLanguage);
+  const [currentCode, setCurrentCode] = useState<LanguageCode>(BASE_LANGUAGE);
+
+  useEffect(() => {
+    clearGoogleTranslateState(BASE_LANGUAGE);
+  }, []);
 
   const notifyLanguageChange = useCallback((code: LanguageCode) => {
     setCurrentCode(code);

@@ -58,11 +58,6 @@ const readStoredTheme = (): ThemeMode | null => {
   }
 };
 
-const getSystemTheme = (): ThemeMode => {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-};
-
 const getInitialTheme = (): ThemeMode => {
   if (typeof window !== "undefined") {
     const windowTheme = window.__CFS_GET_THEME?.();
@@ -70,10 +65,12 @@ const getInitialTheme = (): ThemeMode => {
   }
   const stored = readStoredTheme();
   if (stored) return stored;
-  if (typeof window !== "undefined" && isMobileDevice()) return "light";
+  if (typeof window !== "undefined") {
+    return isMobileDevice() ? "light" : "dark";
+  }
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
-  return getSystemTheme();
+  return "dark";
 };
 
 const applyThemeClass = (mode: ThemeMode) => {
@@ -96,7 +93,7 @@ export default function Navbar() {
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
-  const backgroundLabel = isStaticBg ? "Stille bakgrunn: På" : "Stille bakgrunn: Av";
+  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -116,12 +113,20 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const storedTheme = readStoredTheme();
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
     const mobile = isMobileDevice();
-    const initialTheme: ThemeMode =
-      storedTheme ?? (mobile ? "light" : media.matches ? "dark" : "light");
-    setThemeInternal(initialTheme, !mobile && storedTheme !== null);
+    const storedTheme = mobile ? readStoredTheme() : null;
+    if (!mobile) {
+      try {
+        localStorage.removeItem(THEME_STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+    }
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const initialTheme: ThemeMode = storedTheme ?? (mobile ? "light" : "dark");
+    setThemeInternal(initialTheme, mobile && storedTheme !== null);
+
+    if (!mobile) return;
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
@@ -137,30 +142,30 @@ export default function Navbar() {
   }, [setThemeInternal]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const savedBg = (() => {
-      try {
-        return localStorage.getItem("cfs-ballpit");
-      } catch {
-        return null;
-      }
-    })();
-    const startStatic = savedBg === "static";
-    setIsStaticBg(startStatic);
-    window.__BALLPIT_DISABLED = startStatic;
-    window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: startStatic } }));
+    try {
+      localStorage.removeItem("cfs-ballpit");
+    } catch {
+      // ignore
+    }
   }, []);
 
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
-    setThemeInternal(next, true);
-    window.requestAnimationFrame(() => window.location.reload());
+    const mobile = typeof window !== "undefined" && isMobileDevice();
+    setThemeInternal(next, mobile);
+    if (mobile) {
+      window.requestAnimationFrame(() => window.location.reload());
+    }
   }
 
   function toggleBackgroundMode() {
     const next = !isStaticBg;
     setIsStaticBg(next);
-    localStorage.setItem("cfs-ballpit", next ? "static" : "interactive");
+    try {
+      localStorage.removeItem("cfs-ballpit");
+    } catch {
+      // ignore
+    }
     window.__BALLPIT_DISABLED = next;
     window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: next } }));
   }

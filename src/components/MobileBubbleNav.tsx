@@ -25,8 +25,8 @@ import {
   X,
 } from "lucide-react";
 import {
+  BASE_LANGUAGE,
   LANGUAGE_OPTIONS,
-  detectPersistedLanguage,
   isSupportedLanguage,
   type LanguageCode,
 } from "./translate/language-data";
@@ -45,9 +45,9 @@ export default function MobileBubbleNav({
   toggleBackgroundMode,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
-  const [language, setLanguage] = useState<LanguageCode>(detectPersistedLanguage);
+  const [language, setLanguage] = useState<LanguageCode>(BASE_LANGUAGE);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const backgroundLabel = isStaticBg ? "Stille bakgrunn: På" : "Stille bakgrunn: Av";
+  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
 
   useEffect(() => {
     const initial =
@@ -56,7 +56,7 @@ export default function MobileBubbleNav({
     if (isSupportedLanguage(initial)) {
       setLanguage(initial);
     } else {
-      setLanguage(detectPersistedLanguage());
+      setLanguage(BASE_LANGUAGE);
     }
 
     const handle = (event: Event) => {

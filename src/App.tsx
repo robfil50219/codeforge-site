@@ -82,10 +82,8 @@ export default function App() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Remember user's previous preference
-    let saved: string | null = null;
     try {
-      saved = localStorage.getItem("cfs-ballpit"); // "static" | "interactive" | null
+      localStorage.removeItem("cfs-ballpit");
     } catch {
       // ignore storage errors
     }
@@ -95,11 +93,8 @@ export default function App() {
     window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: true } }));
 
     if (startAppFade) {
-      const restoreDisabled = saved === "static";
-      window.__BALLPIT_DISABLED = restoreDisabled;
-      window.dispatchEvent(
-        new CustomEvent("ballpit-toggle", { detail: { disabled: restoreDisabled } }),
-      );
+      window.__BALLPIT_DISABLED = false;
+      window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: false } }));
     }
   }, [startAppFade]);
 
