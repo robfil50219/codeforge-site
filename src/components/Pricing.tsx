@@ -72,9 +72,8 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      translate="no"
       className={cn(
-        "scroll-mt-24 bg-transparent notranslate",
+        "scroll-mt-24 bg-transparent",
         // text defaults to tokens
         "text-body dark:text-(--text-page)"
       )}
@@ -183,12 +182,13 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
+                      "text-3xl font-extrabold notranslate",
                       // light
                       "text-slate-900",
                       // dark
                       "dark:text-(--text-heading)"
                     )}
+                    translate="no"
                   >
                     {starterPrice}
                   </span>
@@ -309,9 +309,10 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
+                      "text-3xl font-extrabold notranslate",
                       "text-slate-900 dark:text-(--text-heading)"
                     )}
+                    translate="no"
                   >
                     {proPrice}
                   </span>
@@ -407,9 +408,10 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
+                      "text-3xl font-extrabold notranslate",
                       "text-slate-900 dark:text-(--text-heading)"
                     )}
+                    translate="no"
                   >
                     {customPrice}
                   </span>

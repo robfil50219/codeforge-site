@@ -8,13 +8,15 @@ import {
 import { ChevronDown } from "lucide-react";
 import { cn } from "../utils/cn";
 import {
+  BASE_LANGUAGE,
   LANGUAGE_OPTIONS,
+  detectPersistedLanguage,
+  isSupportedLanguage,
   type LanguageCode,
 } from "./translate/language-data";
 
 const SCRIPT_ID = "cfs-google-translate-script";
 const CONTAINER_ID = "cfs-google-translate";
-const BASE_LANGUAGE: LanguageCode = "no";
 
 function clearGoogleTranslateState(baseLang: string) {
   try {
@@ -64,7 +66,7 @@ declare global {
       };
     };
     __cfsTranslateSetLanguage?: (code: string) => void;
-    __cfsGetCurrentLanguage?: () => string | null;
+    __cfsGetCurrentLanguage?: () => LanguageCode | null;
   }
 }
 
@@ -85,7 +87,7 @@ export default function FixedTranslateWidget({
   const selectCleanupRef = useRef<(() => void) | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [currentCode, setCurrentCode] = useState<LanguageCode>("no");
+  const [currentCode, setCurrentCode] = useState<LanguageCode>(detectPersistedLanguage);
 
   const notifyLanguageChange = useCallback((code: LanguageCode) => {
     setCurrentCode(code);
@@ -156,9 +158,9 @@ export default function FixedTranslateWidget({
         select.style.height = "0";
 
         const handleChange = () => {
-          const next = (select.value || BASE_LANGUAGE) as LanguageCode;
-          const allowed = LANGUAGE_OPTIONS.some((option) => option.code === next);
-          notifyLanguageChange(allowed ? next : "no");
+          const rawNext = select.value || detectPersistedLanguage();
+          const next = isSupportedLanguage(rawNext) ? rawNext : BASE_LANGUAGE;
+          notifyLanguageChange(next);
         };
 
         select.setAttribute("aria-hidden", "true");
@@ -169,13 +171,16 @@ export default function FixedTranslateWidget({
           select.removeEventListener("change", handleChange);
 
         window.__cfsTranslateSetLanguage = (code: string) => {
-          const allowed = LANGUAGE_OPTIONS.some((option) => option.code === code);
-          if (!allowed) return;
+          if (!isSupportedLanguage(code)) return;
           select.value = code;
           select.dispatchEvent(new Event("change", { bubbles: true }));
         };
 
-        window.__cfsGetCurrentLanguage = () => select.value || "no";
+        window.__cfsGetCurrentLanguage = () => {
+          const value = select.value;
+          if (isSupportedLanguage(value)) return value;
+          return detectPersistedLanguage();
+        };
       };
 
       decorate();

@@ -96,6 +96,7 @@ export default function Navbar() {
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
+  const backgroundLabel = isStaticBg ? "Stille bakgrunn: På" : "Stille bakgrunn: Av";
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -229,7 +230,7 @@ export default function Navbar() {
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
                   aria-pressed={isStaticBg}
                 >
-                  {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
+                  {backgroundLabel}
                 </button>
 
                 {/* desktop theme toggle */}

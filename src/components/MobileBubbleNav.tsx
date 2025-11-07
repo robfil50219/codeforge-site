@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import {
   LANGUAGE_OPTIONS,
+  detectPersistedLanguage,
+  isSupportedLanguage,
   type LanguageCode,
 } from "./translate/language-data";
 
@@ -43,27 +45,25 @@ export default function MobileBubbleNav({
   toggleBackgroundMode,
 }: MobileBubbleNavProps) {
   const [open, setOpen] = useState(false);
-  const [language, setLanguage] = useState<LanguageCode>("no");
+  const [language, setLanguage] = useState<LanguageCode>(detectPersistedLanguage);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const backgroundLabel = isStaticBg ? "Stille bakgrunn: På" : "Stille bakgrunn: Av";
 
   useEffect(() => {
     const initial =
-      (typeof window !== "undefined" &&
-        window.__cfsGetCurrentLanguage?.()) || "no";
-    if (
-      initial &&
-      LANGUAGE_OPTIONS.some((option) => option.code === initial)
-    ) {
-      setLanguage(initial as LanguageCode);
+      (typeof window !== "undefined" && window.__cfsGetCurrentLanguage?.()) ||
+      null;
+    if (isSupportedLanguage(initial)) {
+      setLanguage(initial);
+    } else {
+      setLanguage(detectPersistedLanguage());
     }
 
     const handle = (event: Event) => {
       const custom = event as CustomEvent<{ code?: string }>;
-      const code = custom.detail?.code as LanguageCode | undefined;
-      if (!code) return;
-      if (LANGUAGE_OPTIONS.some((option) => option.code === code)) {
-        setLanguage(code);
-      }
+      const code = custom.detail?.code;
+      if (!isSupportedLanguage(code)) return;
+      setLanguage(code);
     };
 
     window.addEventListener("cfs-language-change", handle);
@@ -169,9 +169,10 @@ export default function MobileBubbleNav({
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={toggleBackgroundMode}
+                aria-pressed={isStaticBg}
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
-                {isStaticBg ? "Interaktiv bakgrunn" : "Stille bakgrunn"}
+                {backgroundLabel}
               </button>
             </li>
             <li className="mt-2 border-t border-(--card-border) pt-2 relative">
