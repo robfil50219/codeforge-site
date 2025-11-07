@@ -1,66 +1,48 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-// Bump when you want everyone to see the splash again after a deploy
-const SPLASH_VERSION = "v2";
-const KEY = `cfs-saw-splash:${SPLASH_VERSION}`;
+const FLAG = "cfs-splash-done";
 
+/** Read synchronously so there's no flash before first paint */
+function getInitialShow(): boolean {
+  try {
+    return !sessionStorage.getItem(FLAG); // show if not seen this tab
+  } catch {
+    return true; // private mode fallback
+  }
+}
+
+/**
+ * Returns:
+ * - showSplash: whether to render the Splash overlay
+ * - startAppFade: when true, the app should begin fading in (while splash fades out)
+ */
 export default function useFirstVisitSplash() {
-  const [show, setShow] = useState(false);
-  const minDone = useRef(false);
-  const ready = useRef(false);
-  const minTimer = useRef<number | null>(null);
-  const maxTimer = useRef<number | null>(null);
+  const initialShow = getInitialShow();
+  const [showSplash, setShowSplash] = useState<boolean>(initialShow);
+  const [startAppFade, setStartAppFade] = useState<boolean>(!initialShow); // if no splash, app visible immediately
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!showSplash) return;
 
-    // Force via ?splash=1 for testing
-    const force = new URLSearchParams(window.location.search).get("splash") === "1";
-
-    // Show once per tab unless forced
-    if (!force && sessionStorage.getItem(KEY) === "1") return;
-    sessionStorage.setItem(KEY, "1");
-    setShow(true);
-
-    // Keep visible ~2.4s + fade (component) ≈ 3.0s total
-    const minMs = 2400;
-    const maxMs = 3400; // hard cutoff
-
-    const done = () => {
-      ready.current = true;
-      if (minDone.current) setShow(false);
-    };
-
-    // Minimum display time
-    minTimer.current = window.setTimeout(() => {
-      minDone.current = true;
-      if (ready.current) setShow(false);
-    }, minMs);
-
-    // Never stick
-    maxTimer.current = window.setTimeout(done, maxMs);
-
-    // Mark ready when page is usable (won't hide before minMs anyway)
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-      queueMicrotask(done);
-    } else {
-      const onLoad = () => done();
-      const onDom = () => done();
-      window.addEventListener("load", onLoad, { once: true });
-      document.addEventListener("DOMContentLoaded", onDom, { once: true });
-      return () => {
-        window.removeEventListener("load", onLoad);
-        document.removeEventListener("DOMContentLoaded", onDom);
-        if (minTimer.current) clearTimeout(minTimer.current);
-        if (maxTimer.current) clearTimeout(maxTimer.current);
-      };
+    // mark as seen for this tab
+    try {
+      sessionStorage.setItem(FLAG, "1");
+    } catch {
+      /* no-op */
     }
 
-    return () => {
-      if (minTimer.current) clearTimeout(minTimer.current);
-      if (maxTimer.current) clearTimeout(maxTimer.current);
-    };
-  }, []);
+    // Your Splash.tsx starts fade at 2400ms and removes at 3000ms.
+    // We start the app fade a bit earlier for overlap, at 2000ms:
+    const tStart = setTimeout(() => setStartAppFade(true), 2000);
 
-  return show;
+    // Keep Splash mounted slightly past its own removal time to avoid any flicker
+    const tEnd = setTimeout(() => setShowSplash(false), 3100);
+
+    return () => {
+      clearTimeout(tStart);
+      clearTimeout(tEnd);
+    };
+  }, [showSplash]);
+
+  return { showSplash, startAppFade };
 }

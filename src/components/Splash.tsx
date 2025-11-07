@@ -8,12 +8,21 @@ export default function Splash({ showTitle = false }: { showTitle?: boolean }) {
   useEffect(() => {
     const original = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    const startFade = setTimeout(() => setFade(true), 2400);
+
+    // ⏱ Start a smooth 1s fade at 2000ms…
+    const startFade = setTimeout(() => setFade(true), 2000);
+
+    // …and remove exactly at 3000ms (fade ends when we hide)
     const remove = setTimeout(() => {
       document.getElementById("cfs-react-splash")?.style.setProperty("display", "none");
       document.documentElement.style.overflow = original;
     }, 3000);
-    return () => { clearTimeout(startFade); clearTimeout(remove); document.documentElement.style.overflow = original; };
+
+    return () => {
+      clearTimeout(startFade);
+      clearTimeout(remove);
+      document.documentElement.style.overflow = original;
+    };
   }, []);
 
   return (
@@ -21,16 +30,29 @@ export default function Splash({ showTitle = false }: { showTitle?: boolean }) {
       id="cfs-react-splash"
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-50 grid place-items-center bg-white dark:bg-[#0B0F12] transition-opacity duration-700 ${
-        fade ? "opacity-0" : "opacity-100"
-      }`}
       aria-label="CodeForge Studio laster inn"
+      className={[
+        "fixed inset-0 z-50 grid place-items-center",
+        "bg-white dark:bg-[#0B0F12]",
+        // 👇 only transition changed: smoother curve + longer duration
+        fade ? "opacity-0" : "opacity-100",
+      ].join(" ")}
+      style={{
+        // smooth crossfade timing
+        transition: "opacity 1000ms cubic-bezier(.16,1,.3,1)",
+        willChange: "opacity",
+        // ensure full cover on iOS safe areas
+        paddingTop: "var(--app-safe-top)",
+        paddingRight: "var(--app-safe-right)",
+        paddingBottom: "var(--app-safe-bottom)",
+        paddingLeft: "var(--app-safe-left)",
+      }}
     >
       <div className="flex flex-col items-center gap-4">
         {/* Logo (96px mobile → 128px desktop) */}
         <img
           src={logoSrc}
-          alt="" /* decorative; we provide aria-label on the container */
+          alt="" /* decorative; container has aria-label */
           width={128}
           height={128}
           className="select-none pointer-events-none h-auto w-24 sm:w-32 animate-[cfs-pulse_1.1s_ease-in-out_infinite]"
@@ -43,7 +65,6 @@ export default function Splash({ showTitle = false }: { showTitle?: boolean }) {
             CodeForge Studio
           </div>
         ) : (
-          // Keep accessible name for screen readers without showing text
           <span className="sr-only">CodeForge Studio</span>
         )}
 

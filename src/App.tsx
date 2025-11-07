@@ -30,6 +30,13 @@ import BallpitBackground from "./components/BallpitBackground";
 import Splash from "./components/Splash";
 import useFirstVisitSplash from "./hooks/useFirstVisitSplash";
 
+// ✅ Extend Window here so we can use window.__BALLPIT_DISABLED without `any`
+declare global {
+  interface Window {
+    __BALLPIT_DISABLED?: boolean;
+  }
+}
+
 function Home() {
   const title = "CodeForge Studio – Moderne frontend, design og webutvikling";
   const desc =
@@ -38,12 +45,10 @@ function Home() {
 
   return (
     <>
-      {/* Minimal SEO for now (keeps lints happy) */}
       <title>{title}</title>
       <meta name="description" content={desc} />
       <link rel="canonical" href={url} />
 
-      {/* PAGE CONTENT */}
       <Hero />
       <Services />
       <Pricing />
@@ -54,7 +59,8 @@ function Home() {
 }
 
 export default function App() {
-  const showSplash = useFirstVisitSplash();
+  // Hook that drives crossfade timing
+  const { showSplash, startAppFade } = useFirstVisitSplash();
 
   // iPad 100vh fix
   useEffect(() => {
@@ -72,19 +78,59 @@ export default function App() {
     };
   }, []);
 
+  // Keep ballpit mounted from start, but paused & hidden until app fade begins
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Remember user's previous preference
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem("cfs-ballpit"); // "static" | "interactive" | null
+    } catch {
+      // ignore storage errors
+    }
+
+    // Force disabled while splash is visible
+    window.__BALLPIT_DISABLED = true;
+    window.dispatchEvent(new CustomEvent("ballpit-toggle", { detail: { disabled: true } }));
+
+    if (startAppFade) {
+      const restoreDisabled = saved === "static";
+      window.__BALLPIT_DISABLED = restoreDisabled;
+      window.dispatchEvent(
+        new CustomEvent("ballpit-toggle", { detail: { disabled: restoreDisabled } }),
+      );
+    }
+  }, [startAppFade]);
+
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        {/* Background canvas behind everything */}
-        <BallpitBackground />
-
-        {/* React splash overlay */}
+        {/* Splash overlay on top (handles its own fade timings) */}
         {showSplash && <Splash />}
 
-        {/* Foreground app content */}
+        {/* Ballpit is mounted from the start so it's ready; visually fades in with app */}
+        <div
+          style={{
+            opacity: startAppFade ? 1 : 0,
+            transition: "opacity 420ms ease-out",
+          }}
+          aria-hidden={!startAppFade}
+        >
+          <BallpitBackground />
+        </div>
+
+        {/* App content: fades in while splash fades out (crossfade) */}
         <div
           className="relative z-10 flex flex-col text-slate-900 dark:text-[#F6FAFA]"
-          style={{ minHeight: "var(--app-height)" }}
+          style={{
+            minHeight: "var(--app-height)",
+            opacity: startAppFade ? 1 : 0,
+            transition: "opacity 1000ms cubic-bezier(.16,1,.3,1)",
+            pointerEvents: showSplash ? "none" : "auto",
+            overflow: showSplash ? "hidden" : undefined,
+          }}
+          aria-hidden={showSplash}
         >
           <ScrollToTop />
           <Navbar />
