@@ -289,7 +289,11 @@ export default function BallpitBackground() {
     // 🖱️ Inputs
     const moveTo = (x: number, y: number) => { mouse.x = x; mouse.y = y; };
     const onPointerMove = (e: PointerEvent) => moveTo(e.clientX, e.clientY);
-    const onPointerDown = () => { mouse.r = CONFIG.MOUSE_R * 1.15; mouse.force = CONFIG.MOUSE_FORCE * 1.4; };
+    const onPointerDown = (e: PointerEvent) => {
+      moveTo(e.clientX, e.clientY);
+      mouse.r = CONFIG.MOUSE_R * 1.15;
+      mouse.force = CONFIG.MOUSE_FORCE * 1.4;
+    };
     const onPointerUp = () => { mouse.r = CONFIG.MOUSE_R; mouse.force = CONFIG.MOUSE_FORCE; };
     const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
 
