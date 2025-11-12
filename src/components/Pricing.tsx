@@ -33,10 +33,14 @@ export default function Pricing() {
   const FALLBACK_PRO_PRICE = "25,000 NOK";
 
   // Temporarily lock prices to the fallback values while API access is blocked
-  const starterPrice = FALLBACK_STARTER_PRICE;
-  const proPrice = FALLBACK_PRO_PRICE;
+  const starterPriceRaw = FALLBACK_STARTER_PRICE;
+  const proPriceRaw = FALLBACK_PRO_PRICE;
   const customPrice =
     page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
+
+  // Display with "Fra" for flexibility
+  const starterPrice = `Fra ${starterPriceRaw}`;
+  const proPrice = `Fra ${proPriceRaw}`;
 
   //
   // SHARED STYLES
@@ -69,8 +73,8 @@ export default function Pricing() {
     returnObjects: true,
   }) as string[];
 
-  const protectStarterPrice = /\d/.test(starterPrice);
-  const protectProPrice = /\d/.test(proPrice);
+  const protectStarterPrice = /\d/.test(starterPriceRaw);
+  const protectProPrice = /\d/.test(proPriceRaw);
   const protectCustomPrice = /\d/.test(customPrice);
 
   return (
@@ -97,7 +101,7 @@ export default function Pricing() {
             {renderBrandSafe(t("pricing.heading") as string)}
           </h2>
 
-          <p
+        <p
             className={cn(
               "mt-3",
               // light
@@ -219,19 +223,18 @@ export default function Pricing() {
                 {/* CTA button (Starter) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
-                    "CodeForge Studio – Starter"
+                    "Få tilbud – Starter-pakken"
                   )}`}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
-
                     // LIGHT MODE: black bg, white text
                     "bg-slate-900 text-white hover:bg-slate-800",
-
                     // DARK MODE: teal bg, black text
                     "dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
+                  aria-label="Få tilbud på Starter-pakken"
                 >
-                  {t("pricing.chooseStarter") as string}
+                  Få tilbud
                 </a>
               </div>
             </div>
@@ -341,19 +344,18 @@ export default function Pricing() {
                 {/* CTA button (Pro) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
-                    "CodeForge Studio – Pro"
+                    "Få tilbud – Pro-pakken"
                   )}`}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
-
                     // LIGHT MODE: sky bg, white text
                     "bg-sky-600 text-white hover:bg-sky-700",
-
                     // DARK MODE: teal bg, black text
                     "dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
+                  aria-label="Få tilbud på Pro-pakken"
                 >
-                  {t("pricing.choosePro") as string}
+                  Få tilbud
                 </a>
               </div>
             </div>
@@ -441,19 +443,18 @@ export default function Pricing() {
                 {/* CTA button (Custom) */}
                 <a
                   href={`mailto:robert@codeforgestudio.no?subject=${encodeURIComponent(
-                    "CodeForge Studio – Skreddersydd løsning"
+                    "Be om tilbud – Skreddersydd løsning"
                   )}`}
                   className={cn(
                     "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
-
                     // LIGHT MODE: outlined gray button
                     "border border-slate-300 text-slate-700 hover:bg-slate-100",
-
                     // DARK MODE: filled teal button
                     "dark:border-0 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
+                  aria-label="Be om tilbud på skreddersydd løsning"
                 >
-                  {t("pricing.requestQuote") as string}
+                  Be om tilbud
                 </a>
               </div>
             </div>
