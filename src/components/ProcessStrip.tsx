@@ -11,7 +11,7 @@
  *  robert@codeforgestudio.no | https://codeforgestudio.no
  * -------------------------------------------------------
  */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 
 type Step = { step: string; text: string };
@@ -42,7 +42,8 @@ export default function ProcessStrip({
   const [barWidth, setBarWidth] = useState<number>(0);
 
   // --- geometry helpers -----------------------------------------------------
-  function computeCenters() {
+
+  const computeCenters = useCallback(() => {
     const rail = railRef.current;
     if (!rail) return [];
     const rect = rail.getBoundingClientRect();
@@ -51,20 +52,23 @@ export default function ProcessStrip({
       const r = btn.getBoundingClientRect();
       return r.left + r.width / 2 - rect.left;
     });
-  }
+  }, []);
 
-  function updateGeometry(idx: number | null) {
-    const centers = computeCenters();
-    setCenters(centers);
-    if (!centers.length) return;
-    const first = centers[0];
-    const active = centers[idx ?? 0] ?? first;
-    setDotLeft(active);
-    setBarLeft(Math.min(first, active));
-    setBarWidth(Math.abs(active - first));
-  }
+  const updateGeometry = useCallback(
+    (idx: number | null) => {
+      const newCenters = computeCenters();
+      setCenters(newCenters);
+      if (!newCenters.length) return;
+      const first = newCenters[0];
+      const active = newCenters[idx ?? 0] ?? first;
+      setDotLeft(active);
+      setBarLeft(Math.min(first, active));
+      setBarWidth(Math.abs(active - first));
+    },
+    [computeCenters],
+  );
 
-  function positionDropdown(idx: number | null) {
+  const positionDropdown = useCallback((idx: number | null) => {
     const dropdown = dropdownRef.current;
     const rail = railRef.current;
     if (!dropdown || !rail || idx === null) return;
@@ -76,15 +80,14 @@ export default function ProcessStrip({
     dropdown.style.left = `${cx}px`;
     dropdown.style.top = `120px`;
     dropdown.style.transform = `translate(-50%, 0)`;
-  }
+  }, []);
 
   // --- effects --------------------------------------------------------------
   useEffect(() => {
     const i = openIdx ?? 0;
     updateGeometry(i);
     positionDropdown(openIdx);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openIdx]);
+  }, [openIdx, updateGeometry, positionDropdown]);
 
   useEffect(() => {
     const onResize = () => {
@@ -94,8 +97,7 @@ export default function ProcessStrip({
     };
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openIdx]);
+  }, [openIdx, updateGeometry, positionDropdown]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -105,8 +107,7 @@ export default function ProcessStrip({
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openIdx]);
+  }, [openIdx, updateGeometry, positionDropdown]);
 
   // close dropdown on outside click
   useEffect(() => {
@@ -194,7 +195,6 @@ export default function ProcessStrip({
               transition: "left 260ms cubic-bezier(0.22,1,0.36,1)",
             }}
           >
-            {/* subtle glass orb */}
             <div
               className="relative h-8 w-8 rounded-full"
               style={{
@@ -226,7 +226,7 @@ export default function ProcessStrip({
             return (
               <div
                 key={x.step}
-                className="relative flex flex-col items-center"
+                className="relative flex flex-col items-center pb-3"
                 onMouseEnter={() => updateGeometry(idx)}
               >
                 <button
@@ -256,10 +256,10 @@ export default function ProcessStrip({
                   aria-expanded={isOpen}
                   className="mt-4 text-center rounded px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand-sea)"
                 >
-                  <div className="text-heading font-semibold">
-                    {idx + 1}. {x.step}
+                  <div className="text-heading font-semibold">{x.step}</div>
+                  <div className="text-sm text-dim mt-1 leading-snug min-h-10 text-center whitespace-normal">
+                    {x.text}
                   </div>
-                  <div className="text-sm text-dim">{x.text}</div>
                 </button>
               </div>
             );
@@ -281,8 +281,6 @@ export default function ProcessStrip({
             aria-hidden="true"
           />
           <div className="surface-card rounded-xl shadow-xl border border-(--card-border) p-4 text-center">
-            {/* RENDER ALLE STEG ALLTID – bare skjul de som ikke er aktive.
-                Da ligger teksten i DOM fra start, og Chrome kan oversette den. */}
             {steps.map((step, idx) => (
               <div
                 key={step.step}
@@ -294,7 +292,7 @@ export default function ProcessStrip({
                 <div className="text-heading text-xl font-semibold mt-1">
                   {step.step}
                 </div>
-                <p className="text-body text-base leading-relaxed mt-4">
+                <p className="text-body text-base leading-relaxed mt-4 whitespace-normal">
                   {details?.[idx]?.body ?? step.text}
                 </p>
               </div>
@@ -326,7 +324,7 @@ export default function ProcessStrip({
                 className="w-full text-left"
               >
                 <div className="text-heading font-semibold text-base leading-tight">
-                  {idx + 1}. {x.step}
+                  {x.step}
                 </div>
                 <div className="text-dim text-sm leading-relaxed">
                   {x.text}
@@ -344,7 +342,7 @@ export default function ProcessStrip({
                   <div className="text-heading text-sm font-semibold">
                     {details?.[idx]?.title ?? x.step}
                   </div>
-                  <p className="text-body text-sm leading-relaxed mt-2">
+                  <p className="text-body text-sm leading-relaxed mt-2 whitespace-normal">
                     {details?.[idx]?.body ?? x.text}
                   </p>
                 </div>
