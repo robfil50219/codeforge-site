@@ -137,7 +137,10 @@ export default function ProcessStrip({
 
   // --- render ---------------------------------------------------------------
   return (
-    <div ref={cardRef} className="mt-16 sm:mt-20 relative surface-card rounded-2xl p-6 sm:p-8">
+    <div
+      ref={cardRef}
+      className="mt-16 sm:mt-20 relative surface-card rounded-2xl p-6 sm:p-8"
+    >
       <p className="text-dim text-xs font-semibold tracking-widest uppercase text-center">
         {title}
       </p>
@@ -278,19 +281,24 @@ export default function ProcessStrip({
             aria-hidden="true"
           />
           <div className="surface-card rounded-xl shadow-xl border border-(--card-border) p-4 text-center">
-            {openIdx !== null && (
-              <>
+            {/* RENDER ALLE STEG ALLTID – bare skjul de som ikke er aktive.
+                Da ligger teksten i DOM fra start, og Chrome kan oversette den. */}
+            {steps.map((step, idx) => (
+              <div
+                key={step.step}
+                className={openIdx === idx ? "block" : "hidden"}
+              >
                 <div className="text-dim text-sm tracking-wide uppercase">
-                  {details?.[openIdx]?.title ?? steps[openIdx].step}
+                  {details?.[idx]?.title ?? step.step}
                 </div>
                 <div className="text-heading text-xl font-semibold mt-1">
-                  {steps[openIdx].step}
+                  {step.step}
                 </div>
                 <p className="text-body text-base leading-relaxed mt-4">
-                  {details?.[openIdx]?.body ?? steps[openIdx].text}
+                  {details?.[idx]?.body ?? step.text}
                 </p>
-              </>
-            )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -320,7 +328,9 @@ export default function ProcessStrip({
                 <div className="text-heading font-semibold text-base leading-tight">
                   {idx + 1}. {x.step}
                 </div>
-                <div className="text-dim text-sm leading-relaxed">{x.text}</div>
+                <div className="text-dim text-sm leading-relaxed">
+                  {x.text}
+                </div>
               </button>
               <div
                 className={[
