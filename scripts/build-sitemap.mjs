@@ -1,85 +1,42 @@
-/**
- * -------------------------------------------------------
- *  CodeForge Studio — Sitemap Generator (Auto)
- *  © 2025 CodeForge Studio Filep. All rights reserved.
- *
- *  This script automatically finds .tsx pages and creates
- *  a sitemap at /public/sitemap.xml for SEO and indexing.
- * -------------------------------------------------------
- */
-
-import fs from "fs";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { SitemapStream, streamToPromise } from "sitemap";
 
-// Base URL of your site (no trailing slash)
-const siteUrl = "https://codeforgestudio.no";
+export const SITE_URL = "https://codeforgestudio.no";
 
-// Folder containing your React pages
-const pagesDir = path.resolve("./src");
-
-// Helper: recursively scan for .tsx files
-function getAllRoutes(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  let routes = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      routes = routes.concat(getAllRoutes(fullPath));
-    } else if (entry.isFile() && entry.name.endsWith(".tsx")) {
-      // Skip non-page files
-      if (
-        entry.name.toLowerCase().includes("component") ||
-        entry.name.toLowerCase().includes("ui") ||
-        entry.name.toLowerCase().includes("error") ||
-        entry.name.toLowerCase().includes("layout")
-      ) {
-        continue;
-      }
-
-      // derive route from file path
-      const relative = path.relative(pagesDir, fullPath);
-      let urlPath = "/" + relative.replace(/\\/g, "/").replace(/index\.tsx$/, "").replace(/\.tsx$/, "");
-      if (urlPath.endsWith("/")) urlPath = urlPath.slice(0, -1);
-      routes.push({ url: urlPath || "/", changefreq: "monthly", priority: 0.7 });
-    }
-  }
-
-  return routes;
-}
-
-// Static custom sections
-const staticSections = [
-  { url: "/", changefreq: "weekly", priority: 1.0 },
-  { url: "/#about", changefreq: "monthly", priority: 0.8 },
-  { url: "/#services", changefreq: "monthly", priority: 0.8 },
-  { url: "/#contact", changefreq: "monthly", priority: 0.8 },
-  { url: "/pricing", changefreq: "monthly", priority: 0.6 },
+export const SITE_ROUTES = [
+  { url: "/", changefreq: "weekly", priority: 1 },
   { url: "/privacy", changefreq: "yearly", priority: 0.5 },
+  { url: "/terms", changefreq: "yearly", priority: 0.5 },
 ];
 
-// Combine static + discovered routes
-const allRoutes = [...staticSections, ...getAllRoutes(pagesDir)];
+export async function createSitemapXml() {
+  const sitemap = new SitemapStream({ hostname: SITE_URL });
+  SITE_ROUTES.forEach((route) => sitemap.write(route));
+  sitemap.end();
+  return (await streamToPromise(sitemap)).toString();
+}
 
-// Build sitemap stream
-const sitemap = new SitemapStream({ hostname: siteUrl });
+export async function writeSitemap(
+  outputPath = path.resolve("public/sitemap.xml"),
+) {
+  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+  await fs.writeFile(outputPath, await createSitemapXml(), "utf8");
+  return outputPath;
+}
 
-// Ensure public folder exists
-if (!fs.existsSync("./public")) fs.mkdirSync("./public", { recursive: true });
+const currentFile = fileURLToPath(import.meta.url);
+const executedFile = process.argv[1] ? path.resolve(process.argv[1]) : "";
 
-// Write sitemap
-(async () => {
+if (currentFile === executedFile) {
   try {
-    allRoutes.forEach((route) => sitemap.write(route));
-    sitemap.end();
-
-    const xml = await streamToPromise(sitemap);
-    fs.writeFileSync("./public/sitemap.xml", xml.toString());
-
-    console.log(`✅ sitemap.xml generated with ${allRoutes.length} routes at public/sitemap.xml`);
-  } catch (err) {
-    console.error("❌ Failed to generate sitemap:", err);
-    process.exit(1);
+    const outputPath = await writeSitemap();
+    console.log(
+      `sitemap.xml generated with ${SITE_ROUTES.length} routes at ${outputPath}`,
+    );
+  } catch (error) {
+    console.error("Failed to generate sitemap:", error);
+    process.exitCode = 1;
   }
-})();
+}

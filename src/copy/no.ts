@@ -243,7 +243,7 @@ export const NO = {
   consent: {
     title: "Informasjonskapsler og personvern",
     text:
-      "Denne nettsiden bruker informasjonskapsler for å sikre at du får den beste opplevelsen.",
+      "Vi bruker valgfri Google Translate-funksjonalitet som kan lagre informasjonskapsler og sende data til Google.",
     learnMore: "Les mer",
     actions: {
       accept: "Godta alle",

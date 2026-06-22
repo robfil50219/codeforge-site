@@ -70,16 +70,37 @@ export default function ProcessStrip({
 
   const positionDropdown = useCallback((idx: number | null) => {
     const dropdown = dropdownRef.current;
-    const rail = railRef.current;
-    if (!dropdown || !rail || idx === null) return;
-    const railRect = rail.getBoundingClientRect();
+    const offsetParent = dropdown?.offsetParent;
+    if (
+      !dropdown ||
+      !(offsetParent instanceof HTMLElement) ||
+      idx === null
+    ) {
+      return;
+    }
     const btn = iconRefs.current[idx];
     if (!btn) return;
+
+    const parentRect = offsetParent.getBoundingClientRect();
     const btnRect = btn.getBoundingClientRect();
-    const cx = btnRect.left + btnRect.width / 2 - railRect.left;
-    dropdown.style.left = `${cx}px`;
-    dropdown.style.top = `120px`;
-    dropdown.style.transform = `translate(-50%, 0)`;
+    const targetCenter =
+      btnRect.left + btnRect.width / 2 - parentRect.left;
+    const horizontalMargin = 8;
+    const maxWidth = 448;
+    const dropdownWidth = Math.min(
+      maxWidth,
+      Math.max(0, parentRect.width - horizontalMargin * 2),
+    );
+    const unclampedLeft = targetCenter - dropdownWidth / 2;
+    const clampedLeft = Math.min(
+      Math.max(unclampedLeft, horizontalMargin),
+      parentRect.width - dropdownWidth - horizontalMargin,
+    );
+
+    dropdown.style.width = `${dropdownWidth}px`;
+    dropdown.style.left = `${clampedLeft}px`;
+    dropdown.style.top = "120px";
+    dropdown.style.transform = "none";
   }, []);
 
   // --- effects --------------------------------------------------------------

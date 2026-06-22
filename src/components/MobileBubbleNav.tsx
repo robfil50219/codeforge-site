@@ -22,8 +22,11 @@ import {
   Settings2,
   Globe,
   ChevronUp,
+  Moon,
+  Sun,
   X,
 } from "lucide-react";
+import useConsent from "../hooks/useConsent";
 import {
   BASE_LANGUAGE,
   LANGUAGE_OPTIONS,
@@ -42,8 +45,11 @@ type MobileBubbleNavProps = {
 export default function MobileBubbleNav({
   scrollToId,
   isStaticBg,
+  isDarkMode,
   toggleBackgroundMode,
+  toggleTheme,
 }: MobileBubbleNavProps) {
+  const consent = useConsent();
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<LanguageCode>(BASE_LANGUAGE);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -188,50 +194,66 @@ export default function MobileBubbleNav({
                 {backgroundLabel}
               </button>
             </li>
-            <li className="mt-2 border-t border-(--card-border) pt-2 relative">
+            <li className="mt-2">
               <button
-                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
-                onClick={() => setLanguageOpen((value) => !value)}
-                aria-haspopup="listbox"
-                aria-expanded={languageOpen}
+                className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
+                onClick={toggleTheme}
+                aria-pressed={isDarkMode}
               >
-                <span className="notranslate" translate="no">
-                  <Globe className="inline-block h-4 w-4 mr-2 align-middle" />
-                  {LANGUAGE_OPTIONS.find((option) => option.code === language)?.label ??
-                    "Velg språk"}
-                </span>
-                <ChevronUp
-                  className={[
-                    "h-4 w-4 transition-transform duration-200",
-                    languageOpen ? "" : "rotate-180",
-                  ].join(" ")}
-                />
+                {isDarkMode ? (
+                  <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
+                ) : (
+                  <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
+                )}
+                {isDarkMode ? "Bruk lys modus" : "Bruk mørk modus"}
               </button>
-
-              {languageOpen && (
-                <div className="translate-menu translate-menu--up translate-menu--full animate-in fade-in duration-200">
-                  {LANGUAGE_OPTIONS.map((option) => (
-                    <button
-                      key={option.code}
-                      className={[
-                        "translate-menu__item",
-                        option.code === language ? "translate-menu__item--active" : "",
-                      ].join(" ")}
-                      type="button"
-                      onClick={() => {
-                        window.__cfsTranslateSetLanguage?.(option.code);
-                        setLanguage(option.code);
-                        setLanguageOpen(false);
-                      }}
-                    >
-                      <span className="notranslate" translate="no">
-                        {option.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
             </li>
+            {consent === "accepted" && (
+              <li className="mt-2 border-t border-(--card-border) pt-2 relative">
+                <button
+                  className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
+                  onClick={() => setLanguageOpen((value) => !value)}
+                  aria-haspopup="listbox"
+                  aria-expanded={languageOpen}
+                >
+                  <span className="notranslate" translate="no">
+                    <Globe className="inline-block h-4 w-4 mr-2 align-middle" />
+                    {LANGUAGE_OPTIONS.find((option) => option.code === language)?.label ??
+                      "Velg språk"}
+                  </span>
+                  <ChevronUp
+                    className={[
+                      "h-4 w-4 transition-transform duration-200",
+                      languageOpen ? "" : "rotate-180",
+                    ].join(" ")}
+                  />
+                </button>
+
+                {languageOpen && (
+                  <div className="translate-menu translate-menu--up translate-menu--full animate-in fade-in duration-200">
+                    {LANGUAGE_OPTIONS.map((option) => (
+                      <button
+                        key={option.code}
+                        className={[
+                          "translate-menu__item",
+                          option.code === language ? "translate-menu__item--active" : "",
+                        ].join(" ")}
+                        type="button"
+                        onClick={() => {
+                          window.__cfsTranslateSetLanguage?.(option.code);
+                          setLanguage(option.code);
+                          setLanguageOpen(false);
+                        }}
+                      >
+                        <span className="notranslate" translate="no">
+                          {option.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </li>
+            )}
           </ul>
         </div>
       )}

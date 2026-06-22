@@ -12,41 +12,23 @@
  * -------------------------------------------------------
  */
 // src/components/ConsentBanner.tsx
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../lib/t";
-import { getConsent, setConsent } from "../utils/consent";
+import useConsent from "../hooks/useConsent";
+import { setConsent } from "../utils/consent";
 
 export default function ConsentBanner() {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+  const consent = useConsent();
 
-  useEffect(() => {
-    // Show banner if the user hasn't chosen yet
-    const c = getConsent(); // "accepted" | "rejected" | null
-    setVisible(!c); // true if null, false if accepted/rejected
-
-    // 👂 listen for manual reset from footer ("Administrer informasjonskapsler")
-    function handleReset() {
-      setVisible(true);
-    }
-
-    window.addEventListener("cf-consent-reset", handleReset);
-    return () => {
-      window.removeEventListener("cf-consent-reset", handleReset);
-    };
-  }, []);
-
-  if (!visible) return null;
+  if (consent !== null) return null;
 
   const accept = () => {
     setConsent("accepted");
-    setVisible(false);
   };
 
   const reject = () => {
     setConsent("rejected");
-    setVisible(false);
   };
 
   return (

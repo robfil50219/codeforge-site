@@ -7,6 +7,7 @@ import {
 } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../utils/cn";
+import useConsent from "../hooks/useConsent";
 import {
   BASE_LANGUAGE,
   LANGUAGE_OPTIONS,
@@ -48,6 +49,17 @@ function clearGoogleTranslateState(baseLang: string) {
   }
 }
 
+function removeGoogleTranslateUi() {
+  document.getElementById(CONTAINER_ID)?.replaceChildren();
+  document
+    .querySelectorAll(
+      ".goog-te-banner-frame, .goog-te-menu-frame, iframe.skiptranslate",
+    )
+    .forEach((element) => element.remove());
+  document.documentElement.style.removeProperty("margin-top");
+  document.body.style.removeProperty("top");
+}
+
 declare global {
   interface Window {
     googleTranslateElementInit?: () => void;
@@ -85,13 +97,12 @@ export default function FixedTranslateWidget({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const selectCleanupRef = useRef<(() => void) | null>(null);
+  const consent = useConsent();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [currentCode, setCurrentCode] = useState<LanguageCode>(BASE_LANGUAGE);
-
-  useEffect(() => {
-    clearGoogleTranslateState(BASE_LANGUAGE);
-  }, []);
+  const [currentCode, setCurrentCode] = useState<LanguageCode>(
+    detectPersistedLanguage,
+  );
 
   const notifyLanguageChange = useCallback((code: LanguageCode) => {
     setCurrentCode(code);
@@ -127,7 +138,22 @@ export default function FixedTranslateWidget({
   );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || consent !== "accepted") {
+      const translatorWasLoaded =
+        document.getElementById(SCRIPT_ID) !== null ||
+        window.google?.translate?.TranslateElement !== undefined;
+      removeGoogleTranslateUi();
+
+      if (consent === "rejected") {
+        clearGoogleTranslateState(BASE_LANGUAGE);
+        setCurrentCode(BASE_LANGUAGE);
+      }
+
+      if (translatorWasLoaded) {
+        window.location.reload();
+      }
+      return;
+    }
 
     const instantiate = () => {
       if (hasInitRef.current) return;
@@ -205,10 +231,14 @@ export default function FixedTranslateWidget({
     }
 
     return () => {
+      hasInitRef.current = false;
+      selectRef.current = null;
+      removeGoogleTranslateUi();
       if (window.googleTranslateElementInit === instantiate) {
         delete window.googleTranslateElementInit;
       }
       selectCleanupRef.current?.();
+      selectCleanupRef.current = null;
       if (window.__cfsTranslateSetLanguage) {
         delete window.__cfsTranslateSetLanguage;
       }
@@ -216,7 +246,7 @@ export default function FixedTranslateWidget({
         delete window.__cfsGetCurrentLanguage;
       }
     };
-  }, [notifyLanguageChange]);
+  }, [consent, notifyLanguageChange]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -278,6 +308,8 @@ export default function FixedTranslateWidget({
     },
     [closeMenu, selectLanguage],
   );
+
+  if (consent !== "accepted") return null;
 
   return (
     <div

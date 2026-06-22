@@ -1,24 +1,33 @@
-// src/utils/consent.ts
+export type ConsentValue = "accepted" | "rejected" | null;
 
-const CONSENT_KEY = "cf-consent"; // same key you're already using
+export const CONSENT_CHANGE_EVENT = "cf-consent-change";
+const CONSENT_KEY = "cf-consent";
 
-export function getConsent(): "accepted" | "rejected" | null {
+function emitConsentChange(value: ConsentValue) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<{ value: ConsentValue }>(CONSENT_CHANGE_EVENT, {
+      detail: { value },
+    }),
+  );
+}
+
+export function getConsent(): ConsentValue {
   try {
-    return localStorage.getItem(CONSENT_KEY) as
-      | "accepted"
-      | "rejected"
-      | null;
+    const value = localStorage.getItem(CONSENT_KEY);
+    return value === "accepted" || value === "rejected" ? value : null;
   } catch {
     return null;
   }
 }
 
-export function setConsent(value: "accepted" | "rejected") {
+export function setConsent(value: Exclude<ConsentValue, null>) {
   try {
     localStorage.setItem(CONSENT_KEY, value);
   } catch {
     /* ignore */
   }
+  emitConsentChange(value);
 }
 
 export function resetConsent() {
@@ -28,6 +37,5 @@ export function resetConsent() {
     /* ignore */
   }
 
-  // 🔊 tell the app "consent was cleared"
-  window.dispatchEvent(new CustomEvent("cf-consent-reset"));
+  emitConsentChange(null);
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- JSX utility, not a Fast Refresh boundary */
 import { Fragment, type ReactNode } from "react";
 
 const TOKENS = [

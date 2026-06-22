@@ -44,8 +44,8 @@ src/
 ## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js (>= 18)
-- npm or yarn
+- Node.js 20.19 or newer (or Node.js 22.12+)
+- npm
 
 ### Installation
 ```
@@ -56,7 +56,7 @@ git clone https://github.com/your-username/codeforge-studio.git
 cd codeforge-studio
 
 # Install dependencies
-npm install
+npm ci
 ```
 
 ### Development
@@ -129,10 +129,10 @@ Founder & Frontend Developer — [CodeForge Studio](https://codeforgestudio.no)
 
 ## 🛡️ License
 
-This project and its source code are **proprietary and confidential**.  
+This project and its source code are **proprietary**.
 Unauthorized copying, distribution, modification, or use of any part of this project is strictly prohibited without written permission from **CodeForge Studio**.
 
-© 2025 CodeForge Studio Filep. All rights reserved.
+© 2025-2026 Robert Filep and CodeForge Studio. All rights reserved.
 
 ---
 

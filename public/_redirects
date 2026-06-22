@@ -5,12 +5,6 @@
 #          and complete removal of old WordPress URLs.
 # -------------------------------------------------------
 
-# ✅ React routes (for client-side navigation)
-/
-/index.html       200
-/privacy          /index.html 200
-/terms            /index.html 200
-
 # 🚫 Old WordPress URLs (mark as permanently gone)
 # 410 = "Gone forever" → Google removes them from index
 /wp-login          /404.html 410
@@ -27,5 +21,5 @@
 /wp-sitemap.xml        /sitemap.xml 301
 /sitemap_index.xml     /sitemap.xml 301
 
-# ✅ Catch-all (React fallback + 404 page)
-/*                /404.html 404
+# ✅ React Router fallback, including the in-app 404 page
+/*                    /index.html 200
