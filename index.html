@@ -22,31 +22,6 @@
         const root = document.documentElement;
         const meta = document.querySelector('meta[name="color-scheme"]');
 
-        const isMobileDevice = () => {
-          try {
-            if (navigator?.userAgentData && typeof navigator.userAgentData.mobile === "boolean") {
-              return navigator.userAgentData.mobile;
-            }
-          } catch (error) {
-            console.warn("Unable to inspect userAgentData", error);
-          }
-
-          const ua = (navigator && typeof navigator.userAgent === "string" && navigator.userAgent) || "";
-          const mobileRegex =
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
-          if (mobileRegex.test(ua)) {
-            return true;
-          }
-          if (typeof window.matchMedia === "function") {
-            try {
-              return window.matchMedia("(pointer: coarse)").matches;
-            } catch {
-              return false;
-            }
-          }
-          return false;
-        };
-
         const updateBodyScheme = (mode) => {
           if (document.body) {
             document.body.style.colorScheme = mode;
@@ -88,7 +63,6 @@
         };
 
         try {
-          const mobile = isMobileDevice();
           let stored = null;
           try {
             stored = localStorage.getItem(STORAGE_KEY);
@@ -99,8 +73,6 @@
           let initialMode;
           if (stored === "dark" || stored === "light") {
             initialMode = stored;
-          } else if (mobile) {
-            initialMode = "light";
           } else {
             initialMode = systemPrefersDark ? "dark" : "light";
           }

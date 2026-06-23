@@ -28,26 +28,6 @@ declare global {
 const THEME_STORAGE_KEY = "cfs-theme";
 type ThemeMode = "light" | "dark";
 
-const isMobileDevice = (): boolean => {
-  if (typeof navigator !== "undefined") {
-    const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
-    if (typeof nav.userAgentData?.mobile === "boolean") return nav.userAgentData.mobile;
-    if (typeof nav.userAgent === "string") {
-      const mobileRegex =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
-      if (mobileRegex.test(nav.userAgent)) return true;
-    }
-  }
-  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
-    try {
-      return window.matchMedia("(pointer: coarse)").matches;
-    } catch {
-      return false;
-    }
-  }
-  return false;
-};
-
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
   try {
@@ -66,11 +46,11 @@ const getInitialTheme = (): ThemeMode => {
   const stored = readStoredTheme();
   if (stored) return stored;
   if (typeof window !== "undefined") {
-    return isMobileDevice() ? "light" : "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
-  return "dark";
+  return "light";
 };
 
 const applyThemeClass = (mode: ThemeMode) => {
@@ -113,20 +93,10 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mobile = isMobileDevice();
-    const storedTheme = mobile ? readStoredTheme() : null;
-    if (!mobile) {
-      try {
-        localStorage.removeItem(THEME_STORAGE_KEY);
-      } catch {
-        /* ignore */
-      }
-    }
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const initialTheme: ThemeMode = storedTheme ?? (mobile ? "light" : "dark");
-    setThemeInternal(initialTheme, mobile && storedTheme !== null);
-
-    if (!mobile) return;
+    const storedTheme = readStoredTheme();
+    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
+    setThemeInternal(initialTheme, storedTheme !== null);
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
@@ -151,11 +121,7 @@ export default function Navbar() {
 
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
-    const mobile = typeof window !== "undefined" && isMobileDevice();
-    setThemeInternal(next, mobile);
-    if (mobile) {
-      window.requestAnimationFrame(() => window.location.reload());
-    }
+    setThemeInternal(next, true);
   }
 
   function toggleBackgroundMode() {
