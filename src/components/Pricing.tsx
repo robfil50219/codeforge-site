@@ -15,38 +15,16 @@ import { useTranslation } from "../lib/t";
 import { Rocket, Sparkles, Settings } from "lucide-react";
 import Container from "./ui/Container";
 import { cn } from "../utils/cn";
-import { useWpPage } from "../hooks/useWpPage";
 import { renderBrandSafe } from "../utils/notranslate";
-
-/** ACF structure you made in WP (field names must match) */
-type PricingAcf = {
-  starter_price?: string;
-  pro_price?: string;
-  custom_price?: string;
-};
 
 export default function Pricing() {
   const { t } = useTranslation();
-  const { page, loading } = useWpPage<PricingAcf>("pricing");
-
-  const FALLBACK_STARTER_PRICE = "8,500 NOK";
-  const FALLBACK_PRO_PRICE = "25,000 NOK";
-
-  // Temporarily lock prices to the fallback values while API access is blocked
-  const starterPriceRaw = FALLBACK_STARTER_PRICE;
-  const proPriceRaw = FALLBACK_PRO_PRICE;
-  const customPrice =
-    page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
-
-  // Display with "Fra" for flexibility
-  const starterPrice = `Fra ${starterPriceRaw}`;
-  const proPrice = `Fra ${proPriceRaw}`;
 
   //
   // SHARED STYLES
   //
   const cardBase = cn(
-    "group relative overflow-hidden rounded-2xl p-6 transition",
+    "group relative flex flex-col overflow-hidden rounded-2xl p-6 transition",
     "surface-card",
     // light styling keeps the same palette tokens as other cards
     "bg-white border border-slate-200",
@@ -72,10 +50,6 @@ export default function Pricing() {
   const customFeatures = t("pricing.custom.features", {
     returnObjects: true,
   }) as string[];
-
-  const protectStarterPrice = /\d/.test(starterPriceRaw);
-  const protectProPrice = /\d/.test(proPriceRaw);
-  const protectCustomPrice = /\d/.test(customPrice);
 
   return (
     <section
@@ -114,20 +88,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        {loading ? (
-          <p
-            className={cn(
-              "mt-6 text-center",
-              // light
-              "text-slate-500",
-              // dark
-              "dark:text-(--text-dim)"
-            )}
-          >
-            {t("loading")}
-          </p>
-        ) : (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Starter */}
             <div className={cardBase}>
               {/* corner blob */}
@@ -141,7 +102,7 @@ export default function Pricing() {
                   "dark:bg-[rgba(56,189,248,0.28)] dark:group-hover:bg-[rgba(125,211,252,0.36)]"
                 )}
               />
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -187,25 +148,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.starter.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "text-3xl font-extrabold",
-                      // light
-                      "text-slate-900",
-                      // dark
-                      "dark:text-(--text-heading)",
-                      protectStarterPrice && "notranslate"
-                    )}
-                    {...(protectStarterPrice ? { translate: "no" as const } : {})}
-                  >
-                    {starterPrice}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     // light
                     "text-slate-700",
                     // dark
@@ -226,7 +171,7 @@ export default function Pricing() {
                     "Få tilbud – Starter-pakken"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
                     // LIGHT MODE: black bg, white text
                     "bg-slate-900 text-white hover:bg-slate-800",
                     // DARK MODE: teal bg, black text
@@ -274,7 +219,7 @@ export default function Pricing() {
                 {t("pricing.pro.badge") as string}
               </span>
 
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -314,22 +259,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.pro.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "text-3xl font-extrabold",
-                      "text-slate-900 dark:text-(--text-heading)",
-                      protectProPrice && "notranslate"
-                    )}
-                    {...(protectProPrice ? { translate: "no" as const } : {})}
-                  >
-                    {proPrice}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
@@ -347,7 +279,7 @@ export default function Pricing() {
                     "Få tilbud – Pro-pakken"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
                     // LIGHT MODE: sky bg, white text
                     "bg-sky-600 text-white hover:bg-sky-700",
                     // DARK MODE: teal bg, black text
@@ -373,7 +305,7 @@ export default function Pricing() {
                   "dark:bg-[rgba(16,185,129,0.3)] dark:group-hover:bg-[rgba(45,212,191,0.38)]"
                 )}
               />
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -413,22 +345,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.custom.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "text-3xl font-extrabold",
-                      "text-slate-900 dark:text-(--text-heading)",
-                      protectCustomPrice && "notranslate"
-                    )}
-                    {...(protectCustomPrice ? { translate: "no" as const } : {})}
-                  >
-                    {customPrice}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
@@ -446,9 +365,9 @@ export default function Pricing() {
                     "Be om tilbud – Skreddersydd løsning"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
-                    // LIGHT MODE: outlined gray button
-                    "border border-slate-300 text-slate-700 hover:bg-slate-100",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition",
+                    // LIGHT MODE: high-contrast filled button
+                    "border border-emerald-700 bg-emerald-700 text-white hover:border-emerald-800 hover:bg-emerald-800",
                     // DARK MODE: filled teal button
                     "dark:border-0 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
@@ -458,8 +377,7 @@ export default function Pricing() {
                 </a>
               </div>
             </div>
-          </div>
-        )}
+        </div>
 
         <p
           className={cn(

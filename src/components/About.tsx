@@ -115,15 +115,12 @@ export default function About() {
           <div className="flex flex-col items-center text-center">
             <div className="relative">
               <div className="relative aspect-square w-56 sm:w-64 overflow-hidden rounded-full ring-4 ring-white/60 dark:ring-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.15)] bg-white/60 dark:bg-white/10 backdrop-blur-sm transition-transform duration-500 hover:scale-105">
-                <picture>
-                  <source srcSet="/robert-profile-800.webp" type="image/webp" />
-                  <img
-                    src="/robert-profile-800.jpg"
-                    alt={t("about.alt") as string}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </picture>
+                <img
+                  src="/robert-profile-800.jpg"
+                  alt={t("about.alt") as string}
+                  loading="lazy"
+                  className="h-full w-full object-cover object-[center_42%]"
+                />
               </div>
             </div>
 

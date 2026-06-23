@@ -22,31 +22,6 @@
         const root = document.documentElement;
         const meta = document.querySelector('meta[name="color-scheme"]');
 
-        const isMobileDevice = () => {
-          try {
-            if (navigator?.userAgentData && typeof navigator.userAgentData.mobile === "boolean") {
-              return navigator.userAgentData.mobile;
-            }
-          } catch (error) {
-            console.warn("Unable to inspect userAgentData", error);
-          }
-
-          const ua = (navigator && typeof navigator.userAgent === "string" && navigator.userAgent) || "";
-          const mobileRegex =
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
-          if (mobileRegex.test(ua)) {
-            return true;
-          }
-          if (typeof window.matchMedia === "function") {
-            try {
-              return window.matchMedia("(pointer: coarse)").matches;
-            } catch {
-              return false;
-            }
-          }
-          return false;
-        };
-
         const updateBodyScheme = (mode) => {
           if (document.body) {
             document.body.style.colorScheme = mode;
@@ -70,25 +45,17 @@
             meta.setAttribute("content", isDark ? "dark light" : "light dark");
           }
           updateBodyScheme(normalized);
-          void root.offsetHeight; // force reflow for Safari repaint
           if (persist === true) {
             try {
               localStorage.setItem(STORAGE_KEY, normalized);
             } catch (error) {
               console.warn("Unable to persist theme", error);
             }
-          } else if (persist === false) {
-            try {
-              localStorage.removeItem(STORAGE_KEY);
-            } catch (error) {
-              console.warn("Unable to clear stored theme", error);
-            }
           }
           return normalized;
         };
 
         try {
-          const mobile = isMobileDevice();
           let stored = null;
           try {
             stored = localStorage.getItem(STORAGE_KEY);
@@ -96,14 +63,12 @@
             console.warn("Unable to read stored theme", error);
           }
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          let initialMode;
-          if (stored === "dark" || stored === "light") {
-            initialMode = stored;
-          } else if (mobile) {
-            initialMode = "light";
-          } else {
-            initialMode = systemPrefersDark ? "dark" : "light";
-          }
+          const initialMode =
+            stored === "dark" || stored === "light"
+              ? stored
+              : systemPrefersDark
+                ? "dark"
+                : "light";
           apply(initialMode);
 
           window.__CFS_GET_THEME = () => (root.classList.contains("dark") ? "dark" : "light");

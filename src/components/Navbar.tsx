@@ -14,8 +14,11 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
+import useLanguage from "../hooks/useLanguage";
+import { NAVIGATION_LABELS } from "./translate/language-data";
 
 declare global {
   interface Window {
@@ -27,26 +30,6 @@ declare global {
 
 const THEME_STORAGE_KEY = "cfs-theme";
 type ThemeMode = "light" | "dark";
-
-const isMobileDevice = (): boolean => {
-  if (typeof navigator !== "undefined") {
-    const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
-    if (typeof nav.userAgentData?.mobile === "boolean") return nav.userAgentData.mobile;
-    if (typeof nav.userAgent === "string") {
-      const mobileRegex =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
-      if (mobileRegex.test(nav.userAgent)) return true;
-    }
-  }
-  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
-    try {
-      return window.matchMedia("(pointer: coarse)").matches;
-    } catch {
-      return false;
-    }
-  }
-  return false;
-};
 
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
@@ -63,14 +46,9 @@ const getInitialTheme = (): ThemeMode => {
     const windowTheme = window.__CFS_GET_THEME?.();
     if (windowTheme === "dark" || windowTheme === "light") return windowTheme;
   }
-  const stored = readStoredTheme();
-  if (stored) return stored;
-  if (typeof window !== "undefined") {
-    return isMobileDevice() ? "light" : "dark";
-  }
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
-  return "dark";
+  return "light";
 };
 
 const applyThemeClass = (mode: ThemeMode) => {
@@ -89,11 +67,15 @@ const applyThemeClass = (mode: ThemeMode) => {
 };
 
 export default function Navbar() {
+  const language = useLanguage();
+  const labels = NAVIGATION_LABELS[language];
   const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
-  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
+  const backgroundLabel = isStaticBg
+    ? labels.backgroundOff
+    : labels.backgroundOn;
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -108,37 +90,47 @@ export default function Navbar() {
       }
     }
     setThemeState((current) => (current === mode ? current : mode));
-    manualThemeRef.current = persist;
+    if (persist) manualThemeRef.current = true;
   }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mobile = isMobileDevice();
-    const storedTheme = mobile ? readStoredTheme() : null;
-    if (!mobile) {
-      try {
-        localStorage.removeItem(THEME_STORAGE_KEY);
-      } catch {
-        /* ignore */
-      }
-    }
+    const storedTheme = readStoredTheme();
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const initialTheme: ThemeMode = storedTheme ?? (mobile ? "light" : "dark");
-    setThemeInternal(initialTheme, mobile && storedTheme !== null);
-
-    if (!mobile) return;
+    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
+    manualThemeRef.current = storedTheme !== null;
+    setThemeInternal(initialTheme, false);
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
       setThemeInternal(event.matches ? "dark" : "light", false);
     };
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== THEME_STORAGE_KEY) return;
+      const next =
+        event.newValue === "dark" || event.newValue === "light"
+          ? event.newValue
+          : media.matches
+            ? "dark"
+            : "light";
+      manualThemeRef.current = event.newValue === "dark" || event.newValue === "light";
+      setThemeInternal(next, false);
+    };
+
+    window.addEventListener("storage", handleStorage);
     if (typeof media.addEventListener === "function") {
       media.addEventListener("change", handleSystem);
-      return () => media.removeEventListener("change", handleSystem);
+      return () => {
+        media.removeEventListener("change", handleSystem);
+        window.removeEventListener("storage", handleStorage);
+      };
     }
     media.addListener(handleSystem);
-    return () => media.removeListener(handleSystem);
+    return () => {
+      media.removeListener(handleSystem);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, [setThemeInternal]);
 
   useEffect(() => {
@@ -151,11 +143,7 @@ export default function Navbar() {
 
   function toggleTheme() {
     const next: ThemeMode = isDark ? "light" : "dark";
-    const mobile = typeof window !== "undefined" && isMobileDevice();
-    setThemeInternal(next, mobile);
-    if (mobile) {
-      window.requestAnimationFrame(() => window.location.reload());
-    }
+    setThemeInternal(next, true);
   }
 
   function toggleBackgroundMode() {
@@ -194,7 +182,7 @@ export default function Navbar() {
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
-              aria-label="Til forsiden"
+              aria-label={labels.home}
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -212,16 +200,16 @@ export default function Navbar() {
             {/* desktop nav */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-                Tjenester
+                <span className="notranslate" translate="no">{labels.services}</span>
               </button>
               <button onClick={() => scrollToId("pricing")} className="hover:opacity-80 transition">
-                Priser
+                <span className="notranslate" translate="no">{labels.pricing}</span>
               </button>
               <button onClick={() => scrollToId("about")} className="hover:opacity-80 transition">
-                Om oss
+                <span className="notranslate" translate="no">{labels.about}</span>
               </button>
               <button onClick={() => scrollToId("contact")} className="hover:opacity-80 transition">
-                Kontakt
+                <span className="notranslate" translate="no">{labels.contact}</span>
               </button>
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
@@ -248,20 +236,28 @@ export default function Navbar() {
                   }
                   aria-pressed={isStaticBg}
                 >
-                  {backgroundLabel}
+                  <span className="notranslate" translate="no">{backgroundLabel}</span>
                 </button>
 
                 {/* desktop theme toggle */}
                 <button
                   type="button"
+                  data-testid="desktop-theme-toggle"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
                     toggleTheme();
                   }}
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
+                  aria-label={isDark ? labels.useLightTheme : labels.useDarkTheme}
+                  aria-pressed={isDark}
+                  title={isDark ? labels.useLightTheme : labels.useDarkTheme}
                 >
-                  {isDark ? "Lys" : "Mørk"}
+                  {isDark ? (
+                    <Sun className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Moon className="h-4 w-4" aria-hidden="true" />
+                  )}
                 </button>
 
                 {/* translate button */}

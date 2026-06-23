@@ -23,14 +23,19 @@ const TOKENS = [
 
 const NORMALIZED = TOKENS.map((token) => token.toLowerCase());
 const ESCAPED = TOKENS.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-const TOKEN_REGEX = new RegExp(`(${ESCAPED.join("|")})`, "gi");
+const TOKEN_REGEX = new RegExp(
+  `([\\s\\u00A0]*(?:${ESCAPED.join("|")})[\\s\\u00A0]*)`,
+  "gi",
+);
 
 export function renderBrandSafe(text: string | null | undefined): ReactNode {
   if (!text) return text ?? null;
   const parts = text.split(TOKEN_REGEX);
   return parts.map((part, index) => {
     if (!part) return null;
-    const matchIndex = NORMALIZED.findIndex((token) => token === part.toLowerCase());
+    const matchIndex = NORMALIZED.findIndex(
+      (token) => token === part.trim().toLowerCase(),
+    );
     if (matchIndex !== -1) {
       return (
         <span key={`brand-${index}`} className="notranslate" translate="no">

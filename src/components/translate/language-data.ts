@@ -12,6 +12,129 @@ export const LANGUAGE_OPTIONS = [
 export type LanguageCode = (typeof LANGUAGE_OPTIONS)[number]["code"];
 
 export const BASE_LANGUAGE: LanguageCode = "no";
+export const LANGUAGE_STORAGE_KEY = "cfs-language";
+export const LANGUAGE_CHANGE_EVENT = "cfs-language-change";
+
+type NavigationLabels = {
+  home: string;
+  menu: string;
+  closeMenu: string;
+  services: string;
+  pricing: string;
+  about: string;
+  contact: string;
+  backgroundOn: string;
+  backgroundOff: string;
+  useLightTheme: string;
+  useDarkTheme: string;
+};
+
+export const NAVIGATION_LABELS: Record<LanguageCode, NavigationLabels> = {
+  no: {
+    home: "Til forsiden",
+    menu: "Meny",
+    closeMenu: "Lukk meny",
+    services: "Tjenester",
+    pricing: "Priser",
+    about: "Om oss",
+    contact: "Kontakt",
+    backgroundOn: "Interaktiv bakgrunn: På",
+    backgroundOff: "Interaktiv bakgrunn: Av",
+    useLightTheme: "Bruk lys modus",
+    useDarkTheme: "Bruk mørk modus",
+  },
+  en: {
+    home: "Home",
+    menu: "Menu",
+    closeMenu: "Close menu",
+    services: "Services",
+    pricing: "Pricing",
+    about: "About",
+    contact: "Contact",
+    backgroundOn: "Interactive background: On",
+    backgroundOff: "Interactive background: Off",
+    useLightTheme: "Use light mode",
+    useDarkTheme: "Use dark mode",
+  },
+  sv: {
+    home: "Till startsidan",
+    menu: "Meny",
+    closeMenu: "Stäng menyn",
+    services: "Tjänster",
+    pricing: "Priser",
+    about: "Om oss",
+    contact: "Kontakt",
+    backgroundOn: "Interaktiv bakgrund: På",
+    backgroundOff: "Interaktiv bakgrund: Av",
+    useLightTheme: "Använd ljust läge",
+    useDarkTheme: "Använd mörkt läge",
+  },
+  da: {
+    home: "Til forsiden",
+    menu: "Menu",
+    closeMenu: "Luk menu",
+    services: "Tjenester",
+    pricing: "Priser",
+    about: "Om os",
+    contact: "Kontakt",
+    backgroundOn: "Interaktiv baggrund: Til",
+    backgroundOff: "Interaktiv baggrund: Fra",
+    useLightTheme: "Brug lys tilstand",
+    useDarkTheme: "Brug mørk tilstand",
+  },
+  fi: {
+    home: "Etusivulle",
+    menu: "Valikko",
+    closeMenu: "Sulje valikko",
+    services: "Palvelut",
+    pricing: "Hinnat",
+    about: "Meistä",
+    contact: "Yhteystiedot",
+    backgroundOn: "Interaktiivinen tausta: Päällä",
+    backgroundOff: "Interaktiivinen tausta: Pois",
+    useLightTheme: "Käytä vaaleaa tilaa",
+    useDarkTheme: "Käytä tummaa tilaa",
+  },
+  de: {
+    home: "Zur Startseite",
+    menu: "Menü",
+    closeMenu: "Menü schließen",
+    services: "Leistungen",
+    pricing: "Preise",
+    about: "Über uns",
+    contact: "Kontakt",
+    backgroundOn: "Interaktiver Hintergrund: Ein",
+    backgroundOff: "Interaktiver Hintergrund: Aus",
+    useLightTheme: "Hellen Modus verwenden",
+    useDarkTheme: "Dunklen Modus verwenden",
+  },
+  fr: {
+    home: "Accueil",
+    menu: "Menu",
+    closeMenu: "Fermer le menu",
+    services: "Services",
+    pricing: "Tarifs",
+    about: "À propos",
+    contact: "Contact",
+    backgroundOn: "Arrière-plan interactif : Activé",
+    backgroundOff: "Arrière-plan interactif : Désactivé",
+    useLightTheme: "Utiliser le mode clair",
+    useDarkTheme: "Utiliser le mode sombre",
+  },
+  es: {
+    home: "Inicio",
+    menu: "Menú",
+    closeMenu: "Cerrar menú",
+    services: "Servicios",
+    pricing: "Precios",
+    about: "Nosotros",
+    contact: "Contacto",
+    backgroundOn: "Fondo interactivo: Activado",
+    backgroundOff: "Fondo interactivo: Desactivado",
+    useLightTheme: "Usar modo claro",
+    useDarkTheme: "Usar modo oscuro",
+  },
+};
 
 const SUPPORTED_CODES = new Set<LanguageCode>(
   LANGUAGE_OPTIONS.map((option) => option.code),
@@ -57,6 +180,12 @@ const readStorageLanguage = (getter: () => string | null): LanguageCode | null =
 };
 
 export const detectPersistedLanguage = (): LanguageCode => {
+  const fromPreference = readStorageLanguage(() => {
+    if (typeof window === "undefined") return null;
+    return window.localStorage?.getItem(LANGUAGE_STORAGE_KEY) ?? null;
+  });
+  if (fromPreference) return fromPreference;
+
   const fromCookie = readCookieLanguage();
   if (fromCookie) return fromCookie;
 
@@ -73,6 +202,22 @@ export const detectPersistedLanguage = (): LanguageCode => {
   if (fromSession) return fromSession;
 
   return BASE_LANGUAGE;
+};
+
+export const persistLanguage = (code: LanguageCode) => {
+  try {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
+  } catch {
+    /* ignore unavailable storage */
+  }
+};
+
+export const clearPersistedLanguage = () => {
+  try {
+    window.localStorage.removeItem(LANGUAGE_STORAGE_KEY);
+  } catch {
+    /* ignore unavailable storage */
+  }
 };
 
 export const isSupportedLanguage = (

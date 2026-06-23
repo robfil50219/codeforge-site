@@ -27,11 +27,10 @@ import {
   X,
 } from "lucide-react";
 import useConsent from "../hooks/useConsent";
+import useLanguage from "../hooks/useLanguage";
 import {
-  BASE_LANGUAGE,
   LANGUAGE_OPTIONS,
-  isSupportedLanguage,
-  type LanguageCode,
+  NAVIGATION_LABELS,
 } from "./translate/language-data";
 
 type MobileBubbleNavProps = {
@@ -50,33 +49,13 @@ export default function MobileBubbleNav({
   toggleTheme,
 }: MobileBubbleNavProps) {
   const consent = useConsent();
+  const language = useLanguage();
+  const labels = NAVIGATION_LABELS[language];
   const [open, setOpen] = useState(false);
-  const [language, setLanguage] = useState<LanguageCode>(BASE_LANGUAGE);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
-
-  useEffect(() => {
-    const initial =
-      (typeof window !== "undefined" && window.__cfsGetCurrentLanguage?.()) ||
-      null;
-    if (isSupportedLanguage(initial)) {
-      setLanguage(initial);
-    } else {
-      setLanguage(BASE_LANGUAGE);
-    }
-
-    const handle = (event: Event) => {
-      const custom = event as CustomEvent<{ code?: string }>;
-      const code = custom.detail?.code;
-      if (!isSupportedLanguage(code)) return;
-      setLanguage(code);
-    };
-
-    window.addEventListener("cfs-language-change", handle);
-    return () => {
-      window.removeEventListener("cfs-language-change", handle);
-    };
-  }, []);
+  const backgroundLabel = isStaticBg
+    ? labels.backgroundOff
+    : labels.backgroundOn;
 
   useEffect(() => {
     if (!open) setLanguageOpen(false);
@@ -91,6 +70,7 @@ export default function MobileBubbleNav({
   return (
     <>
       <button
+        data-testid="mobile-menu-toggle"
         className={[
           "fixed z-50 md:hidden",
           "surface-chip mobile-bubble-trigger px-4 py-2 text-heading text-xs font-semibold shadow-lg border-0",
@@ -102,10 +82,10 @@ export default function MobileBubbleNav({
         }}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label="Meny"
+        aria-label={labels.menu}
       >
         <Settings2 className="inline-block h-4 w-4 align-middle mr-1" />
-        Meny
+        <span className="notranslate" translate="no">{labels.menu}</span>
       </button>
 
       {open && (
@@ -124,7 +104,7 @@ export default function MobileBubbleNav({
           <div className="flex justify-end border-b border-(--card-border) px-3 py-2">
             <button
               onClick={() => setOpen(false)}
-              aria-label="Lukk meny"
+              aria-label={labels.closeMenu}
               className="relative group p-1 rounded-md transition-transform duration-300 hover:scale-110 active:scale-95"
             >
               <span className="absolute inset-0 rounded-md bg-[rgba(255,255,255,0.1)] opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
@@ -139,7 +119,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("services")}
               >
                 <Palette className="inline-block h-4 w-4 mr-2 align-middle" />
-                Tjenester
+                <span className="notranslate" translate="no">{labels.services}</span>
               </button>
             </li>
             <li>
@@ -148,7 +128,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("pricing")}
               >
                 <Rocket className="inline-block h-4 w-4 mr-2 align-middle" />
-                Priser
+                <span className="notranslate" translate="no">{labels.pricing}</span>
               </button>
             </li>
             <li>
@@ -157,7 +137,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("about")}
               >
                 <User className="inline-block h-4 w-4 mr-2 align-middle" />
-                Om oss
+                <span className="notranslate" translate="no">{labels.about}</span>
               </button>
             </li>
             <li>
@@ -166,7 +146,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("contact")}
               >
                 <PhoneCall className="inline-block h-4 w-4 mr-2 align-middle" />
-                Kontakt
+                <span className="notranslate" translate="no">{labels.contact}</span>
               </button>
             </li>
 
@@ -191,11 +171,12 @@ export default function MobileBubbleNav({
                 }
               >
                 <CircleDot className="inline-block h-4 w-4 mr-2 align-middle" />
-                {backgroundLabel}
+                <span className="notranslate" translate="no">{backgroundLabel}</span>
               </button>
             </li>
             <li className="mt-2">
               <button
+                data-testid="mobile-theme-toggle"
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={toggleTheme}
                 aria-pressed={isDarkMode}
@@ -205,12 +186,15 @@ export default function MobileBubbleNav({
                 ) : (
                   <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
                 )}
-                {isDarkMode ? "Bruk lys modus" : "Bruk mørk modus"}
+                <span className="notranslate" translate="no">
+                  {isDarkMode ? labels.useLightTheme : labels.useDarkTheme}
+                </span>
               </button>
             </li>
             {consent === "accepted" && (
               <li className="mt-2 border-t border-(--card-border) pt-2 relative">
                 <button
+                  data-testid="mobile-language-toggle"
                   className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5 flex items-center justify-between"
                   onClick={() => setLanguageOpen((value) => !value)}
                   aria-haspopup="listbox"
@@ -234,6 +218,7 @@ export default function MobileBubbleNav({
                     {LANGUAGE_OPTIONS.map((option) => (
                       <button
                         key={option.code}
+                        data-testid={`mobile-language-${option.code}`}
                         className={[
                           "translate-menu__item",
                           option.code === language ? "translate-menu__item--active" : "",
@@ -241,7 +226,6 @@ export default function MobileBubbleNav({
                         type="button"
                         onClick={() => {
                           window.__cfsTranslateSetLanguage?.(option.code);
-                          setLanguage(option.code);
                           setLanguageOpen(false);
                         }}
                       >

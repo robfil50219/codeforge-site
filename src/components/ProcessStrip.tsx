@@ -353,19 +353,21 @@ export default function ProcessStrip({
               </button>
               <div
                 className={[
-                  "origin-top transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  "grid origin-top transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   isOpen
-                    ? "opacity-100 scale-100 translate-y-2"
-                    : "pointer-events-none opacity-0 scale-[0.98] -translate-y-1",
+                    ? "grid-rows-[1fr] opacity-100 scale-100 translate-y-2"
+                    : "pointer-events-none grid-rows-[0fr] opacity-0 scale-[0.98] -translate-y-1",
                 ].join(" ")}
               >
-                <div className="surface-card mt-3 rounded-lg shadow-md border border-(--card-border) p-3">
-                  <div className="text-heading text-sm font-semibold">
-                    {details?.[idx]?.title ?? x.step}
+                <div className="overflow-hidden">
+                  <div className="surface-card mt-3 rounded-lg shadow-md border border-(--card-border) p-3">
+                    <div className="text-heading text-sm font-semibold">
+                      {details?.[idx]?.title ?? x.step}
+                    </div>
+                    <p className="text-body text-sm leading-relaxed mt-2 whitespace-normal">
+                      {details?.[idx]?.body ?? x.text}
+                    </p>
                   </div>
-                  <p className="text-body text-sm leading-relaxed mt-2 whitespace-normal">
-                    {details?.[idx]?.body ?? x.text}
-                  </p>
                 </div>
               </div>
             </li>

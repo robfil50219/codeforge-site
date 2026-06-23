@@ -10,18 +10,31 @@ import { cn } from "../utils/cn";
 import useConsent from "../hooks/useConsent";
 import {
   BASE_LANGUAGE,
+  LANGUAGE_CHANGE_EVENT,
   LANGUAGE_OPTIONS,
+  clearPersistedLanguage,
   detectPersistedLanguage,
   isSupportedLanguage,
+  persistLanguage,
   type LanguageCode,
 } from "./translate/language-data";
 
 const SCRIPT_ID = "cfs-google-translate-script";
 const CONTAINER_ID = "cfs-google-translate";
 
+function getCookieDomains() {
+  const hostname = window.location.hostname;
+  const isIpAddress = /^[\d.:]+$/.test(hostname);
+  if (!hostname || hostname === "localhost" || isIpAddress) return [""];
+  const parentDomain = hostname.split(".").slice(-2).join(".");
+  return Array.from(
+    new Set(["", hostname, `.${hostname}`, `.${parentDomain}`]),
+  );
+}
+
 function clearGoogleTranslateState(baseLang: string) {
   try {
-    const domains = ["", window.location.hostname, `.${window.location.hostname}`];
+    const domains = getCookieDomains();
     const paths = ["/", window.location.pathname || "/"];
     domains.forEach((domain) => {
       paths.forEach((path) => {
@@ -46,6 +59,29 @@ function clearGoogleTranslateState(baseLang: string) {
     }
   } catch {
     // ignore errors cleaning translation state
+  }
+}
+
+function setGoogleTranslateState(code: LanguageCode) {
+  const value = `/${BASE_LANGUAGE}/${code}`;
+  const expires = new Date();
+  expires.setFullYear(expires.getFullYear() + 1);
+
+  for (const domain of getCookieDomains()) {
+    const domainPart = domain ? `;domain=${domain}` : "";
+    document.cookie =
+      `googtrans=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax${domainPart}`;
+  }
+
+  try {
+    localStorage.setItem("googtrans", value);
+  } catch {
+    /* ignore unavailable storage */
+  }
+  try {
+    sessionStorage.setItem("googtrans", value);
+  } catch {
+    /* ignore unavailable storage */
   }
 }
 
@@ -107,7 +143,7 @@ export default function FixedTranslateWidget({
   const notifyLanguageChange = useCallback((code: LanguageCode) => {
     setCurrentCode(code);
     window.dispatchEvent(
-      new CustomEvent("cfs-language-change", { detail: { code } }),
+      new CustomEvent(LANGUAGE_CHANGE_EVENT, { detail: { code } }),
     );
   }, []);
 
@@ -115,24 +151,16 @@ export default function FixedTranslateWidget({
 
   const selectLanguage = useCallback(
     (code: LanguageCode, opts?: { focusTrigger?: boolean; closeMenu?: boolean }) => {
-      const select = selectRef.current;
-      if (!select) return;
-      const isBase = code === BASE_LANGUAGE;
-      select.value = isBase ? BASE_LANGUAGE : code;
-      if (isBase) {
-        select.selectedIndex = 0;
-      }
-      select.dispatchEvent(new Event("change", { bubbles: true }));
-      if (isBase) {
+      persistLanguage(code);
+      if (code === BASE_LANGUAGE) {
         clearGoogleTranslateState(BASE_LANGUAGE);
-        notifyLanguageChange(BASE_LANGUAGE);
-        window.setTimeout(() => {
-          window.location.reload();
-        }, 100);
-        return;
+      } else {
+        setGoogleTranslateState(code);
       }
+      notifyLanguageChange(code);
       if (opts?.closeMenu !== false) closeMenu();
       if (opts?.focusTrigger !== false) triggerRef.current?.focus();
+      window.setTimeout(() => window.location.reload(), 50);
     },
     [closeMenu, notifyLanguageChange],
   );
@@ -144,16 +172,27 @@ export default function FixedTranslateWidget({
         window.google?.translate?.TranslateElement !== undefined;
       removeGoogleTranslateUi();
 
-      if (consent === "rejected") {
-        clearGoogleTranslateState(BASE_LANGUAGE);
-        setCurrentCode(BASE_LANGUAGE);
-      }
+      clearGoogleTranslateState(BASE_LANGUAGE);
+      clearPersistedLanguage();
+      setCurrentCode(BASE_LANGUAGE);
 
       if (translatorWasLoaded) {
         window.location.reload();
       }
       return;
     }
+
+    const preferredLanguage = detectPersistedLanguage();
+    setCurrentCode(preferredLanguage);
+    if (preferredLanguage !== BASE_LANGUAGE) {
+      setGoogleTranslateState(preferredLanguage);
+    }
+
+    window.__cfsTranslateSetLanguage = (code: string) => {
+      if (!isSupportedLanguage(code)) return;
+      selectLanguage(code, { focusTrigger: false });
+    };
+    window.__cfsGetCurrentLanguage = detectPersistedLanguage;
 
     const instantiate = () => {
       if (hasInitRef.current) return;
@@ -188,7 +227,7 @@ export default function FixedTranslateWidget({
         select.style.height = "0";
 
         const handleChange = () => {
-          const rawNext = select.value || detectPersistedLanguage();
+          const rawNext = select.value || preferredLanguage;
           const next = isSupportedLanguage(rawNext) ? rawNext : BASE_LANGUAGE;
           notifyLanguageChange(next);
         };
@@ -199,18 +238,6 @@ export default function FixedTranslateWidget({
 
         selectCleanupRef.current = () =>
           select.removeEventListener("change", handleChange);
-
-        window.__cfsTranslateSetLanguage = (code: string) => {
-          if (!isSupportedLanguage(code)) return;
-          select.value = code;
-          select.dispatchEvent(new Event("change", { bubbles: true }));
-        };
-
-        window.__cfsGetCurrentLanguage = () => {
-          const value = select.value;
-          if (isSupportedLanguage(value)) return value;
-          return detectPersistedLanguage();
-        };
       };
 
       decorate();
@@ -246,7 +273,7 @@ export default function FixedTranslateWidget({
         delete window.__cfsGetCurrentLanguage;
       }
     };
-  }, [consent, notifyLanguageChange]);
+  }, [consent, notifyLanguageChange, selectLanguage]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -322,6 +349,7 @@ export default function FixedTranslateWidget({
     >
       <button
         type="button"
+        data-testid="desktop-language-toggle"
         ref={triggerRef}
         className="surface-chip nav-chip translate-button px-3 py-1.5 text-heading"
         aria-haspopup="listbox"
@@ -359,6 +387,7 @@ export default function FixedTranslateWidget({
           {LANGUAGE_OPTIONS.map((option, index) => (
             <button
               key={option.code}
+              data-testid={`desktop-language-${option.code}`}
               type="button"
               role="option"
               aria-selected={currentCode === option.code}
