@@ -8,9 +8,12 @@
 import { ArrowRight, Code2, Gauge, ShieldCheck } from "lucide-react";
 import Container from "./ui/Container";
 import { useTranslation } from "../lib/t";
+import { cn } from "../utils/cn";
 
 export default function Hero() {
   const { t } = useTranslation();
+  const heroButtonBase =
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-bold shadow-sm transition hover:-translate-y-0.5 focus-visible:-translate-y-0.5";
 
   return (
     <section
@@ -62,14 +65,23 @@ export default function Hero() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
                 href="#contact"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-brand-midnight)] px-5 py-3 text-sm font-bold text-white shadow-[0_18px_34px_rgba(15,68,82,0.22)] transition hover:-translate-y-0.5 hover:bg-[var(--color-brand-black)] dark:bg-[var(--color-brand-sea)] dark:text-[var(--color-brand-black)] dark:hover:brightness-110"
+                className={cn(
+                  heroButtonBase,
+                  "border-[var(--color-brand-midnight)] bg-[var(--color-brand-midnight)] text-white",
+                  "shadow-[0_18px_34px_rgba(15,68,82,0.22)] hover:bg-[var(--color-brand-black)]",
+                  "dark:border-[var(--color-brand-sea)] dark:bg-[var(--color-brand-sea)] dark:text-[var(--color-brand-black)] dark:hover:brightness-110"
+                )}
               >
                 {t("hero.ctaQuote") as string}
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href="#services"
-                className="inline-flex items-center justify-center rounded-xl border border-[var(--card-border)] bg-white/60 px-5 py-3 text-sm font-bold text-heading backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10"
+                className={cn(
+                  heroButtonBase,
+                  "border-[var(--card-border)] bg-white/60 text-heading backdrop-blur hover:bg-white",
+                  "dark:bg-white/5 dark:hover:bg-white/10"
+                )}
               >
                 {t("hero.ctaServices") as string}
               </a>
