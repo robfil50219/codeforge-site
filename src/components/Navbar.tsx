@@ -17,8 +17,6 @@ import { Link } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
-import useLanguage from "../hooks/useLanguage";
-import { NAVIGATION_LABELS } from "./translate/language-data";
 
 declare global {
   interface Window {
@@ -46,6 +44,7 @@ const getInitialTheme = (): ThemeMode => {
     const windowTheme = window.__CFS_GET_THEME?.();
     if (windowTheme === "dark" || windowTheme === "light") return windowTheme;
   }
+
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
   return "light";
@@ -67,15 +66,11 @@ const applyThemeClass = (mode: ThemeMode) => {
 };
 
 export default function Navbar() {
-  const language = useLanguage();
-  const labels = NAVIGATION_LABELS[language];
-  const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
+useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
   const backgroundLabel = isStaticBg
-    ? labels.backgroundOff
-    : labels.backgroundOn;
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -95,11 +90,6 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const storedTheme = readStoredTheme();
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
-    manualThemeRef.current = storedTheme !== null;
-    setThemeInternal(initialTheme, false);
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
@@ -182,7 +172,7 @@ export default function Navbar() {
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
-              aria-label={labels.home}
+
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -200,16 +190,7 @@ export default function Navbar() {
             {/* desktop nav */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-                <span className="notranslate" translate="no">{labels.services}</span>
-              </button>
-              <button onClick={() => scrollToId("pricing")} className="hover:opacity-80 transition">
-                <span className="notranslate" translate="no">{labels.pricing}</span>
-              </button>
-              <button onClick={() => scrollToId("about")} className="hover:opacity-80 transition">
-                <span className="notranslate" translate="no">{labels.about}</span>
-              </button>
-              <button onClick={() => scrollToId("contact")} className="hover:opacity-80 transition">
-                <span className="notranslate" translate="no">{labels.contact}</span>
+
               </button>
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
@@ -253,11 +234,7 @@ export default function Navbar() {
                   aria-pressed={isDark}
                   title={isDark ? labels.useLightTheme : labels.useDarkTheme}
                 >
-                  {isDark ? (
-                    <Sun className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <Moon className="h-4 w-4" aria-hidden="true" />
-                  )}
+
                 </button>
 
                 {/* translate button */}

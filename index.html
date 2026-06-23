@@ -63,12 +63,7 @@
             console.warn("Unable to read stored theme", error);
           }
           const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const initialMode =
-            stored === "dark" || stored === "light"
-              ? stored
-              : systemPrefersDark
-                ? "dark"
-                : "light";
+
           apply(initialMode);
 
           window.__CFS_GET_THEME = () => (root.classList.contains("dark") ? "dark" : "light");

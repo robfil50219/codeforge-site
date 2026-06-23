@@ -70,7 +70,7 @@ export default function Footer() {
               </a>
               <a
                 href={MAILTO}
-                aria-label={`Email ${CONTACT_EMAIL}`}
+                aria-label={`${t("contact.email") as string} ${CONTACT_EMAIL}`}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-(--card-bg) border border-(--card-border) shadow-sm hover:shadow-lg transition"
               >
                 <Mail className="h-5 w-5 text-(--color-brand-sea)" />
@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Divider & bottom row */}
         <div className="mt-6 border-t border-(--card-border) pt-4 flex flex-col gap-2 text-xs text-(--text-dim) md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-1 flex-wrap">
-            © {year} <span className="notranslate" translate="no">CodeForgeStudio</span>. Alle rettigheter forbeholdt. Designet og utviklet av{" "}
+            © {year} <span className="notranslate" translate="no">CodeForgeStudio</span>. {t("footer.rights") as string} {t("footer.designedBy") as string}{" "}
             <a
               href="https://codeforgestudio.no"
               target="_blank"
@@ -92,7 +92,7 @@ export default function Footer() {
             >
               <span className="notranslate" translate="no">CodeForgeStudio</span>
             </a>
-            . Driftet av{" "}
+            . {t("footer.hostedBy") as string}{" "}
             <a
               href="https://www.netlify.com"
               target="_blank"

@@ -26,9 +26,7 @@ export default function Pricing() {
   const cardBase = cn(
     "group relative flex flex-col overflow-hidden rounded-2xl p-6 transition",
     "surface-card",
-    // light styling keeps the same palette tokens as other cards
-    "bg-white border border-slate-200",
-    // dark styling relies on global tokens for consistency
+    "bg-white/85 border border-slate-200/80",
     "dark:bg-[var(--card-bg)] dark:border-[var(--card-border)]"
   );
 

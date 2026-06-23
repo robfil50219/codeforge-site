@@ -12,18 +12,29 @@ export const NO = {
 
   // ---------- Hero ----------
   hero: {
+    kicker: "Frontend-studio / Norge",
     title: "Design og bygg moderne nettløsninger",
     tagline: "Nettsteder som er raske og ser skarpe ut.",
     blurb:
       "Vi lager raske og pålitelige digitale løsninger med moderne webteknologi — tilpasset dine mål. Fra enkle landingssider til komplette plattformer, har vi fokus på ytelse, tilgjengelighet og design som gjør inntrykk.",
     imageAlt: "Utviklere som samarbeider foran en skjerm",
     imageCaption: "Sanntidsgrensesnitt, ryddig arkitektur og pikselperfekte detaljer",
+    imageKicker: "Klart for bygging",
+    imageCopy: "Skarpe grensesnitt, responsive systemer og frontend-arbeid klart for produksjon.",
+    photoCredit: "Foto av",
+    ctaQuote: "Be om pris",
     ctaServices: "Se tjenester",
     ctaWork: "Se arbeid",
+    stats: {
+      react: "React",
+      speed: "Hastighet",
+      polish: "Finish",
+    },
   },
 
   // ---------- Services ----------
   services: {
+    kicker: "Dette bygger vi",
     heading: "Tjenester",
     sub: "Vi tilbyr moderne webløsninger som dekker dine behov.",
     primary: {
@@ -104,6 +115,7 @@ export const NO = {
   pricing: {
     heading: "Prosjektpakker",
     sub: "Velg det som passer mål og tidsplan.",
+    inquiryLabel: "Be om pris",
     starter: {
       name: "Start",
       price: "kr 8 500 / fastpris",
@@ -235,8 +247,37 @@ export const NO = {
     navLabel: "Bunnmeny",
     connect: "Kontakt",
     rights: "Alle rettigheter forbeholdt.",
+    designedBy: "Designet og utviklet av",
+    hostedBy: "Driftet av",
     privacy: "Personvern",
     terms: "Vilkår",
+  },
+
+  controls: {
+    backgroundMotion: "Animasjon",
+    backgroundStatic: "Rolig bakgrunn",
+    lightMode: "Lys",
+    darkMode: "Mørk",
+    useLightMode: "Bruk lys modus",
+    useDarkMode: "Bruk mørk modus",
+    chooseLanguage: "Velg språk",
+    openMenu: "Åpne meny",
+    closeMenu: "Lukk meny",
+    home: "Til forsiden",
+    menu: "Meny",
+  },
+
+  notFound: {
+    message: "Siden ble ikke funnet.",
+    home: "Gå hjem",
+  },
+
+  error: {
+    label: "Noe gikk galt",
+    heading: "Vi undersøker saken.",
+    copy: "Det oppstod en uventet feil. Prøv igjen eller gå tilbake til forsiden.",
+    retry: "Prøv igjen",
+    home: "Gå hjem",
   },
 
   // ---------- Consent ----------

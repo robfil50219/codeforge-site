@@ -18,8 +18,8 @@
    Design tokens
    ================================= */
 :root {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-sans: "Manrope", "Aptos", "Segoe UI", ui-sans-serif, system-ui,
+    sans-serif;
 
   /* Brand palette */
   --color-brand-sea: #00a0a0;        /* accent / highlight teal */
@@ -29,7 +29,7 @@
   --color-brand-accent-soft: #008e8e; /* muted teal (light mode) */
 
   /* LIGHT MODE surfaces */
-  --bg-page: #ffffff;
+  --bg-page: #f7fbfb;
   --text-page: #0f172a;        /* main body text (slate-900-ish) */
   --text-dim: #4b5563;         /* slate-600 */
   --text-heading: #0f172a;     /* headings and strong text */
@@ -37,14 +37,14 @@
   --text-link-hover: #0e7490;  /* cyan-700-ish hover */
 
   /* cards in light */
-  --card-bg: rgba(255, 255, 255, 1);
-  --card-border: rgba(0, 0, 0, 0.05);
-  --card-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.86);
+  --card-border: rgba(15, 68, 82, 0.12);
+  --card-shadow: 0 20px 55px rgba(15, 68, 82, 0.11);
 
   /* navbar / bubbles / glass in light */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.25);
-  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 18px 45px rgba(15, 68, 82, 0.12);
 
   /* chip bg in light (small pills like "Let's talk") */
   --chip-bg: rgba(255, 255, 255, 0.8);
@@ -116,7 +116,10 @@ html {
 /* the page background + default text */
 body {
   font-family: var(--font-sans);
-  background: var(--bg-page);
+  background:
+    linear-gradient(135deg, rgba(0, 160, 160, 0.08), transparent 34rem),
+    radial-gradient(circle at 78% 12%, rgba(15, 68, 82, 0.09), transparent 28rem),
+    var(--bg-page);
   color: var(--text-page);
   padding-top: 0;
   min-height: var(--app-height);
@@ -180,7 +183,47 @@ button, a, [role="button"], input[type="submit"], input[type="button"], input[ty
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
   border-radius: 0.75rem;
-  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s;
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  transition: background 0.4s, box-shadow 0.4s, border-color 0.4s, transform 0.25s ease;
+}
+
+.surface-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 28px 70px rgba(15, 68, 82, 0.16),
+    0 0 0 1px rgba(0, 160, 160, 0.08);
+}
+
+:root.dark .surface-card:hover {
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.82),
+    0 0 0 1px rgba(111, 231, 229, 0.14);
+}
+
+.section-kicker {
+  color: var(--color-brand-accent-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hero-media-frame {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-media-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(145deg, transparent 45%, rgba(0, 25, 32, 0.52)),
+    linear-gradient(0deg, rgba(0, 160, 160, 0.18), transparent 42%);
+  pointer-events: none;
 }
 
 .surface-chip {
