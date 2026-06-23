@@ -14,9 +14,9 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
-import { useTranslation } from "../lib/t";
 
 declare global {
   interface Window {
@@ -44,11 +44,7 @@ const getInitialTheme = (): ThemeMode => {
     const windowTheme = window.__CFS_GET_THEME?.();
     if (windowTheme === "dark" || windowTheme === "light") return windowTheme;
   }
-  const stored = readStoredTheme();
-  if (stored) return stored;
-  if (typeof window !== "undefined") {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
+
   if (typeof document !== "undefined" && document.documentElement.classList.contains("dark"))
     return "dark";
   return "light";
@@ -70,14 +66,11 @@ const applyThemeClass = (mode: ThemeMode) => {
 };
 
 export default function Navbar() {
-  const { t } = useTranslation();
-  const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
+useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
   const backgroundLabel = isStaticBg
-    ? (t("controls.backgroundStatic") as string)
-    : (t("controls.backgroundMotion") as string);
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -92,27 +85,42 @@ export default function Navbar() {
       }
     }
     setThemeState((current) => (current === mode ? current : mode));
-    manualThemeRef.current = persist;
+    if (persist) manualThemeRef.current = true;
   }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const storedTheme = readStoredTheme();
-    const initialTheme: ThemeMode = storedTheme ?? (media.matches ? "dark" : "light");
-    setThemeInternal(initialTheme, storedTheme !== null);
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
       setThemeInternal(event.matches ? "dark" : "light", false);
     };
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== THEME_STORAGE_KEY) return;
+      const next =
+        event.newValue === "dark" || event.newValue === "light"
+          ? event.newValue
+          : media.matches
+            ? "dark"
+            : "light";
+      manualThemeRef.current = event.newValue === "dark" || event.newValue === "light";
+      setThemeInternal(next, false);
+    };
+
+    window.addEventListener("storage", handleStorage);
     if (typeof media.addEventListener === "function") {
       media.addEventListener("change", handleSystem);
-      return () => media.removeEventListener("change", handleSystem);
+      return () => {
+        media.removeEventListener("change", handleSystem);
+        window.removeEventListener("storage", handleStorage);
+      };
     }
     media.addListener(handleSystem);
-    return () => media.removeListener(handleSystem);
+    return () => {
+      media.removeListener(handleSystem);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, [setThemeInternal]);
 
   useEffect(() => {
@@ -164,7 +172,7 @@ export default function Navbar() {
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
-              aria-label={t("controls.home") as string}
+
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -182,16 +190,7 @@ export default function Navbar() {
             {/* desktop nav */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-                {t("nav.services") as string}
-              </button>
-              <button onClick={() => scrollToId("pricing")} className="hover:opacity-80 transition">
-                {t("nav.pricing") as string}
-              </button>
-              <button onClick={() => scrollToId("about")} className="hover:opacity-80 transition">
-                {t("nav.about") as string}
-              </button>
-              <button onClick={() => scrollToId("contact")} className="hover:opacity-80 transition">
-                {t("nav.contact") as string}
+
               </button>
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
@@ -218,20 +217,24 @@ export default function Navbar() {
                   }
                   aria-pressed={isStaticBg}
                 >
-                  {backgroundLabel}
+                  <span className="notranslate" translate="no">{backgroundLabel}</span>
                 </button>
 
                 {/* desktop theme toggle */}
                 <button
                   type="button"
+                  data-testid="desktop-theme-toggle"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
                     toggleTheme();
                   }}
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
+                  aria-label={isDark ? labels.useLightTheme : labels.useDarkTheme}
+                  aria-pressed={isDark}
+                  title={isDark ? labels.useLightTheme : labels.useDarkTheme}
                 >
-                  {isDark ? (t("controls.lightMode") as string) : (t("controls.darkMode") as string)}
+
                 </button>
 
                 {/* translate button */}

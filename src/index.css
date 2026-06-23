@@ -11,6 +11,9 @@
 ------------------------------------------------------- */
 @import "tailwindcss";
 
+/* Drive dark-mode utilities from the app's theme class, not the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* =================================
    Design tokens
    ================================= */

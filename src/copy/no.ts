@@ -154,7 +154,7 @@ export const NO = {
     choosePro: "Velg Pro",
     requestQuote: "Be om tilbud",
     fineprint:
-      "Prisene er typiske utgangspunkt. Endelig tilbud avhenger av omfang og integrasjoner.",
+      "Endelig tilbud tilpasses omfang, tidsplan og integrasjoner.",
   },
 
   // ---------- About ----------

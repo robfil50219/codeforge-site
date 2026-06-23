@@ -19,13 +19,12 @@ import { renderBrandSafe } from "../utils/notranslate";
 
 export default function Pricing() {
   const { t } = useTranslation();
-  const inquiryLabel = t("pricing.inquiryLabel") as string;
 
   //
   // SHARED STYLES
   //
   const cardBase = cn(
-    "group relative overflow-hidden rounded-2xl p-6 transition",
+    "group relative flex flex-col overflow-hidden rounded-2xl p-6 transition",
     "surface-card",
     "bg-white/85 border border-slate-200/80",
     "dark:bg-[var(--card-bg)] dark:border-[var(--card-border)]"
@@ -101,7 +100,7 @@ export default function Pricing() {
                   "dark:bg-[rgba(56,189,248,0.28)] dark:group-hover:bg-[rgba(125,211,252,0.36)]"
                 )}
               />
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -147,21 +146,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.starter.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
-                      "border-sky-200 bg-sky-50 text-sky-800",
-                      "dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-100"
-                    )}
-                  >
-                    {renderBrandSafe(inquiryLabel)}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     // light
                     "text-slate-700",
                     // dark
@@ -182,7 +169,7 @@ export default function Pricing() {
                     "Få tilbud – Starter-pakken"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
                     // LIGHT MODE: black bg, white text
                     "bg-slate-900 text-white hover:bg-slate-800",
                     // DARK MODE: teal bg, black text
@@ -230,7 +217,7 @@ export default function Pricing() {
                 {t("pricing.pro.badge") as string}
               </span>
 
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -270,21 +257,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.pro.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
-                      "border-sky-300 bg-sky-600 text-white",
-                      "dark:border-cyan-300/30 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black)"
-                    )}
-                  >
-                    {renderBrandSafe(inquiryLabel)}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
@@ -302,7 +277,7 @@ export default function Pricing() {
                     "Få tilbud – Pro-pakken"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
                     // LIGHT MODE: sky bg, white text
                     "bg-sky-600 text-white hover:bg-sky-700",
                     // DARK MODE: teal bg, black text
@@ -328,7 +303,7 @@ export default function Pricing() {
                   "dark:bg-[rgba(16,185,129,0.3)] dark:group-hover:bg-[rgba(45,212,191,0.38)]"
                 )}
               />
-              <div className="relative">
+              <div className="relative flex h-full flex-col">
                 {/* icon chip */}
                 <div
                   className={cn(
@@ -368,21 +343,9 @@ export default function Pricing() {
                   {renderBrandSafe(t("pricing.custom.blurb") as string)}
                 </p>
 
-                <div className="mt-4">
-                  <span
-                    className={cn(
-                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
-                      "border-emerald-200 bg-emerald-50 text-emerald-800",
-                      "dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100"
-                    )}
-                  >
-                    {renderBrandSafe(inquiryLabel)}
-                  </span>
-                </div>
-
                 <ul
                   className={cn(
-                    "mt-6 space-y-2 text-sm",
+                    "mt-6 flex-1 space-y-2 text-sm",
                     "text-slate-700 dark:text-(--text-page)"
                   )}
                 >
@@ -400,9 +363,9 @@ export default function Pricing() {
                     "Be om tilbud – Skreddersydd løsning"
                   )}`}
                   className={cn(
-                    "mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition",
-                    // LIGHT MODE: outlined gray button
-                    "border border-slate-300 text-slate-700 hover:bg-slate-100",
+                    "mt-6 inline-flex self-start items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition",
+                    // LIGHT MODE: high-contrast filled button
+                    "border border-emerald-700 bg-emerald-700 text-white hover:border-emerald-800 hover:bg-emerald-800",
                     // DARK MODE: filled teal button
                     "dark:border-0 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black) dark:hover:brightness-110"
                   )}
