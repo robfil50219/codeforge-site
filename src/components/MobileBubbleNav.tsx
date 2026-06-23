@@ -19,7 +19,6 @@ import {
   Rocket,
   User,
   CircleDot,
-  Settings2,
   Globe,
   ChevronUp,
   Moon,
@@ -56,6 +55,8 @@ export default function MobileBubbleNav({
   const [open, setOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const backgroundLabel = isStaticBg
+    ? labels.backgroundOff
+    : labels.backgroundOn;
 
   useEffect(() => {
     if (!open) setLanguageOpen(false);
@@ -82,6 +83,9 @@ export default function MobileBubbleNav({
         }}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
+        aria-label={open ? labels.closeMenu : labels.menu}
+        title={open ? labels.closeMenu : labels.menu}
+      >
       </button>
 
       {open && (
@@ -100,6 +104,8 @@ export default function MobileBubbleNav({
           <div className="flex justify-end border-b border-(--card-border) px-3 py-2">
             <button
               onClick={() => setOpen(false)}
+              aria-label={labels.closeMenu}
+              title={labels.closeMenu}
               className="relative group p-1 rounded-md transition-transform duration-300 hover:scale-110 active:scale-95"
             >
               <span className="absolute inset-0 rounded-md bg-[rgba(255,255,255,0.1)] opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
@@ -112,34 +118,40 @@ export default function MobileBubbleNav({
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => go("services")}
+                aria-label={labels.services}
               >
                 <Palette className="inline-block h-4 w-4 mr-2 align-middle" />
+                <span className="notranslate" translate="no">{labels.services}</span>
               </button>
             </li>
             <li>
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => go("pricing")}
+                aria-label={labels.pricing}
               >
                 <Rocket className="inline-block h-4 w-4 mr-2 align-middle" />
-
+                <span className="notranslate" translate="no">{labels.pricing}</span>
               </button>
             </li>
             <li>
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => go("about")}
+                aria-label={labels.about}
               >
                 <User className="inline-block h-4 w-4 mr-2 align-middle" />
-
+                <span className="notranslate" translate="no">{labels.about}</span>
               </button>
             </li>
             <li>
               <button
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={() => go("contact")}
+                aria-label={labels.contact}
               >
                 <PhoneCall className="inline-block h-4 w-4 mr-2 align-middle" />
+                <span className="notranslate" translate="no">{labels.contact}</span>
               </button>
             </li>
 
@@ -154,6 +166,8 @@ export default function MobileBubbleNav({
                   .join(" ")}
                 onClick={toggleBackgroundMode}
                 aria-pressed={isStaticBg}
+                aria-label={backgroundLabel}
+                title={backgroundLabel}
                 style={
                   isStaticBg
                     ? undefined
@@ -172,13 +186,18 @@ export default function MobileBubbleNav({
                 data-testid="mobile-theme-toggle"
                 className="w-full text-left rounded-lg px-3 py-2 hover:bg-white/5"
                 onClick={toggleTheme}
+                aria-label={isDarkMode ? labels.useLightTheme : labels.useDarkTheme}
                 aria-pressed={isDarkMode}
+                title={isDarkMode ? labels.useLightTheme : labels.useDarkTheme}
               >
                 {isDarkMode ? (
                   <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
                 ) : (
                   <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
                 )}
+                <span className="notranslate" translate="no">
+                  {isDarkMode ? labels.useLightTheme : labels.useDarkTheme}
+                </span>
               </button>
             </li>
             {consent === "accepted" && (

@@ -17,6 +17,8 @@ import { Link } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
+import useLanguage from "../hooks/useLanguage";
+import { NAVIGATION_LABELS } from "./translate/language-data";
 
 declare global {
   interface Window {
@@ -66,11 +68,15 @@ const applyThemeClass = (mode: ThemeMode) => {
 };
 
 export default function Navbar() {
-useState<ThemeMode>(getInitialTheme);
+  const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
+  const language = useLanguage();
+  const labels = NAVIGATION_LABELS[language];
   const isDark = theme === "dark";
   const backgroundLabel = isStaticBg
+    ? labels.backgroundOff
+    : labels.backgroundOn;
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -90,6 +96,7 @@ useState<ThemeMode>(getInitialTheme);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleSystem = (event: MediaQueryListEvent) => {
       if (manualThemeRef.current) return;
@@ -190,7 +197,7 @@ useState<ThemeMode>(getInitialTheme);
             {/* desktop nav */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-
+                <span className="notranslate" translate="no">{labels.services}</span>
               </button>
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
@@ -216,6 +223,8 @@ useState<ThemeMode>(getInitialTheme);
                         }
                   }
                   aria-pressed={isStaticBg}
+                  aria-label={backgroundLabel}
+                  title={backgroundLabel}
                 >
                   <span className="notranslate" translate="no">{backgroundLabel}</span>
                 </button>
@@ -234,7 +243,14 @@ useState<ThemeMode>(getInitialTheme);
                   aria-pressed={isDark}
                   title={isDark ? labels.useLightTheme : labels.useDarkTheme}
                 >
-
+                  {isDark ? (
+                    <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
+                  ) : (
+                    <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
+                  )}
+                  <span className="notranslate" translate="no">
+                    {isDark ? labels.useLightTheme : labels.useDarkTheme}
+                  </span>
                 </button>
 
                 {/* translate button */}
