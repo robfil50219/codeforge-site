@@ -38,25 +38,25 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
       return (
         <main className="min-h-[60vh] flex items-center justify-center px-6">
           <div className="text-center">
-            <p className="text-sm font-semibold text-red-600">Something went wrong</p>
+            <p className="text-sm font-semibold text-red-600">Noe gikk galt</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-              We’re on it.
+              Vi undersøker saken.
             </h1>
             <p className="mt-2 text-slate-600">
-              An unexpected error occurred. Try again or go back home.
+              Det oppstod en uventet feil. Prøv igjen eller gå tilbake til forsiden.
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
               <button
                 onClick={this.handleRetry}
                 className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition"
               >
-                Try again
+                Prøv igjen
               </button>
               <Link
                 to="/"
                 className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-white transition"
               >
-                Go home
+                Gå hjem
               </Link>
             </div>
           </div>

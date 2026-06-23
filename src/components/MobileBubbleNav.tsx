@@ -33,6 +33,7 @@ import {
   isSupportedLanguage,
   type LanguageCode,
 } from "./translate/language-data";
+import { useTranslation } from "../lib/t";
 
 type MobileBubbleNavProps = {
   scrollToId: (id: string) => void;
@@ -49,11 +50,14 @@ export default function MobileBubbleNav({
   toggleBackgroundMode,
   toggleTheme,
 }: MobileBubbleNavProps) {
+  const { t } = useTranslation();
   const consent = useConsent();
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<LanguageCode>(BASE_LANGUAGE);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
+  const backgroundLabel = isStaticBg
+    ? (t("controls.backgroundStatic") as string)
+    : (t("controls.backgroundMotion") as string);
 
   useEffect(() => {
     const initial =
@@ -102,10 +106,10 @@ export default function MobileBubbleNav({
         }}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label="Meny"
+        aria-label={open ? (t("controls.closeMenu") as string) : (t("controls.openMenu") as string)}
       >
         <Settings2 className="inline-block h-4 w-4 align-middle mr-1" />
-        Meny
+        {t("controls.menu") as string}
       </button>
 
       {open && (
@@ -124,7 +128,7 @@ export default function MobileBubbleNav({
           <div className="flex justify-end border-b border-(--card-border) px-3 py-2">
             <button
               onClick={() => setOpen(false)}
-              aria-label="Lukk meny"
+              aria-label={t("controls.closeMenu") as string}
               className="relative group p-1 rounded-md transition-transform duration-300 hover:scale-110 active:scale-95"
             >
               <span className="absolute inset-0 rounded-md bg-[rgba(255,255,255,0.1)] opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
@@ -139,7 +143,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("services")}
               >
                 <Palette className="inline-block h-4 w-4 mr-2 align-middle" />
-                Tjenester
+                {t("nav.services") as string}
               </button>
             </li>
             <li>
@@ -148,7 +152,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("pricing")}
               >
                 <Rocket className="inline-block h-4 w-4 mr-2 align-middle" />
-                Priser
+                {t("nav.pricing") as string}
               </button>
             </li>
             <li>
@@ -157,7 +161,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("about")}
               >
                 <User className="inline-block h-4 w-4 mr-2 align-middle" />
-                Om oss
+                {t("nav.about") as string}
               </button>
             </li>
             <li>
@@ -166,7 +170,7 @@ export default function MobileBubbleNav({
                 onClick={() => go("contact")}
               >
                 <PhoneCall className="inline-block h-4 w-4 mr-2 align-middle" />
-                Kontakt
+                {t("nav.contact") as string}
               </button>
             </li>
 
@@ -205,7 +209,7 @@ export default function MobileBubbleNav({
                 ) : (
                   <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
                 )}
-                {isDarkMode ? "Bruk lys modus" : "Bruk mørk modus"}
+                {isDarkMode ? (t("controls.useLightMode") as string) : (t("controls.useDarkMode") as string)}
               </button>
             </li>
             {consent === "accepted" && (
@@ -219,7 +223,7 @@ export default function MobileBubbleNav({
                   <span className="notranslate" translate="no">
                     <Globe className="inline-block h-4 w-4 mr-2 align-middle" />
                     {LANGUAGE_OPTIONS.find((option) => option.code === language)?.label ??
-                      "Velg språk"}
+                      (t("controls.chooseLanguage") as string)}
                   </span>
                   <ChevronUp
                     className={[

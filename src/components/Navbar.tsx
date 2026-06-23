@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
+import { useTranslation } from "../lib/t";
 
 declare global {
   interface Window {
@@ -69,11 +70,14 @@ const applyThemeClass = (mode: ThemeMode) => {
 };
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
   const isDark = theme === "dark";
-  const backgroundLabel = isStaticBg ? "Interaktiv bakgrunn: Av" : "Interaktiv bakgrunn: På";
+  const backgroundLabel = isStaticBg
+    ? (t("controls.backgroundStatic") as string)
+    : (t("controls.backgroundMotion") as string);
 
   const setThemeInternal = useCallback((mode: ThemeMode, persist: boolean) => {
     if (typeof window !== "undefined" && typeof window.__CFS_SET_THEME === "function") {
@@ -160,7 +164,7 @@ export default function Navbar() {
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
-              aria-label="Til forsiden"
+              aria-label={t("controls.home") as string}
             >
               <img
                 src={`${import.meta.env.BASE_URL}favicon.png`}
@@ -178,16 +182,16 @@ export default function Navbar() {
             {/* desktop nav */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
               <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-                Tjenester
+                {t("nav.services") as string}
               </button>
               <button onClick={() => scrollToId("pricing")} className="hover:opacity-80 transition">
-                Priser
+                {t("nav.pricing") as string}
               </button>
               <button onClick={() => scrollToId("about")} className="hover:opacity-80 transition">
-                Om oss
+                {t("nav.about") as string}
               </button>
               <button onClick={() => scrollToId("contact")} className="hover:opacity-80 transition">
-                Kontakt
+                {t("nav.contact") as string}
               </button>
               <div className="flex items-center gap-3 text-xs font-medium">
                 {/* background toggle */}
@@ -227,7 +231,7 @@ export default function Navbar() {
                   }}
                   className="surface-chip nav-chip px-3 py-1.5 text-heading"
                 >
-                  {isDark ? "Lys" : "Mørk"}
+                  {isDark ? (t("controls.lightMode") as string) : (t("controls.darkMode") as string)}
                 </button>
 
                 {/* translate button */}

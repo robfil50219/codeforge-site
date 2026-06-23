@@ -15,32 +15,11 @@ import { useTranslation } from "../lib/t";
 import { Rocket, Sparkles, Settings } from "lucide-react";
 import Container from "./ui/Container";
 import { cn } from "../utils/cn";
-import { useWpPage } from "../hooks/useWpPage";
 import { renderBrandSafe } from "../utils/notranslate";
-
-/** ACF structure you made in WP (field names must match) */
-type PricingAcf = {
-  starter_price?: string;
-  pro_price?: string;
-  custom_price?: string;
-};
 
 export default function Pricing() {
   const { t } = useTranslation();
-  const { page, loading } = useWpPage<PricingAcf>("pricing");
-
-  const FALLBACK_STARTER_PRICE = "8,500 NOK";
-  const FALLBACK_PRO_PRICE = "25,000 NOK";
-
-  // Temporarily lock prices to the fallback values while API access is blocked
-  const starterPriceRaw = FALLBACK_STARTER_PRICE;
-  const proPriceRaw = FALLBACK_PRO_PRICE;
-  const customPrice =
-    page?.acf?.custom_price ?? (t("pricing.custom.price") as string);
-
-  // Display with "Fra" for flexibility
-  const starterPrice = `Fra ${starterPriceRaw}`;
-  const proPrice = `Fra ${proPriceRaw}`;
+  const inquiryLabel = t("pricing.inquiryLabel") as string;
 
   //
   // SHARED STYLES
@@ -48,9 +27,7 @@ export default function Pricing() {
   const cardBase = cn(
     "group relative overflow-hidden rounded-2xl p-6 transition",
     "surface-card",
-    // light styling keeps the same palette tokens as other cards
-    "bg-white border border-slate-200",
-    // dark styling relies on global tokens for consistency
+    "bg-white/85 border border-slate-200/80",
     "dark:bg-[var(--card-bg)] dark:border-[var(--card-border)]"
   );
 
@@ -72,10 +49,6 @@ export default function Pricing() {
   const customFeatures = t("pricing.custom.features", {
     returnObjects: true,
   }) as string[];
-
-  const protectStarterPrice = /\d/.test(starterPriceRaw);
-  const protectProPrice = /\d/.test(proPriceRaw);
-  const protectCustomPrice = /\d/.test(customPrice);
 
   return (
     <section
@@ -114,20 +87,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        {loading ? (
-          <p
-            className={cn(
-              "mt-6 text-center",
-              // light
-              "text-slate-500",
-              // dark
-              "dark:text-(--text-dim)"
-            )}
-          >
-            {t("loading")}
-          </p>
-        ) : (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Starter */}
             <div className={cardBase}>
               {/* corner blob */}
@@ -190,16 +150,12 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
-                      // light
-                      "text-slate-900",
-                      // dark
-                      "dark:text-(--text-heading)",
-                      protectStarterPrice && "notranslate"
+                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
+                      "border-sky-200 bg-sky-50 text-sky-800",
+                      "dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-100"
                     )}
-                    {...(protectStarterPrice ? { translate: "no" as const } : {})}
                   >
-                    {starterPrice}
+                    {renderBrandSafe(inquiryLabel)}
                   </span>
                 </div>
 
@@ -317,13 +273,12 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
-                      "text-slate-900 dark:text-(--text-heading)",
-                      protectProPrice && "notranslate"
+                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
+                      "border-sky-300 bg-sky-600 text-white",
+                      "dark:border-cyan-300/30 dark:bg-(--color-brand-sea) dark:text-(--color-brand-black)"
                     )}
-                    {...(protectProPrice ? { translate: "no" as const } : {})}
                   >
-                    {proPrice}
+                    {renderBrandSafe(inquiryLabel)}
                   </span>
                 </div>
 
@@ -416,13 +371,12 @@ export default function Pricing() {
                 <div className="mt-4">
                   <span
                     className={cn(
-                      "text-3xl font-extrabold",
-                      "text-slate-900 dark:text-(--text-heading)",
-                      protectCustomPrice && "notranslate"
+                      "inline-flex rounded-full border px-3 py-1.5 text-sm font-bold uppercase tracking-[0.12em]",
+                      "border-emerald-200 bg-emerald-50 text-emerald-800",
+                      "dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100"
                     )}
-                    {...(protectCustomPrice ? { translate: "no" as const } : {})}
                   >
-                    {customPrice}
+                    {renderBrandSafe(inquiryLabel)}
                   </span>
                 </div>
 
@@ -458,8 +412,7 @@ export default function Pricing() {
                 </a>
               </div>
             </div>
-          </div>
-        )}
+        </div>
 
         <p
           className={cn(
