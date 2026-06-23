@@ -73,6 +73,7 @@ export default function MobileBubbleNav({
       <button
         data-testid="mobile-menu-toggle"
         className={[
+          "hidden",
           "fixed z-50 md:hidden",
           "surface-chip mobile-bubble-trigger px-4 py-2 text-heading text-xs font-semibold shadow-lg border-0",
           "active:scale-95 transition-transform",
@@ -91,6 +92,7 @@ export default function MobileBubbleNav({
       {open && (
         <div
           className={[
+            "hidden",
             "fixed z-[60] md:hidden w-56 rounded-xl border shadow-xl",
             "bg-(--bg-page) border-(--card-border) text-(--text-page)",
             "animate-in fade-in slide-in-from-bottom-4 duration-300",

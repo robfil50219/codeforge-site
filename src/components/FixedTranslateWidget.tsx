@@ -121,11 +121,13 @@ declare global {
 type FixedTranslateWidgetProps = {
   floating?: boolean;
   className?: string;
+  compact?: boolean;
 };
 
 export default function FixedTranslateWidget({
   floating = false,
   className,
+  compact = false,
 }: FixedTranslateWidgetProps) {
   const hasInitRef = useRef(false);
   const selectRef = useRef<HTMLSelectElement | null>(null);
@@ -338,6 +340,9 @@ export default function FixedTranslateWidget({
 
   if (consent !== "accepted") return null;
 
+  const currentLanguage =
+    LANGUAGE_OPTIONS.find((option) => option.code === currentCode) ?? LANGUAGE_OPTIONS[0];
+
   return (
     <div
       ref={containerRef}
@@ -351,9 +356,18 @@ export default function FixedTranslateWidget({
         type="button"
         data-testid="desktop-language-toggle"
         ref={triggerRef}
-        className="surface-chip nav-chip translate-button px-3 py-1.5 text-heading"
+        className={cn(
+          "surface-chip nav-chip translate-button text-heading",
+          compact ? "translate-button--compact" : "px-3 py-1.5",
+        )}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        aria-label={
+          currentLanguage?.label ?? "Velg språk"
+        }
+        title={
+          currentLanguage?.label ?? "Velg språk"
+        }
         onClick={() => setIsOpen((open) => !open)}
         onKeyDown={(event) => {
           if (event.key === "ArrowDown") {
@@ -366,15 +380,21 @@ export default function FixedTranslateWidget({
           }
         }}
       >
-        <span className="translate-button__label notranslate" translate="no">
-          {LANGUAGE_OPTIONS.find((option) => option.code === currentCode)?.label ??
-            "Velg språk"}
-        </span>
-        <ChevronDown
-          className="translate-button__arrow"
-          data-open={isOpen}
-          aria-hidden="true"
-        />
+        {compact ? (
+          <>
+            <span className="translate-button__flag" aria-hidden="true">
+              {currentLanguage.flag}
+            </span>
+            <span className="translate-button__code notranslate" translate="no">
+              {currentCode.toUpperCase()}
+            </span>
+          </>
+        ) : (
+          <span className="translate-button__label notranslate" translate="no">
+            {currentLanguage.label}
+          </span>
+        )}
+        <ChevronDown className="translate-button__arrow" data-open={isOpen} aria-hidden="true" />
       </button>
 
       {isOpen && (
@@ -400,6 +420,9 @@ export default function FixedTranslateWidget({
               onClick={() => selectLanguage(option.code)}
               onKeyDown={(event) => handleItemKeyDown(event, index)}
             >
+              <span className="translate-menu__flag" aria-hidden="true">
+                {option.flag}
+              </span>
               <span className="notranslate" translate="no">
                 {option.label}
               </span>

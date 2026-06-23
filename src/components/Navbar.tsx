@@ -14,7 +14,18 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import {
+  CircleDot,
+  Home,
+  Menu,
+  Moon,
+  Palette,
+  PhoneCall,
+  Rocket,
+  Sun,
+  User,
+  X,
+} from "lucide-react";
 import MobileBubbleNav from "./MobileBubbleNav";
 import FixedTranslateWidget from "./FixedTranslateWidget";
 import useLanguage from "../hooks/useLanguage";
@@ -30,6 +41,7 @@ declare global {
 
 const THEME_STORAGE_KEY = "cfs-theme";
 type ThemeMode = "light" | "dark";
+const SECTION_ICON_CLASS = "h-4 w-4";
 
 const readStoredTheme = (): ThemeMode | null => {
   if (typeof window === "undefined") return null;
@@ -71,6 +83,7 @@ export default function Navbar() {
   const [theme, setThemeState] = useState<ThemeMode>(getInitialTheme);
   const manualThemeRef = useRef(readStoredTheme() !== null);
   const [isStaticBg, setIsStaticBg] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const language = useLanguage();
   const labels = NAVIGATION_LABELS[language];
   const isDark = theme === "dark";
@@ -158,7 +171,16 @@ export default function Navbar() {
   function scrollToId(id: string) {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
+    setIsMobileMenuOpen(false);
   }
+
+  const navItems = [
+    { id: "hero", label: labels.home, icon: Home },
+    { id: "services", label: labels.services, icon: Palette },
+    { id: "pricing", label: labels.pricing, icon: Rocket },
+    { id: "about", label: labels.about, icon: User },
+    { id: "contact", label: labels.contact, icon: PhoneCall },
+  ];
 
   return (
     <>
@@ -174,10 +196,13 @@ export default function Navbar() {
         }}
       >
         <div className="flex min-h-4rem items-center px-4 sm:px-6 lg:px-8">
-          <div className="flex w-full items-center justify-between max-w-7xl mx-auto">
+          <div className="relative flex w-full items-center justify-between max-w-7xl mx-auto gap-3">
             <Link
               to="/"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                setIsMobileMenuOpen(false);
+              }}
               className="group flex items-center gap-3 text-lg font-extrabold tracking-tight text-(--text-heading)"
 
             >
@@ -187,7 +212,7 @@ export default function Navbar() {
                 className="nav-flame h-10 w-10 sm:h-14 sm:w-14 will-change-transform"
               />
               <span
-                className="text-xl sm:text-2xl tracking-[0.04em] anim-delay-200 notranslate"
+                className="text-base sm:text-2xl tracking-[0.04em] anim-delay-200 notranslate"
                 translate="no"
               >
                 CODEFORGE STUDIO
@@ -195,11 +220,21 @@ export default function Navbar() {
             </Link>
 
             {/* desktop nav */}
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-(--text-page)">
-              <button onClick={() => scrollToId("services")} className="hover:opacity-80 transition">
-                <span className="notranslate" translate="no">{labels.services}</span>
-              </button>
-              <div className="flex items-center gap-3 text-xs font-medium">
+            <nav className="hidden lg:flex items-center gap-3 text-sm font-medium text-(--text-page)">
+              <div className="nav-rail flex items-center gap-1.5">
+                {navItems.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => scrollToId(id)}
+                    className="nav-link"
+                    aria-label={label}
+                  >
+                    <Icon className={SECTION_ICON_CLASS} aria-hidden="true" />
+                    <span className="notranslate" translate="no">{label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium">
                 {/* background toggle */}
                 <button
                   type="button"
@@ -209,7 +244,7 @@ export default function Navbar() {
                     toggleBackgroundMode();
                   }}
                   className={[
-                    "surface-chip nav-chip px-3 py-1.5 text-heading transition",
+                    "surface-chip nav-chip nav-icon-button text-heading transition",
                     !isStaticBg && "ring-1 ring-(--color-brand-sea)",
                   ]
                     .filter(Boolean)
@@ -226,7 +261,7 @@ export default function Navbar() {
                   aria-label={backgroundLabel}
                   title={backgroundLabel}
                 >
-                  <span className="notranslate" translate="no">{backgroundLabel}</span>
+                  <CircleDot className="h-4 w-4" aria-hidden="true" />
                 </button>
 
                 {/* desktop theme toggle */}
@@ -238,30 +273,101 @@ export default function Navbar() {
                     event.stopPropagation();
                     toggleTheme();
                   }}
-                  className="surface-chip nav-chip px-3 py-1.5 text-heading"
+                  className="surface-chip nav-chip nav-icon-button text-heading"
                   aria-label={isDark ? labels.useLightTheme : labels.useDarkTheme}
                   aria-pressed={isDark}
                   title={isDark ? labels.useLightTheme : labels.useDarkTheme}
                 >
                   {isDark ? (
-                    <Sun className="inline-block h-4 w-4 mr-2 align-middle" />
+                    <Sun className="h-4 w-4" aria-hidden="true" />
                   ) : (
-                    <Moon className="inline-block h-4 w-4 mr-2 align-middle" />
+                    <Moon className="h-4 w-4" aria-hidden="true" />
                   )}
-                  <span className="notranslate" translate="no">
-                    {isDark ? labels.useLightTheme : labels.useDarkTheme}
-                  </span>
                 </button>
 
                 {/* translate button */}
-                <FixedTranslateWidget className="shrink-0" />
+                <FixedTranslateWidget className="shrink-0" compact />
               </div>
             </nav>
+
+            <button
+              type="button"
+              data-testid="mobile-menu-toggle"
+              className="surface-chip nav-chip nav-mobile-toggle text-heading lg:hidden"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-header-menu"
+              aria-label={isMobileMenuOpen ? labels.closeMenu : labels.menu}
+              title={isMobileMenuOpen ? labels.closeMenu : labels.menu}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <Menu className="h-5 w-5" aria-hidden="true" />
+              )}
+            </button>
+
+            {isMobileMenuOpen && (
+              <div id="mobile-header-menu" className="mobile-header-panel lg:hidden">
+                <nav className="grid gap-2" aria-label={labels.menu}>
+                  {navItems.map(({ id, label, icon: Icon }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      className="mobile-header-link"
+                      onClick={() => scrollToId(id)}
+                      aria-label={label}
+                    >
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                      <span className="notranslate" translate="no">{label}</span>
+                    </button>
+                  ))}
+                </nav>
+
+                <div className="mobile-header-actions">
+                  <button
+                    type="button"
+                    onClick={toggleBackgroundMode}
+                    className={[
+                      "mobile-header-action",
+                      !isStaticBg && "mobile-header-action--active",
+                    ].filter(Boolean).join(" ")}
+                    aria-pressed={isStaticBg}
+                    aria-label={backgroundLabel}
+                    title={backgroundLabel}
+                  >
+                    <CircleDot className="h-4 w-4" aria-hidden="true" />
+                    <span className="notranslate" translate="no">{backgroundLabel}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    data-testid="mobile-theme-toggle"
+                    onClick={toggleTheme}
+                    className="mobile-header-action"
+                    aria-label={isDark ? labels.useLightTheme : labels.useDarkTheme}
+                    aria-pressed={isDark}
+                    title={isDark ? labels.useLightTheme : labels.useDarkTheme}
+                  >
+                    {isDark ? (
+                      <Sun className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <Moon className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    <span className="notranslate" translate="no">
+                      {isDark ? labels.useLightTheme : labels.useDarkTheme}
+                    </span>
+                  </button>
+
+                  <FixedTranslateWidget className="mobile-header-language" compact />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      {/* mobile menu */}
+      {/* The former bubble nav stays mounted as a compatibility shim. */}
       <MobileBubbleNav
         scrollToId={scrollToId}
         isStaticBg={isStaticBg}
