@@ -177,10 +177,11 @@ export default function Services() {
       <Container className="py-16 sm:py-24">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="services-heading" className="text-heading text-3xl font-bold tracking-tight">
+          <p className="section-kicker mb-3">{t("services.kicker") as string}</p>
+          <h2 id="services-heading" className="text-heading text-3xl font-bold tracking-tight sm:text-4xl">
             {renderBrandSafe(t("services.heading") as string)}
           </h2>
-          <p className="mt-3 text-body">{renderBrandSafe(t("services.sub") as string)}</p>
+          <p className="mt-4 text-body leading-7">{renderBrandSafe(t("services.sub") as string)}</p>
         </div>
 
         {/* Primary services */}
@@ -200,7 +201,7 @@ export default function Services() {
                   <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                <h3 className="text-heading text-lg font-semibold mt-4">
+                <h3 className="text-heading text-xl font-bold mt-5">
                   {renderBrandSafe(title)}
                 </h3>
                 <p className="text-body text-sm leading-relaxed mt-2">
@@ -213,7 +214,7 @@ export default function Services() {
                       key={`${title}-primary-${idx}`}
                       className="flex items-start gap-2 text-body leading-relaxed"
                     >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-brand-accent-soft)]" />
                       <span>{renderBrandSafe(p)}</span>
                     </li>
                   ))}
@@ -246,7 +247,7 @@ export default function Services() {
                   <Icon className="h-5 w-5" style={{ color: toneVars.icon }} />
                 </div>
 
-                <h3 className="text-heading text-lg font-semibold mt-4">
+                <h3 className="text-heading text-lg font-bold mt-4">
                   {renderBrandSafe(title)}
                 </h3>
                 <p className="text-body text-sm leading-relaxed mt-2">
@@ -259,7 +260,7 @@ export default function Services() {
                       key={`${title}-extra-${idx}`}
                       className="flex items-start gap-2 text-body leading-relaxed"
                     >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 text-dim shrink-0" />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-brand-accent-soft)]" />
                       <span>{renderBrandSafe(p)}</span>
                     </li>
                   ))}
